@@ -1,8 +1,8 @@
-#if !hasFeature(Embedded)
 /// An element that awaits its content before rendering.
 ///
 /// The this element can only be rendered in an async context (ie: by calling ``HTML/render(into:chunkSize:)`` or ``HTML/renderAsync()``).
 /// All HTML tag types (``HTMLElement``) support async content closures in their initializers, so you don't need to use this element directly in most cases.
+@_unavailableInEmbedded
 public struct AsyncContent<Content: HTML>: HTML, Sendable {
     public typealias Body = Never
     public typealias Tag = Content.Tag
@@ -36,6 +36,7 @@ public struct AsyncContent<Content: HTML>: HTML, Sendable {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -44,4 +45,3 @@ public struct AsyncContent<Content: HTML>: HTML, Sendable {
         try await Content._render(await html.content(), into: &renderer, with: context)
     }
 }
-#endif

@@ -78,6 +78,7 @@ extension Optional: HTML where Wrapped: HTML {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -104,6 +105,7 @@ public struct EmptyHTML: HTML, Sendable {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -143,6 +145,7 @@ public struct HTMLText: HTML, Sendable {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -182,6 +185,7 @@ public struct _HTMLConditional<TrueContent: HTML, FalseContent: HTML>: HTML {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -222,6 +226,7 @@ public struct _HTMLArray<Element: HTML>: HTML {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,

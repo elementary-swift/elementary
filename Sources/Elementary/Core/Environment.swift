@@ -96,6 +96,7 @@ public struct _ModifiedTaskLocal<T: Sendable, Content: HTML>: HTML {
         }
     }
 
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,

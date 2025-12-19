@@ -62,6 +62,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -121,6 +122,7 @@ public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML where Tag: HTMLTrait
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -156,6 +158,7 @@ public struct HTMLComment: HTML {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -189,6 +192,7 @@ public struct HTMLRaw: HTML {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,

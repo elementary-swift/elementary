@@ -40,11 +40,14 @@ public protocol HTML<Tag> {
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     )
+
+    #if !hasFeature(Embedded)
     static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) async throws
+    #endif
 }
 
 extension HTML {
@@ -117,6 +120,7 @@ public extension HTML {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,

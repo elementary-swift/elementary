@@ -39,6 +39,7 @@ public struct AsyncForEach<Source: AsyncSequence, Content: HTML>: HTML {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,

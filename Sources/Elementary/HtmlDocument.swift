@@ -68,6 +68,7 @@ public extension HTMLDocument {
         render(html.__body, into: &renderer, with: context)
     }
 
+    @_unavailableInEmbedded
     static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,

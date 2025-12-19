@@ -40,6 +40,7 @@ where Data: Sequence, Content: HTML {
     }
 
     @inlinable
+    @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
