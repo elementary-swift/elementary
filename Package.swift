@@ -1,12 +1,8 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 import PackageDescription
 
-let featureFlags: [SwiftSetting] = [
-    .enableExperimentalFeature("StrictConcurrency=complete"),
-    .enableUpcomingFeature("StrictConcurrency=complete"),
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("ConciseMagicFile"),
-    .enableUpcomingFeature("ImplicitOpenExistentials"),
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ExistentialAny")
 ]
 
 let package = Package(
@@ -26,12 +22,12 @@ let package = Package(
     targets: [
         .target(
             name: "Elementary",
-            swiftSettings: featureFlags
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "ElementaryTests",
             dependencies: ["Elementary"],
-            swiftSettings: featureFlags
+            swiftSettings: swiftSettings
         ),
     ]
 )

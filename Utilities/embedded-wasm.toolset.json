@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "swiftCompiler": {
+    "extraCLIOptions": [
+      "-enable-experimental-feature",
+      "Embedded",
+      "-enable-experimental-feature",
+      "Extern",
+      "-Xfrontend",
+      "-emit-empty-object-file"
+    ]
+  },
+  "cCompiler": {
+    "extraCLIOptions": ["-fdeclspec"]
+  }
+}
