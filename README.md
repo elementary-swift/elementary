@@ -9,6 +9,15 @@
 > This repo 📦 moved 📦 to its new home at **`https://github.com/elementary-swift`**.    
 > Please update your URLs to avoid trouble - and reach out if anything breaks!
 
+> [!NOTE]
+>
+> For running Swift apps in the browser, check out  **[ElementaryUI](https://elementary.codes/)**.
+> 
+>   <a href="https://elementary.codes">
+>    <img src="https://elementary.codes/og-image.png" width="400px" alt="Elementary Logo">
+>  </a>
+
+
 [Examples](#play-with-it) | [Motivation](#motivation-and-other-packages) | [Discussion](https://github.com/elementary-swift/elementary/discussions)
 
 ```swift
