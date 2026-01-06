@@ -294,6 +294,6 @@ My main motivation for Elementary was to create an experience like these ([Swift
 
 [swift-html](https://github.com/pointfreeco/swift-html) and [swift-dom](https://github.com/tayloraswift/swift-dom) will produce HTML nicely, but they use a different syntax for composing HTML elements.
 
-## Future directions
+---
 
-- Experiment with embedded swift for wasm and bolt a lean state tracking/reconciler for reactive DOM manipulation on top
+*SwiftUI is a trademark of Apple Inc. This project is not affiliated with or connected to Apple in any way.*
