@@ -271,11 +271,23 @@ div {
 }
 ```
 
-### 🚧 Work in progress 🚧
+### Contributing
 
 The list of built-in attributes is far from complete, but adding them is really simple (and can be done in external packages as well).
 
 Feel free to open a PR with additional attributes that are missing from the model.
+
+<p align="center">
+  <i>Thank you to everyone supporting this open‑source project financially.
+  <br>Please consider joining them by <a href="https://github.com/sponsors/sliemeobn" target="_blank" rel="noopener">sponsoring ElementaryUI</a>.</i>
+  <a href="https://elementary.codes#sponsors">
+  <picture>
+    <source media="(width <= 600px)" srcset="https://elementary.codes/sponsors/sponsors-400.svg" />
+    <source media="(width <= 800px)" srcset="https://elementary.codes/sponsors/sponsors-600.svg" />
+    <img src="https://elementary.codes/sponsors/sponsors-800.svg" alt="Sponsors" />
+  </picture>
+  </a>
+</p>
 
 ## Motivation and other packages
 
