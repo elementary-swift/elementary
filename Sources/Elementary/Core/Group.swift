@@ -7,8 +7,9 @@
 ///   in a single block (because variadic generics aren't available there yet). You can exceed
 ///   that limit by nesting content inside one or more `Group` blocks.
 public struct Group<Content: HTML>: HTML {
-    public typealias Body = Never
     public typealias Tag = Never
+    public typealias Body = Never
+    public typealias Content = Content
 
     public let content: Content
 
