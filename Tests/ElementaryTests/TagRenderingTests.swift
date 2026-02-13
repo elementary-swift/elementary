@@ -33,6 +33,24 @@ final class TagRenderingTests: XCTestCase {
         )
     }
 
+    func testRendersGroup() async throws {
+        try await HTMLAssertEqual(
+            div {
+                Group {
+                    h1 {}
+                    Group {
+                        if true {
+                            p {}
+                            p {}
+                        }
+                    }
+                    h1 {}
+                }
+            },
+            "<div><h1></h1><p></p><p></p><h1></h1></div>"
+        )
+    }
+
     func testRendersOptionals() async throws {
         try await HTMLAssertEqual(
             div {
