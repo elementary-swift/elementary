@@ -2,19 +2,19 @@ extension _StoredAttribute {
 
     /// Returns style key-value pairs if this is a style attribute, or `nil` otherwise.
     @inlinable
-    public var styleKeyValuePairs: StyleKeyValuePairs? {
+    public var _styleKeyValuePairs: _StyleKeyValuePairs? {
         switch _value {
         case .styles(let styles):
-            return StyleKeyValuePairs(styles)
+            return _StyleKeyValuePairs(styles)
         case .plain(let value) where name.utf8Equals("style"):
-            return StyleKeyValuePairs(plainValue: value)
+            return _StyleKeyValuePairs(plainValue: value)
         default:
             return nil
         }
     }
 
     /// Lazily yields CSS style key-value pairs from structured and/or plain-text style entries.
-    public struct StyleKeyValuePairs: Sequence, Sendable {
+    public struct _StyleKeyValuePairs: Sequence, Sendable {
         @usableFromInline
         var entries: [Styles.Entry]
         @usableFromInline
@@ -43,17 +43,17 @@ extension _StoredAttribute {
             @usableFromInline
             var entryIndex: Int
             @usableFromInline
-            var remaining: Substring
+            var remaining: Substring.UTF8View
 
             @usableFromInline
             init(_ entries: [Styles.Entry], plainValue: String?) {
                 self.entries = entries
                 self.entryIndex = 0
-                self.remaining = plainValue.map { Substring($0) } ?? Substring()
+                self.remaining = plainValue.map { Substring($0).utf8 } ?? Substring().utf8
             }
 
             @inlinable
-            public mutating func next() -> (key: Substring, value: Substring)? {
+            public mutating func next() -> (key: Substring.UTF8View, value: Substring.UTF8View)? {
                 while true {
                     if let pair = _nextStylePair(from: &remaining) { return pair }
 
@@ -62,9 +62,9 @@ extension _StoredAttribute {
                     entryIndex &+= 1
 
                     if entry.key.utf8.isEmpty {
-                        remaining = Substring(entry.value)
+                        remaining = Substring(entry.value).utf8
                     } else {
-                        return (key: Substring(entry.key), value: Substring(entry.value))
+                        return (key: Substring(entry.key).utf8, value: Substring(entry.value).utf8)
                     }
                 }
             }
@@ -72,20 +72,19 @@ extension _StoredAttribute {
     }
 }
 
-/// Parses the next semicolon-delimited `key:value` pair from a CSS declaration substring.
+/// Parses the next semicolon-delimited `key:value` pair from a CSS declaration UTF-8 view.
 @inline(__always)
 @usableFromInline
-func _nextStylePair(from remaining: inout Substring) -> (key: Substring, value: Substring)? {
-    while !remaining.utf8.isEmpty {
+func _nextStylePair(from remaining: inout Substring.UTF8View) -> (key: Substring.UTF8View, value: Substring.UTF8View)? {
+    while !remaining.isEmpty {
         let current = remaining
-        let utf8 = current.utf8
-        let utf8End = utf8.endIndex
+        let utf8End = current.endIndex
 
-        var cursor = utf8.startIndex
-        var colon: String.Index?
+        var cursor = current.startIndex
+        var colon: Substring.UTF8View.Index?
 
         while cursor < utf8End {
-            let byte = utf8[cursor]
+            let byte = current[cursor]
 
             // :
             if byte == 0x3A, colon == nil {
@@ -97,21 +96,21 @@ func _nextStylePair(from remaining: inout Substring) -> (key: Substring, value: 
                 break
             }
 
-            utf8.formIndex(after: &cursor)
+            current.formIndex(after: &cursor)
         }
 
         let partEnd = cursor
         if cursor < utf8End {
-            remaining = current[utf8.index(after: cursor)...]
+            remaining = current[current.index(after: cursor)...]
         } else {
-            remaining = Substring()
+            remaining = Substring().utf8
         }
 
         guard let colon else { continue }
 
-        let key = current[..<colon]._trimmedSpaces
-        guard !key.utf8.isEmpty else { continue }
-        let valueStart = utf8.index(after: colon)
+        let key = current[current.startIndex..<colon]._trimmedSpaces
+        guard !key.isEmpty else { continue }
+        let valueStart = current.index(after: colon)
         let value = current[valueStart..<partEnd]._trimmedSpaces
 
         return (key: key, value: value)
@@ -119,16 +118,16 @@ func _nextStylePair(from remaining: inout Substring) -> (key: Substring, value: 
     return nil
 }
 
-extension Substring {
+extension Substring.UTF8View {
     /// Trims leading and trailing CSS ASCII whitespace:
     /// space (0x20), tab (0x09), LF (0x0A), CR (0x0D), FF (0x0C).
     @inline(__always)
     @usableFromInline
-    var _trimmedSpaces: Substring {
-        var lo = utf8.startIndex
-        var hi = utf8.endIndex
-        while lo < hi, utf8[lo]._isCSSASCIIWhitespace { utf8.formIndex(after: &lo) }
-        while hi > lo, utf8[utf8.index(before: hi)]._isCSSASCIIWhitespace { utf8.formIndex(before: &hi) }
+    var _trimmedSpaces: Substring.UTF8View {
+        var lo = startIndex
+        var hi = endIndex
+        while lo < hi, self[lo]._isCSSASCIIWhitespace { formIndex(after: &lo) }
+        while hi > lo, self[index(before: hi)]._isCSSASCIIWhitespace { formIndex(before: &hi) }
         return self[lo..<hi]
     }
 }

@@ -126,16 +126,16 @@ final class StyleKeyValuePairsTests: XCTestCase {
         let classPlain = _StoredAttribute(name: "class", value: "foo bar", mergeMode: .replaceValue)
         let classAttr = _StoredAttribute(name: "class", value: "foo", mergeMode: .replaceValue)
         let emptyStyle = _StoredAttribute(name: "style", value: nil, mergeMode: .replaceValue)
-        XCTAssertNil(classPlain.styleKeyValuePairs)
-        XCTAssertNil(classAttr.styleKeyValuePairs)
-        XCTAssertNil(emptyStyle.styleKeyValuePairs)
+        XCTAssertNil(classPlain._styleKeyValuePairs)
+        XCTAssertNil(classAttr._styleKeyValuePairs)
+        XCTAssertNil(emptyStyle._styleKeyValuePairs)
     }
 
     // MARK: - Helpers
 
     private func collectPairs(from attr: _StoredAttribute) -> [(key: String, value: String)]? {
-        guard let pairs = attr.styleKeyValuePairs else { return nil }
-        return pairs.map { (String($0.key), String($0.value)) }
+        guard let pairs = attr._styleKeyValuePairs else { return nil }
+        return pairs.map { (k, v) in (key: String(Substring(k)), value: String(Substring(v))) }
     }
 
     private func assertPairs(
