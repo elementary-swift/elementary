@@ -86,12 +86,17 @@ func _nextStylePair(from remaining: inout Substring) -> (key: Substring, value: 
 
         while cursor < utf8End {
             let byte = utf8[cursor]
-            if byte == 0x3A /* : */, colon == nil {
+
+            // :
+            if byte == 0x3A, colon == nil {
                 colon = cursor
             }
-            if byte == 0x3B /* ; */ {
+
+            // ;
+            if byte == 0x3B {
                 break
             }
+
             utf8.formIndex(after: &cursor)
         }
 
