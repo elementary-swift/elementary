@@ -141,7 +141,9 @@ extension _StoredAttribute {
     struct Styles: Equatable, Sendable {
         @usableFromInline
         struct Entry: Equatable, Sendable {
+            @usableFromInline
             let key: String
+            @usableFromInline
             let value: String
 
             @usableFromInline
