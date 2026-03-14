@@ -96,6 +96,49 @@ public struct _AttributedElement<Content: HTML>: HTML {
         context.prependAttributes(html.attributes)
         try await Content._render(html.content, into: &renderer, with: context)
     }
+
+    /// Adds the specified attribute to the element.
+    /// - Parameters:
+    ///   - attribute: The attribute to add to the element.
+    ///   - condition: If set to false, the attribute will not be added.
+    /// - Returns: A new element with the specified attribute added.
+    @inlinable
+    public func attributes(_ attribute: HTMLAttribute<Tag>, when condition: Bool = true) -> Self {
+        if condition {
+            var element = self
+            element.attributes.append(_AttributeStorage(attribute))
+            return element
+        } else {
+            return self
+        }
+    }
+
+    /// Adds the specified attributes to the element.
+    /// - Parameters:
+    ///   - attributes: The attributes to add to the element.
+    ///   - condition: If set to false, the attributes will not be added.
+    /// - Returns: A new element with the specified attributes added.
+    @inlinable
+    public func attributes(_ attributes: HTMLAttribute<Tag>..., when condition: Bool = true) -> Self {
+        self.attributes(contentsOf: attributes, when: condition)
+    }
+
+    /// Adds the specified attributes to the element.
+    /// - Parameters:
+    ///   - attributes: The attributes to add to the element as an array.
+    ///   - condition: If set to false, the attributes will not be added.
+    /// - Returns: A new element with the specified attributes added.
+    @inlinable
+    public func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> Self {
+        if condition {
+            var element = self
+            element.attributes.append(_AttributeStorage(attributes))
+            return element
+        } else {
+            return self
+        }
+    }
+
 }
 
 extension _AttributedElement: Sendable where Content: Sendable {}
