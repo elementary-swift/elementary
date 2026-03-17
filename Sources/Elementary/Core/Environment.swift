@@ -86,12 +86,7 @@ public struct _ModifiedTaskLocal<T: Sendable, Content: HTML>: HTML {
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) {
-        #if compiler(>=6.0)
-        // https://github.com/swiftlang/swift/issues/76474
-        let context = consume context
-        #endif
-
-        html.taskLocal.withValue(html.value) {
+        html.taskLocal.withValue(html.value) { [context] in
             Content._render(html.wrappedContent, into: &renderer, with: context)
         }
     }
@@ -102,12 +97,7 @@ public struct _ModifiedTaskLocal<T: Sendable, Content: HTML>: HTML {
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) async throws {
-        #if compiler(>=6.0)
-        // https://github.com/swiftlang/swift/issues/76474
-        let context = consume context
-        #endif
-
-        try await html.taskLocal.withValue(html.value) {
+        try await html.taskLocal.withValue(html.value) { [context] in
             try await Content._render(html.wrappedContent, into: &renderer, with: context)
         }
     }
