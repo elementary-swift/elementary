@@ -64,7 +64,7 @@ public struct _RenderingContext {
     @usableFromInline
     var attributes: _AttributeStorage
 
-    public static var emptyContext: Self { Self(attributes: .none) }
+    public static var emptyContext: Self { Self(attributes: .none(isStaticallyKnownEmpty: true)) }
 }
 
 // TODO: think about this interface... seems not ideal

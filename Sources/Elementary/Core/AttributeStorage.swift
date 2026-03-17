@@ -5,13 +5,13 @@
 /// The storage automatically optimizes for the number of attributes being stored,
 /// using the most efficient representation in each case.
 public enum _AttributeStorage: Sendable, Equatable {
-    case none
+    case none(isStaticallyKnownEmpty: Bool)
     case single(_StoredAttribute)
     case multiple([_StoredAttribute])
 
     @inlinable
-    init() {
-        self = .none
+    init(isStaticallyKnownEmpty: Bool) {
+        self = .none(isStaticallyKnownEmpty: isStaticallyKnownEmpty)
     }
 
     @inlinable
@@ -22,7 +22,7 @@ public enum _AttributeStorage: Sendable, Equatable {
     @inlinable
     init(_ attributes: [HTMLAttribute<some HTMLTagDefinition>]) {
         switch attributes.count {
-        case 0: self = .none
+        case 0: self = .none(isStaticallyKnownEmpty: false)
         case 1: self = .single(attributes[0].htmlAttribute)
         default: self = .multiple(attributes.map { $0.htmlAttribute })
         }
@@ -30,18 +30,27 @@ public enum _AttributeStorage: Sendable, Equatable {
 
     public var isEmpty: Bool {
         switch self {
-        case .none: return true
+        case .none(_): return true
         case .single: return false
         case let .multiple(attributes): return attributes.isEmpty  // just to be sure...
+        }
+    }
+
+    public var isStaticallyKnownEmpty: Bool {
+        switch self {
+        case let .none(isStaticallyKnownEmpty): return isStaticallyKnownEmpty
+        case .single, .multiple: return false
         }
     }
 
     public mutating func append(_ attributes: consuming _AttributeStorage) {
         // maybe this was a bad idea....
         switch (self, attributes) {
-        case (_, .none):
+        case let (.none(lhsStatic), .none(rhsStatic)):
+            self = .none(isStaticallyKnownEmpty: lhsStatic && rhsStatic)
+        case (_, .none(_)):
             break
-        case let (.none, other):
+        case let (.none(_), other):
             self = other
         case let (.single(existing), .single(other)):
             self = .multiple([existing, other])
@@ -86,7 +95,7 @@ public struct _MergedAttributes: Sequence, Sendable {
 
         init(_ storage: consuming _AttributeStorage) {
             switch storage {
-            case .none: state = .empty
+            case .none(_): state = .empty
             case let .single(attribute): state = .single(attribute)
             case let .multiple(attributes): state = .flattening(attributes, 0)
             }
