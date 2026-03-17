@@ -107,7 +107,7 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
         if condition {
             return _AttributedElement(content: self, attributes: .init(attribute))
         } else {
-            return _AttributedElement(content: self, attributes: .init())
+            return _AttributedElement(content: self, attributes: .init(isStaticallyKnownEmpty: false))
         }
     }
 
@@ -118,7 +118,11 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
     /// - Returns: A new element with the specified attributes added.
     @inlinable
     func attributes(_ attributes: HTMLAttribute<Tag>..., when condition: Bool = true) -> _AttributedElement<Self> {
-        _AttributedElement(content: self, attributes: .init(condition ? attributes : []))
+        if condition {
+            return _AttributedElement(content: self, attributes: .init(attributes))
+        } else {
+            return _AttributedElement(content: self, attributes: .none(isStaticallyKnownEmpty: false))
+        }
     }
 
     /// Adds the specified attributes to the element.
@@ -128,7 +132,11 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
     /// - Returns: A new element with the specified attributes added.
     @inlinable
     func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> _AttributedElement<Self> {
-        _AttributedElement(content: self, attributes: .init(condition ? attributes : []))
+        if condition {
+            return _AttributedElement(content: self, attributes: .init(attributes))
+        } else {
+            return _AttributedElement(content: self, attributes: .none(isStaticallyKnownEmpty: false))
+        }
     }
 }
 
