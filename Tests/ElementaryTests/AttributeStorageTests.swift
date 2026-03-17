@@ -14,7 +14,7 @@ struct AttributeStorageTests {
 
     @Test func testArrayInitializerWithSingleAttributeCreatesSingleStorage() {
         let attributes: [HTMLAttribute<HTMLTag.p>] = [
-            .init(name: "id", value: "foo"),
+            .init(name: "id", value: "foo")
         ]
         let storage = _AttributeStorage(attributes)
 
