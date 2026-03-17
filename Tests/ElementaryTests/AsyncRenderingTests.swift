@@ -1,8 +1,8 @@
 import Elementary
-import XCTest
+import Testing
 
-final class AsyncRenderingTests: XCTestCase {
-    func testRendersAsyncContent() async throws {
+struct AsyncRenderingTests {
+    @Test func testRendersAsyncContent() async throws {
         try await HTMLAssertEqualAsyncOnly(
             AsyncContent {
                 let text = await getValue()
@@ -13,7 +13,7 @@ final class AsyncRenderingTests: XCTestCase {
         )
     }
 
-    func testAsyncElementInTuple() async throws {
+    @Test func testAsyncElementInTuple() async throws {
         try await HTMLAssertEqualAsyncOnly(
             div {
                 AwaitedP(number: 1)
@@ -24,7 +24,7 @@ final class AsyncRenderingTests: XCTestCase {
         )
     }
 
-    func testImplicitlyAsyncContent() async throws {
+    @Test func testImplicitlyAsyncContent() async throws {
         try await HTMLAssertEqualAsyncOnly(
             p(.id("hello")) {
                 let text = await getValue()
@@ -34,7 +34,7 @@ final class AsyncRenderingTests: XCTestCase {
         )
     }
 
-    func testNestedImplicitAsyncContent() async throws {
+    @Test func testNestedImplicitAsyncContent() async throws {
         try await HTMLAssertEqualAsyncOnly(
             div(attributes: [.class("c1")]) {
                 p {
@@ -49,7 +49,7 @@ final class AsyncRenderingTests: XCTestCase {
         )
     }
 
-    func testAsyncForEach() async throws {
+    @Test func testAsyncForEach() async throws {
         try await HTMLAssertEqualAsyncOnly(
             ul {
                 AsyncForEach(AsyncStream(testData: [1, 2, 3])) { number in
@@ -60,7 +60,7 @@ final class AsyncRenderingTests: XCTestCase {
         )
     }
 
-    func testAsyncForEachWithAsyncContent() async throws {
+    @Test func testAsyncForEachWithAsyncContent() async throws {
         try await HTMLAssertEqualAsyncOnly(
             AsyncForEach(AsyncStream(testData: ["foo", "bar"])) { text in
                 p {
@@ -71,22 +71,22 @@ final class AsyncRenderingTests: XCTestCase {
         )
     }
 
-    func testBufferFlushesWhenChunkSizeExceeded() async throws {
+    @Test func testBufferFlushesWhenChunkSizeExceeded() async throws {
         let writer = TestBufferWriter()
         try await div { "This is some content" }
             .render(into: writer, chunkSize: 1)
 
-        XCTAssertEqual("<div>This is some content</div>", String(decoding: writer.result, as: UTF8.self), file: #filePath, line: #line)
-        XCTAssertGreaterThan(writer.writeCount, 1)
+        #expect("<div>This is some content</div>" == String(decoding: writer.result, as: UTF8.self))
+        #expect(writer.writeCount > 1)
     }
 
-    func testBufferFlushesExactlyOnceOnSmallInput() async throws {
+    @Test func testBufferFlushesExactlyOnceOnSmallInput() async throws {
         let writer = TestBufferWriter()
         try await div { "This is some content" }
             .render(into: writer, chunkSize: 1024)
 
-        XCTAssertEqual("<div>This is some content</div>", String(decoding: writer.result, as: UTF8.self), file: #filePath, line: #line)
-        XCTAssertEqual(writer.writeCount, 1)
+        #expect("<div>This is some content</div>" == String(decoding: writer.result, as: UTF8.self))
+        #expect(writer.writeCount == 1)
     }
 }
 

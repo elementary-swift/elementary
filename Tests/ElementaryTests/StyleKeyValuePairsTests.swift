@@ -1,12 +1,12 @@
-import XCTest
+import Testing
 
 @testable import Elementary
 
-final class StyleKeyValuePairsTests: XCTestCase {
+struct StyleKeyValuePairsTests {
 
     // MARK: - Structured styles
 
-    func testStructuredStylesPreserveOrderAndAllowEmptyValue() {
+    @Test func testStructuredStylesPreserveOrderAndAllowEmptyValue() {
         assertPairs(
             makeStructured(["color": "red", "font-size": "16px", "margin": ""]),
             [
@@ -17,16 +17,16 @@ final class StyleKeyValuePairsTests: XCTestCase {
         )
     }
 
-    func testStructuredEmptyStylesYieldsEmptySequence() {
+    @Test func testStructuredEmptyStylesYieldsEmptySequence() {
         let attr = _StoredAttribute(_StoredAttribute.Styles([:] as KeyValuePairs<String, String>))
         let pairs = collectPairs(from: attr)
-        XCTAssertNotNil(pairs)
-        XCTAssertEqual(pairs?.count, 0)
+        #expect(pairs != nil)
+        #expect(pairs?.count == 0)
     }
 
     // MARK: - Plain style parsing (.plain style attribute path)
 
-    func testPlainStyleParsingCoreCases() {
+    @Test func testPlainStyleParsingCoreCases() {
         let cases: [(String, [(String, String)])] = [
             ("color:red", [("color", "red")]),
             ("color:red;font-size:16px", [("color", "red"), ("font-size", "16px")]),
@@ -44,7 +44,7 @@ final class StyleKeyValuePairsTests: XCTestCase {
         }
     }
 
-    func testPlainStyleParsingToleratesEmptySemicolonParts() {
+    @Test func testPlainStyleParsingToleratesEmptySemicolonParts() {
         let cases: [(String, [(String, String)])] = [
             ("color:red;", [("color", "red")]),
             (";color:red", [("color", "red")]),
@@ -57,7 +57,7 @@ final class StyleKeyValuePairsTests: XCTestCase {
         }
     }
 
-    func testPlainStyleParsingSkipsInvalidDeclarations() {
+    @Test func testPlainStyleParsingSkipsInvalidDeclarations() {
         let cases: [(String, [(String, String)])] = [
             ("", []),
             ("   ", []),
@@ -74,7 +74,7 @@ final class StyleKeyValuePairsTests: XCTestCase {
 
     // MARK: - Merge behavior
 
-    func testMergedPlainStylesKeepAllDeclarationsInOrder() {
+    @Test func testMergedPlainStylesKeepAllDeclarationsInOrder() {
         var styles = _StoredAttribute.Styles(plainValue: "color:red;display:flex")
         styles.append(plainValue: "font-size:16px;margin:0")
         let attr = _StoredAttribute(styles)
@@ -89,7 +89,7 @@ final class StyleKeyValuePairsTests: XCTestCase {
         )
     }
 
-    func testMixedStructuredAndPlainMergeKeepsExpectedOrder() {
+    @Test func testMixedStructuredAndPlainMergeKeepsExpectedOrder() {
         var attr = makeStructured(["color": "red", "display": "flex"])
         attr.mergeWith(makeStylesFromPlain("font-size:16px; margin: 0"))
         attr.mergeWith(makeStructured(["padding": "8px"]))
@@ -105,30 +105,30 @@ final class StyleKeyValuePairsTests: XCTestCase {
         )
     }
 
-    func testPlainEntriesAreNotDeduplicatedAgainstStructuredKeys() {
+    @Test func testPlainEntriesAreNotDeduplicatedAgainstStructuredKeys() {
         var attr = makeStylesFromPlain("color:red")
         attr.mergeWith(makeStructured(["color": "blue"]))
         let pairs = collectPairs(from: attr)!
         let colorPairs = pairs.filter { $0.key == "color" }
-        XCTAssertEqual(colorPairs.count, 2)
-        XCTAssertEqual(colorPairs[0].value, "red")
-        XCTAssertEqual(colorPairs[1].value, "blue")
+        #expect(colorPairs.count == 2)
+        #expect(colorPairs[0].value == "red")
+        #expect(colorPairs[1].value == "blue")
     }
 
     // MARK: - Non-style / empty behavior
 
-    func testStyleNameInPlainAttributeIsParsed() {
+    @Test func testStyleNameInPlainAttributeIsParsed() {
         let attr = _StoredAttribute(name: "style", value: "color:red;font-size:16px", mergeMode: .replaceValue)
         assertPairs(attr, [("color", "red"), ("font-size", "16px")])
     }
 
-    func testNonStyleOrEmptyAttributesReturnNil() {
+    @Test func testNonStyleOrEmptyAttributesReturnNil() {
         let classPlain = _StoredAttribute(name: "class", value: "foo bar", mergeMode: .replaceValue)
         let classAttr = _StoredAttribute(name: "class", value: "foo", mergeMode: .replaceValue)
         let emptyStyle = _StoredAttribute(name: "style", value: nil, mergeMode: .replaceValue)
-        XCTAssertNil(classPlain._styleKeyValuePairs)
-        XCTAssertNil(classAttr._styleKeyValuePairs)
-        XCTAssertNil(emptyStyle._styleKeyValuePairs)
+        #expect(classPlain._styleKeyValuePairs == nil)
+        #expect(classAttr._styleKeyValuePairs == nil)
+        #expect(emptyStyle._styleKeyValuePairs == nil)
     }
 
     // MARK: - Helpers
@@ -141,18 +141,17 @@ final class StyleKeyValuePairsTests: XCTestCase {
     private func assertPairs(
         _ attr: _StoredAttribute,
         _ expected: [(String, String)],
-        file: StaticString = #filePath,
-        line: UInt = #line
+        sourceLocation: SourceLocation = #_sourceLocation
     ) {
         guard let pairs = collectPairs(from: attr) else {
-            XCTFail("styleKeyValuePairs returned nil", file: file, line: line)
+            Issue.record("styleKeyValuePairs returned nil", sourceLocation: sourceLocation)
             return
         }
-        XCTAssertEqual(pairs.count, expected.count, "pair count mismatch", file: file, line: line)
+        #expect(pairs.count == expected.count, "pair count mismatch", sourceLocation: sourceLocation)
         for (i, (expectedKey, expectedValue)) in expected.enumerated() {
             guard i < pairs.count else { break }
-            XCTAssertEqual(pairs[i].key, expectedKey, "key mismatch at index \(i)", file: file, line: line)
-            XCTAssertEqual(pairs[i].value, expectedValue, "value mismatch at index \(i)", file: file, line: line)
+            #expect(pairs[i].key == expectedKey, "key mismatch at index \(i)", sourceLocation: sourceLocation)
+            #expect(pairs[i].value == expectedValue, "value mismatch at index \(i)", sourceLocation: sourceLocation)
         }
     }
 
@@ -173,9 +172,8 @@ final class StyleKeyValuePairsTests: XCTestCase {
     private func assertPlainPairs(
         _ value: String,
         _ expected: [(String, String)],
-        file: StaticString = #filePath,
-        line: UInt = #line
+        sourceLocation: SourceLocation = #_sourceLocation
     ) {
-        assertPairs(makePlainAttr(value), expected, file: file, line: line)
+        assertPairs(makePlainAttr(value), expected, sourceLocation: sourceLocation)
     }
 }

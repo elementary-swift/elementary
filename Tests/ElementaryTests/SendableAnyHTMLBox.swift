@@ -1,23 +1,20 @@
 import Elementary
-import XCTest
+import Testing
 
-final class SendOnceHTMLValueTests: XCTestCase {
-    func testHoldsSendableValue() {
+struct SendOnceHTMLValueTests {
+    @Test func testHoldsSendableValue() {
         let html = div { "Hello, World!" }
         let box = _SendableAnyHTMLBox(html)
-        XCTAssertNotNil(box.tryTake())
-        XCTAssertNotNil(box.tryTake())
+        #expect(box.tryTake() != nil)
+        #expect(box.tryTake() != nil)
     }
 
-    func testHoldsNonSendable() throws {
-        guard #available(macOS 15.0, *) else {
-            throw XCTSkip("Requires macOS 15.0")
-        }
-
+    @available(macOS 15.0, *)
+    @Test func testHoldsNonSendable() {
         let html = MyComponent()
         let box = _SendableAnyHTMLBox(html)
-        XCTAssertNotNil(box.tryTake())
-        XCTAssertNil(box.tryTake())
+        #expect(box.tryTake() != nil)
+        #expect(box.tryTake() == nil)
     }
 }
 

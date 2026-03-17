@@ -1,29 +1,29 @@
 import Elementary
-import XCTest
+import Testing
 
-final class TextRenderingTests: XCTestCase {
-    func testRendersText() async throws {
+struct TextRenderingTests {
+    @Test func testRendersText() async throws {
         try await HTMLAssertEqual(
             h1 { "Hello, World!" },
             "<h1>Hello, World!</h1>"
         )
     }
 
-    func testEscapesText() async throws {
+    @Test func testEscapesText() async throws {
         try await HTMLAssertEqual(
             h1 { #""Hello" 'World' & <FooBar>"# },
             #"<h1>"Hello" 'World' &amp; &lt;FooBar&gt;</h1>"#
         )
     }
 
-    func testDoesNotEscapeRawText() async throws {
+    @Test func testDoesNotEscapeRawText() async throws {
         try await HTMLAssertEqual(
             h1 { HTMLRaw(#""Hello" 'World' & <FooBar>"#) },
             #"<h1>"Hello" 'World' & <FooBar></h1>"#
         )
     }
 
-    func testRendersListsOfText() async throws {
+    @Test func testRendersListsOfText() async throws {
         try await HTMLAssertEqual(
             div {
                 "Hello, "
@@ -33,7 +33,7 @@ final class TextRenderingTests: XCTestCase {
         )
     }
 
-    func testRendersTextWithInlineTags() async throws {
+    @Test func testRendersTextWithInlineTags() async throws {
         try await HTMLAssertEqual(
             div {
                 "He"
@@ -45,7 +45,7 @@ final class TextRenderingTests: XCTestCase {
         )
     }
 
-    func testRendersComment() async throws {
+    @Test func testRendersComment() async throws {
         try await HTMLAssertEqual(
             div {
                 HTMLComment("Hello !--> World")
@@ -54,7 +54,7 @@ final class TextRenderingTests: XCTestCase {
         )
     }
 
-    func testRendersRaw() async throws {
+    @Test func testRendersRaw() async throws {
         try await HTMLAssertEqual(
             div {
                 HTMLRaw(#"<my-tag>"&amp;"</my-tag>"#)
