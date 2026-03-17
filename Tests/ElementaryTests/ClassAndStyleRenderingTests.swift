@@ -1,15 +1,15 @@
 import Elementary
-import XCTest
+import Testing
 
-final class ClassAndStyleRenderingTests: XCTestCase {
-    func testRendersClasses() async throws {
+struct ClassAndStyleRenderingTests {
+    @Test func testRendersClasses() async throws {
         try await HTMLAssertEqual(
             p(.class(["foo", "bar"])) {},
             #"<p class="foo bar"></p>"#
         )
     }
 
-    func testMergesClassesKeepingSequence() async throws {
+    @Test func testMergesClassesKeepingSequence() async throws {
         try await HTMLAssertEqual(
             p(
                 .class(["foo", "bar"]),
@@ -23,14 +23,14 @@ final class ClassAndStyleRenderingTests: XCTestCase {
         )
     }
 
-    func testRendersStyles() async throws {
+    @Test func testRendersStyles() async throws {
         try await HTMLAssertEqual(
             p(.style(["color": "red", "font-size": "16px"])) {},
             #"<p style="color:red;font-size:16px"></p>"#
         )
     }
 
-    func testRendersStylesFromDictionary() async throws {
+    @Test func testRendersStylesFromDictionary() async throws {
         let styles = [
             "display": "flex"
         ]
@@ -40,7 +40,7 @@ final class ClassAndStyleRenderingTests: XCTestCase {
         )
     }
 
-    func testMergesStylesKeepingSequence() async throws {
+    @Test func testMergesStylesKeepingSequence() async throws {
         try await HTMLAssertEqual(
             p(.style(["color": "red", "font-size": "16px"])) {}
                 .attributes(

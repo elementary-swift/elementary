@@ -1,8 +1,8 @@
 import Elementary
-import XCTest
+import Testing
 
-final class EnvironmentRenderingTests: XCTestCase {
-    func testSetsEnvironment() async throws {
+struct EnvironmentRenderingTests {
+    @Test func testSetsEnvironment() async throws {
         try await HTMLAssertEqual(
             div {
                 MyNumber()
@@ -14,7 +14,7 @@ final class EnvironmentRenderingTests: XCTestCase {
         )
     }
 
-    func testGetsOptionalEnvironment() async throws {
+    @Test func testGetsOptionalEnvironment() async throws {
         try await HTMLAssertEqualAsyncOnly(
             div {
                 MyDatabaseValue()

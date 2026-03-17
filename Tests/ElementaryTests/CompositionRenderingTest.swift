@@ -1,29 +1,29 @@
 import Elementary
-import XCTest
+import Testing
 
-final class CompositionRenderingTests: XCTestCase {
-    func testRendersADocument() async throws {
+struct CompositionRenderingTests {
+    @Test func testRendersADocument() async throws {
         try await HTMLAssertEqual(
             MyPage(text: "my text"),
             #"<!DOCTYPE html><html lang="en"><head><title>Foo</title><meta name="author" content="Me"><meta name="description" content="Test page"></head><body class="my-class" id="42"><div><h1>Hello, world!</h1><p>my text</p></div></body></html>"#
         )
     }
 
-    func testRendersARTLPage() async throws {
+    @Test func testRendersARTLPage() async throws {
         try await HTMLAssertEqual(
             MyRTLPage(),
             #"<!DOCTYPE html><html lang="he" dir="rtl"><head><title>שלום עולם</title></head><body><h1>מה קורה?</h1></body></html>"#
         )
     }
 
-    func testRendersAComponent() async throws {
+    @Test func testRendersAComponent() async throws {
         try await HTMLAssertEqual(
             MyList(items: ["one", "two"], selectedIndex: 1),
             #"<ul><li id="1">one</li><li class="selected" id="2">two</li></ul>"#
         )
     }
 
-    func testRendersForEachWithRange() async throws {
+    @Test func testRendersForEachWithRange() async throws {
         try await HTMLAssertEqual(
             ForEach(1...3) { index in
                 li { "Item \(index)" }
@@ -32,7 +32,7 @@ final class CompositionRenderingTests: XCTestCase {
         )
     }
 
-    func testRendersForEachWithLazyMap() async throws {
+    @Test func testRendersForEachWithLazyMap() async throws {
         try await HTMLAssertEqual(
             ForEach([1, 2, 3].lazy.map { $0 * 10 }) { index in
                 li { "Item \(index)" }

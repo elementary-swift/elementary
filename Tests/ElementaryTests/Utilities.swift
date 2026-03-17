@@ -1,19 +1,19 @@
 import Elementary
-import XCTest
+import Testing
 
-func HTMLAssertEqual(_ html: some HTML, _ expected: String, file: StaticString = #filePath, line: UInt = #line) async throws {
-    XCTAssertEqual(expected, html.render(), file: file, line: line)
+func HTMLAssertEqual(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws {
+    #expect(expected == html.render(), sourceLocation: sourceLocation)
 
-    try await HTMLAssertEqualAsyncOnly(html, expected, file: file, line: line)
+    try await HTMLAssertEqualAsyncOnly(html, expected, sourceLocation: sourceLocation)
 }
 
-func HTMLAssertEqualAsyncOnly(_ html: some HTML, _ expected: String, file: StaticString = #filePath, line: UInt = #line) async throws {
+func HTMLAssertEqualAsyncOnly(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws {
     let asyncText = try await html.renderAsync()
-    XCTAssertEqual(expected, asyncText, file: file, line: line)
+    #expect(expected == asyncText, sourceLocation: sourceLocation)
 }
 
-func HTMLFormattedAssertEqual(_ html: some HTML, _ expected: String, file: StaticString = #filePath, line: UInt = #line) {
-    XCTAssertEqual(expected, html.renderFormatted(), file: file, line: line)
+func HTMLFormattedAssertEqual(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) {
+    #expect(expected == html.renderFormatted(), sourceLocation: sourceLocation)
 }
 
 final class TestBufferWriter: HTMLStreamWriter {
