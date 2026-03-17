@@ -10,11 +10,6 @@
         HTMLText(content)
     }
 
-    @available(*, deprecated, message: "use buildExpression(_: String) instead")
-    public static func buildExpression<Content>(_ content: Content) -> HTMLText where Content: StringProtocol {
-        HTMLText(String(content))
-    }
-
     @inlinable
     public static func buildBlock() -> EmptyHTML {
         EmptyHTML()
@@ -121,12 +116,6 @@ public struct EmptyHTML: HTML, Sendable {
 public struct HTMLText: HTML, Sendable {
     /// The text content.
     public var text: String
-
-    /// Creates a new text content with the specified text.
-    @available(*, deprecated, message: "use init(_: String) instead")
-    public init(_ text: some StringProtocol) {
-        self.text = String(text)
-    }
 
     /// Creates a new text content with the specified text.
     @inlinable

@@ -30,11 +30,6 @@ public protocol HTML<Tag> {
     /// The HTML content of this component.
     @HTMLBuilder var body: Body { get }
 
-    /// The HTML content of this component.
-    @HTMLBuilder
-    @available(*, deprecated, message: "`var content` is deprecated, use `var body` instead")
-    var content: Body { get }
-
     static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -48,21 +43,6 @@ public protocol HTML<Tag> {
         with context: consuming _RenderingContext
     ) async throws
     #endif
-}
-
-extension HTML {
-    @available(*, deprecated, message: "`var content` is deprecated, use `var body` instead")
-    public var body: Body {
-        // NOTE: sorry for the change
-        content
-    }
-
-    @available(*, deprecated, message: "Content was renamed, use Body instead")
-    public typealias Content = Body
-
-    public var content: Body {
-        fatalError("Please make sure to add a `var body` implementation to your HTML type.")
-    }
 }
 
 /// A type that represents an HTML tag.

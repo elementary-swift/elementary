@@ -9,7 +9,6 @@ final class SendOnceHTMLValueTests: XCTestCase {
         XCTAssertNotNil(box.tryTake())
     }
 
-    #if compiler(>=6.0)
     func testHoldsNonSendable() throws {
         guard #available(macOS 15.0, *) else {
             throw XCTSkip("Requires macOS 15.0")
@@ -20,7 +19,6 @@ final class SendOnceHTMLValueTests: XCTestCase {
         XCTAssertNotNil(box.tryTake())
         XCTAssertNil(box.tryTake())
     }
-    #endif
 }
 
 class NonSendable {

@@ -21,12 +21,6 @@ public extension HTML {
         return renderer.collect()
     }
 
-    @available(*, deprecated, message: "will be removed, use async API render(into:chunkSize:) instead")
-    consuming func render(into writer: @escaping (String) -> Void) {
-        var renderer = HTMLStreamRenderer(writer: writer)
-        Self._render(self, into: &renderer, with: .emptyContext)
-    }
-
     /// Renders the HTML content into a stream writer.
     /// - Parameters:
     ///   - writer: The ``HTMLStreamWriter`` to write the rendered content to.

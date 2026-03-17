@@ -20,15 +20,6 @@ struct HTMLTextRenderer: _HTMLRendering {
     }
 }
 
-@available(*, deprecated, message: "will be removed")
-struct HTMLStreamRenderer: _HTMLRendering {
-    let writer: (String) -> Void
-
-    mutating func appendToken(_ token: consuming _HTMLRenderToken) {
-        writer(token.renderedValue())
-    }
-}
-
 struct PrettyHTMLTextRenderer {
     let indentation: String
 
