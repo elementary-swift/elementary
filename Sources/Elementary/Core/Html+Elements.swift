@@ -14,7 +14,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag
     /// - Parameter content: The content of the element.
     @inlinable
     public init(@HTMLBuilder content: () -> Content) {
-        _attributes = .init(isStaticallyKnownEmpty: true)
+        _attributes = .init()
         self.content = content()
     }
 
@@ -87,7 +87,7 @@ public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML where Tag: HTMLTrait
     /// Creates a new HTML void element.
     @inlinable
     public init() {
-        _attributes = .init(isStaticallyKnownEmpty: true)
+        _attributes = .init()
     }
 
     /// Creates a new HTML void element with the specified attribute.
