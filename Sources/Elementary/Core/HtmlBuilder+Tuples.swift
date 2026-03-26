@@ -41,6 +41,8 @@ public extension HTMLBuilder {
         _HTMLTuple6(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5)
     }
 
+    // 7...12 use nested tuples: first 6 elements + remainder
+
     @inlinable
     static func buildBlock<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML>(
         _ v0: V0,
@@ -50,8 +52,8 @@ public extension HTMLBuilder {
         _ v4: V4,
         _ v5: V5,
         _ v6: V6
-    ) -> _HTMLTuple7<V0, V1, V2, V3, V4, V5, V6> {
-        _HTMLTuple7(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5, v6: v6)
+    ) -> _HTMLTuple2<_HTMLTuple6<V0, V1, V2, V3, V4, V5>, V6> {
+        .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: v6)
     }
 
     @inlinable
@@ -64,8 +66,8 @@ public extension HTMLBuilder {
         _ v5: V5,
         _ v6: V6,
         _ v7: V7
-    ) -> _HTMLTuple8<V0, V1, V2, V3, V4, V5, V6, V7> {
-        _HTMLTuple8(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5, v6: v6, v7: v7)
+    ) -> _HTMLTuple2<_HTMLTuple6<V0, V1, V2, V3, V4, V5>, _HTMLTuple2<V6, V7>> {
+        .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7))
     }
 
     @inlinable
@@ -79,8 +81,8 @@ public extension HTMLBuilder {
         _ v6: V6,
         _ v7: V7,
         _ v8: V8
-    ) -> _HTMLTuple9<V0, V1, V2, V3, V4, V5, V6, V7, V8> {
-        _HTMLTuple9(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5, v6: v6, v7: v7, v8: v8)
+    ) -> _HTMLTuple2<_HTMLTuple6<V0, V1, V2, V3, V4, V5>, _HTMLTuple3<V6, V7, V8>> {
+        .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7, v2: v8))
     }
 
     @inlinable
@@ -95,8 +97,8 @@ public extension HTMLBuilder {
         _ v7: V7,
         _ v8: V8,
         _ v9: V9
-    ) -> _HTMLTuple10<V0, V1, V2, V3, V4, V5, V6, V7, V8, V9> {
-        _HTMLTuple10(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5, v6: v6, v7: v7, v8: v8, v9: v9)
+    ) -> _HTMLTuple2<_HTMLTuple6<V0, V1, V2, V3, V4, V5>, _HTMLTuple4<V6, V7, V8, V9>> {
+        .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7, v2: v8, v3: v9))
     }
 
     @inlinable
@@ -112,8 +114,8 @@ public extension HTMLBuilder {
         _ v8: V8,
         _ v9: V9,
         _ v10: V10
-    ) -> _HTMLTuple11<V0, V1, V2, V3, V4, V5, V6, V7, V8, V9, V10> {
-        _HTMLTuple11(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5, v6: v6, v7: v7, v8: v8, v9: v9, v10: v10)
+    ) -> _HTMLTuple2<_HTMLTuple6<V0, V1, V2, V3, V4, V5>, _HTMLTuple5<V6, V7, V8, V9, V10>> {
+        .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7, v2: v8, v3: v9, v4: v10))
     }
 
     @inlinable
@@ -143,8 +145,8 @@ public extension HTMLBuilder {
         _ v9: V9,
         _ v10: V10,
         _ v11: V11
-    ) -> _HTMLTuple12<V0, V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11> {
-        _HTMLTuple12(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5, v6: v6, v7: v7, v8: v8, v9: v9, v10: v10, v11: v11)
+    ) -> _HTMLTuple2<_HTMLTuple6<V0, V1, V2, V3, V4, V5>, _HTMLTuple6<V6, V7, V8, V9, V10, V11>> {
+        .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7, v2: v8, v3: v9, v4: v10, v5: v11))
     }
 
     // variadic generics currently not supported in embedded
@@ -380,464 +382,6 @@ public struct _HTMLTuple6<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: 
         try await V3._render(html.v3, into: &renderer, with: copy context)
         try await V4._render(html.v4, into: &renderer, with: copy context)
         try await V5._render(html.v5, into: &renderer, with: copy context)
-    }
-}
-
-extension _HTMLTuple7: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable {}
-public struct _HTMLTuple7<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML>: HTML {
-    public let v0: V0
-    public let v1: V1
-    public let v2: V2
-    public let v3: V3
-    public let v4: V4
-    public let v5: V5
-    public let v6: V6
-
-    @inlinable
-    public init(v0: V0, v1: V1, v2: V2, v3: V3, v4: V4, v5: V5, v6: V6) {
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
-        self.v3 = v3
-        self.v4 = v4
-        self.v5 = v5
-        self.v6 = v6
-    }
-
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-        V4._render(html.v4, into: &renderer, with: copy context)
-        V5._render(html.v5, into: &renderer, with: copy context)
-        V6._render(html.v6, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-        try await V4._render(html.v4, into: &renderer, with: copy context)
-        try await V5._render(html.v5, into: &renderer, with: copy context)
-        try await V6._render(html.v6, into: &renderer, with: copy context)
-    }
-}
-
-extension _HTMLTuple8: Sendable
-where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable {}
-public struct _HTMLTuple8<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML>: HTML {
-    public let v0: V0
-    public let v1: V1
-    public let v2: V2
-    public let v3: V3
-    public let v4: V4
-    public let v5: V5
-    public let v6: V6
-    public let v7: V7
-
-    @inlinable
-    public init(v0: V0, v1: V1, v2: V2, v3: V3, v4: V4, v5: V5, v6: V6, v7: V7) {
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
-        self.v3 = v3
-        self.v4 = v4
-        self.v5 = v5
-        self.v6 = v6
-        self.v7 = v7
-    }
-
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-        V4._render(html.v4, into: &renderer, with: copy context)
-        V5._render(html.v5, into: &renderer, with: copy context)
-        V6._render(html.v6, into: &renderer, with: copy context)
-        V7._render(html.v7, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-        try await V4._render(html.v4, into: &renderer, with: copy context)
-        try await V5._render(html.v5, into: &renderer, with: copy context)
-        try await V6._render(html.v6, into: &renderer, with: copy context)
-        try await V7._render(html.v7, into: &renderer, with: copy context)
-    }
-}
-
-extension _HTMLTuple9: Sendable
-where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable, V8: Sendable {}
-public struct _HTMLTuple9<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML>: HTML {
-    public let v0: V0
-    public let v1: V1
-    public let v2: V2
-    public let v3: V3
-    public let v4: V4
-    public let v5: V5
-    public let v6: V6
-    public let v7: V7
-    public let v8: V8
-
-    @inlinable
-    public init(v0: V0, v1: V1, v2: V2, v3: V3, v4: V4, v5: V5, v6: V6, v7: V7, v8: V8) {
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
-        self.v3 = v3
-        self.v4 = v4
-        self.v5 = v5
-        self.v6 = v6
-        self.v7 = v7
-        self.v8 = v8
-    }
-
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-        V4._render(html.v4, into: &renderer, with: copy context)
-        V5._render(html.v5, into: &renderer, with: copy context)
-        V6._render(html.v6, into: &renderer, with: copy context)
-        V7._render(html.v7, into: &renderer, with: copy context)
-        V8._render(html.v8, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-        try await V4._render(html.v4, into: &renderer, with: copy context)
-        try await V5._render(html.v5, into: &renderer, with: copy context)
-        try await V6._render(html.v6, into: &renderer, with: copy context)
-        try await V7._render(html.v7, into: &renderer, with: copy context)
-        try await V8._render(html.v8, into: &renderer, with: copy context)
-    }
-}
-
-extension _HTMLTuple10: Sendable
-where
-    V0: Sendable,
-    V1: Sendable,
-    V2: Sendable,
-    V3: Sendable,
-    V4: Sendable,
-    V5: Sendable,
-    V6: Sendable,
-    V7: Sendable,
-    V8: Sendable,
-    V9: Sendable
-{}
-public struct _HTMLTuple10<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML, V9: HTML>: HTML {
-    public let v0: V0
-    public let v1: V1
-    public let v2: V2
-    public let v3: V3
-    public let v4: V4
-    public let v5: V5
-    public let v6: V6
-    public let v7: V7
-    public let v8: V8
-    public let v9: V9
-
-    @inlinable
-    public init(v0: V0, v1: V1, v2: V2, v3: V3, v4: V4, v5: V5, v6: V6, v7: V7, v8: V8, v9: V9) {
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
-        self.v3 = v3
-        self.v4 = v4
-        self.v5 = v5
-        self.v6 = v6
-        self.v7 = v7
-        self.v8 = v8
-        self.v9 = v9
-    }
-
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-        V4._render(html.v4, into: &renderer, with: copy context)
-        V5._render(html.v5, into: &renderer, with: copy context)
-        V6._render(html.v6, into: &renderer, with: copy context)
-        V7._render(html.v7, into: &renderer, with: copy context)
-        V8._render(html.v8, into: &renderer, with: copy context)
-        V9._render(html.v9, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-        try await V4._render(html.v4, into: &renderer, with: copy context)
-        try await V5._render(html.v5, into: &renderer, with: copy context)
-        try await V6._render(html.v6, into: &renderer, with: copy context)
-        try await V7._render(html.v7, into: &renderer, with: copy context)
-        try await V8._render(html.v8, into: &renderer, with: copy context)
-        try await V9._render(html.v9, into: &renderer, with: copy context)
-    }
-}
-
-extension _HTMLTuple11: Sendable
-where
-    V0: Sendable,
-    V1: Sendable,
-    V2: Sendable,
-    V3: Sendable,
-    V4: Sendable,
-    V5: Sendable,
-    V6: Sendable,
-    V7: Sendable,
-    V8: Sendable,
-    V9: Sendable,
-    V10: Sendable
-{}
-public struct _HTMLTuple11<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML, V9: HTML, V10: HTML>:
-    HTML
-{
-    public let v0: V0
-    public let v1: V1
-    public let v2: V2
-    public let v3: V3
-    public let v4: V4
-    public let v5: V5
-    public let v6: V6
-    public let v7: V7
-    public let v8: V8
-    public let v9: V9
-    public let v10: V10
-
-    @inlinable
-    public init(v0: V0, v1: V1, v2: V2, v3: V3, v4: V4, v5: V5, v6: V6, v7: V7, v8: V8, v9: V9, v10: V10) {
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
-        self.v3 = v3
-        self.v4 = v4
-        self.v5 = v5
-        self.v6 = v6
-        self.v7 = v7
-        self.v8 = v8
-        self.v9 = v9
-        self.v10 = v10
-    }
-
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-        V4._render(html.v4, into: &renderer, with: copy context)
-        V5._render(html.v5, into: &renderer, with: copy context)
-        V6._render(html.v6, into: &renderer, with: copy context)
-        V7._render(html.v7, into: &renderer, with: copy context)
-        V8._render(html.v8, into: &renderer, with: copy context)
-        V9._render(html.v9, into: &renderer, with: copy context)
-        V10._render(html.v10, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-        try await V4._render(html.v4, into: &renderer, with: copy context)
-        try await V5._render(html.v5, into: &renderer, with: copy context)
-        try await V6._render(html.v6, into: &renderer, with: copy context)
-        try await V7._render(html.v7, into: &renderer, with: copy context)
-        try await V8._render(html.v8, into: &renderer, with: copy context)
-        try await V9._render(html.v9, into: &renderer, with: copy context)
-        try await V10._render(html.v10, into: &renderer, with: copy context)
-    }
-}
-
-extension _HTMLTuple12: Sendable
-where
-    V0: Sendable,
-    V1: Sendable,
-    V2: Sendable,
-    V3: Sendable,
-    V4: Sendable,
-    V5: Sendable,
-    V6: Sendable,
-    V7: Sendable,
-    V8: Sendable,
-    V9: Sendable,
-    V10: Sendable,
-    V11: Sendable
-{}
-public struct _HTMLTuple12<
-    V0: HTML,
-    V1: HTML,
-    V2: HTML,
-    V3: HTML,
-    V4: HTML,
-    V5: HTML,
-    V6: HTML,
-    V7: HTML,
-    V8: HTML,
-    V9: HTML,
-    V10: HTML,
-    V11: HTML
->: HTML {
-    public let v0: V0
-    public let v1: V1
-    public let v2: V2
-    public let v3: V3
-    public let v4: V4
-    public let v5: V5
-    public let v6: V6
-    public let v7: V7
-    public let v8: V8
-    public let v9: V9
-    public let v10: V10
-    public let v11: V11
-
-    @inlinable
-    public init(v0: V0, v1: V1, v2: V2, v3: V3, v4: V4, v5: V5, v6: V6, v7: V7, v8: V8, v9: V9, v10: V10, v11: V11) {
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
-        self.v3 = v3
-        self.v4 = v4
-        self.v5 = v5
-        self.v6 = v6
-        self.v7 = v7
-        self.v8 = v8
-        self.v9 = v9
-        self.v10 = v10
-        self.v11 = v11
-    }
-
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-        V4._render(html.v4, into: &renderer, with: copy context)
-        V5._render(html.v5, into: &renderer, with: copy context)
-        V6._render(html.v6, into: &renderer, with: copy context)
-        V7._render(html.v7, into: &renderer, with: copy context)
-        V8._render(html.v8, into: &renderer, with: copy context)
-        V9._render(html.v9, into: &renderer, with: copy context)
-        V10._render(html.v10, into: &renderer, with: copy context)
-        V11._render(html.v11, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-        try await V4._render(html.v4, into: &renderer, with: copy context)
-        try await V5._render(html.v5, into: &renderer, with: copy context)
-        try await V6._render(html.v6, into: &renderer, with: copy context)
-        try await V7._render(html.v7, into: &renderer, with: copy context)
-        try await V8._render(html.v8, into: &renderer, with: copy context)
-        try await V9._render(html.v9, into: &renderer, with: copy context)
-        try await V10._render(html.v10, into: &renderer, with: copy context)
-        try await V11._render(html.v11, into: &renderer, with: copy context)
     }
 }
 
