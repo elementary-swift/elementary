@@ -63,40 +63,11 @@ extension HTMLAttribute {
     }
 }
 
-public struct _AttributedElement<Content: HTML>: HTML {
-    public typealias Body = Never
-    public typealias Tag = Content.Tag
+public protocol _Attributed {
+    var _attributes: _AttributeStorage { get set }
+}
 
-    public var content: Content
-    public var attributes: _AttributeStorage
-
-    @usableFromInline
-    init(content: Content, attributes: _AttributeStorage) {
-        self.content = content
-        self.attributes = attributes
-    }
-
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.prependAttributes(html.attributes)
-        Content._render(html.content, into: &renderer, with: context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.prependAttributes(html.attributes)
-        try await Content._render(html.content, into: &renderer, with: context)
-    }
-
+extension HTML where Self: _Attributed {
     /// Adds the specified attribute to the element.
     /// - Parameters:
     ///   - attribute: The attribute to add to the element.
@@ -106,7 +77,7 @@ public struct _AttributedElement<Content: HTML>: HTML {
     public func attributes(_ attribute: HTMLAttribute<Tag>, when condition: Bool = true) -> Self {
         if condition {
             var element = self
-            element.attributes.append(_AttributeStorage(attribute))
+            element._attributes.append(_AttributeStorage(attribute))
             return element
         } else {
             return self
@@ -132,11 +103,47 @@ public struct _AttributedElement<Content: HTML>: HTML {
     public func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> Self {
         if condition {
             var element = self
-            element.attributes.append(_AttributeStorage(attributes))
+            element._attributes.append(_AttributeStorage(attributes))
             return element
         } else {
             return self
         }
+    }
+}
+
+public struct _AttributedElement<Content: HTML>: HTML, _Attributed {
+    public typealias Body = Never
+    public typealias Tag = Content.Tag
+
+    public var content: Content
+
+    public var _attributes: _AttributeStorage
+
+    @usableFromInline
+    init(content: Content, attributes: _AttributeStorage) {
+        self.content = content
+        self._attributes = attributes
+    }
+
+    @inlinable
+    public static func _render<Renderer: _HTMLRendering>(
+        _ html: consuming Self,
+        into renderer: inout Renderer,
+        with context: consuming _RenderingContext
+    ) {
+        context.prependAttributes(html._attributes)
+        Content._render(html.content, into: &renderer, with: context)
+    }
+
+    @inlinable
+    @_unavailableInEmbedded
+    public static func _render<Renderer: _AsyncHTMLRendering>(
+        _ html: consuming Self,
+        into renderer: inout Renderer,
+        with context: consuming _RenderingContext
+    ) async throws {
+        context.prependAttributes(html._attributes)
+        try await Content._render(html.content, into: &renderer, with: context)
     }
 }
 

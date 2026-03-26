@@ -1,5 +1,5 @@
 /// An HTML element that can contain content.
-public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag: HTMLTrait.Paired {
+public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attributed where Tag: HTMLTrait.Paired {
     /// The type of the HTML tag this element represents.
     public typealias Tag = Tag
     public typealias Body = Never
@@ -79,7 +79,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag
 }
 
 /// An HTML element that does not contain content.
-public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML where Tag: HTMLTrait.Unpaired {
+public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where Tag: HTMLTrait.Unpaired {
     /// The type of the HTML tag this element represents.
     public typealias Tag = Tag
     public var _attributes: _AttributeStorage
