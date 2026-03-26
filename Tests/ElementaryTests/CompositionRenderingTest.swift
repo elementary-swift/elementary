@@ -40,6 +40,7 @@ struct CompositionRenderingTests {
             #"<li>Item 10</li><li>Item 20</li><li>Item 30</li>"#
         )
     }
+
 }
 
 struct MyPage: HTMLDocument {
