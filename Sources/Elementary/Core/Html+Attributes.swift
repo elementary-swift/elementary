@@ -64,7 +64,7 @@ extension HTMLAttribute {
 }
 
 public protocol _Attributed {
-    var attributes: _AttributeStorage { get set }
+    var _attributes: _AttributeStorage { get set }
 }
 
 extension HTML where Self: _Attributed {
@@ -77,7 +77,7 @@ extension HTML where Self: _Attributed {
     public func attributes(_ attribute: HTMLAttribute<Tag>, when condition: Bool = true) -> Self {
         if condition {
             var element = self
-            element.attributes.append(_AttributeStorage(attribute))
+            element._attributes.append(_AttributeStorage(attribute))
             return element
         } else {
             return self
@@ -103,7 +103,7 @@ extension HTML where Self: _Attributed {
     public func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> Self {
         if condition {
             var element = self
-            element.attributes.append(_AttributeStorage(attributes))
+            element._attributes.append(_AttributeStorage(attributes))
             return element
         } else {
             return self
@@ -117,12 +117,18 @@ public struct _AttributedElement<Content: HTML>: HTML, _Attributed {
 
     public var content: Content
 
-    public var attributes: _AttributeStorage
+    @available(*, renamed: "_attributes")
+    public var attributes: _AttributeStorage {
+        _read { yield _attributes }
+        _modify { yield &_attributes }
+    }
+
+    public var _attributes: _AttributeStorage
 
     @usableFromInline
     init(content: Content, attributes: _AttributeStorage) {
         self.content = content
-        self.attributes = attributes
+        self._attributes = attributes
     }
 
     @inlinable
@@ -131,7 +137,7 @@ public struct _AttributedElement<Content: HTML>: HTML, _Attributed {
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) {
-        context.prependAttributes(html.attributes)
+        context.prependAttributes(html._attributes)
         Content._render(html.content, into: &renderer, with: context)
     }
 
@@ -142,7 +148,7 @@ public struct _AttributedElement<Content: HTML>: HTML, _Attributed {
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) async throws {
-        context.prependAttributes(html.attributes)
+        context.prependAttributes(html._attributes)
         try await Content._render(html.content, into: &renderer, with: context)
     }
 }
