@@ -1,5 +1,5 @@
 /// An HTML element that can contain content.
-public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag: HTMLTrait.Paired {
+public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attributed where Tag: HTMLTrait.Paired {
     /// The type of the HTML tag this element represents.
     public typealias Tag = Tag
     public typealias Body = Never
@@ -14,7 +14,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag
     /// - Parameter content: The content of the element.
     @inlinable
     public init(@HTMLBuilder content: () -> Content) {
-        _attributes = .init()
+        self._attributes = .init()
         self.content = content()
     }
 
@@ -24,7 +24,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag
     ///   - content: The content of the element.
     @inlinable
     public init(_ attribute: HTMLAttribute<Tag>, @HTMLBuilder content: () -> Content) {
-        _attributes = .init(attribute)
+        self._attributes = .init(attribute)
         self.content = content()
     }
 
@@ -34,7 +34,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag
     ///  - content: The content of the element.
     @inlinable
     public init(_ attributes: HTMLAttribute<Tag>..., @HTMLBuilder content: () -> Content) {
-        _attributes = .init(attributes)
+        self._attributes = .init(attributes)
         self.content = content()
     }
 
@@ -44,7 +44,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag
     ///  - content: The content of the element.
     @inlinable
     public init(attributes: [HTMLAttribute<Tag>], @HTMLBuilder content: () -> Content) {
-        _attributes = .init(attributes)
+        self._attributes = .init(attributes)
         self.content = content()
     }
 
@@ -79,36 +79,37 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML where Tag
 }
 
 /// An HTML element that does not contain content.
-public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML where Tag: HTMLTrait.Unpaired {
+public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where Tag: HTMLTrait.Unpaired {
     /// The type of the HTML tag this element represents.
     public typealias Tag = Tag
+
     public var _attributes: _AttributeStorage
 
     /// Creates a new HTML void element.
     @inlinable
     public init() {
-        _attributes = .init()
+        self._attributes = .init()
     }
 
     /// Creates a new HTML void element with the specified attribute.
     /// - Parameter attribute: The attribute to apply to the element.
     @inlinable
     public init(_ attribute: HTMLAttribute<Tag>) {
-        _attributes = .init(attribute)
+        self._attributes = .init(attribute)
     }
 
     /// Creates a new HTML void element with the specified attributes.
     /// - Parameter attributes: The attributes to apply to the element.
     @inlinable
     public init(_ attributes: HTMLAttribute<Tag>...) {
-        _attributes = .init(attributes)
+        self._attributes = .init(attributes)
     }
 
     /// Creates a new HTML void element with the specified attributes.
     /// - Parameter attributes: The attributes to apply to the element as an array.
     @inlinable
     public init(attributes: [HTMLAttribute<Tag>]) {
-        _attributes = .init(attributes)
+        self._attributes = .init(attributes)
     }
 
     @inlinable

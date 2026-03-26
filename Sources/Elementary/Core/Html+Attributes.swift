@@ -59,17 +59,72 @@ extension HTMLAttribute {
     }
 }
 
-public struct _AttributedElement<Content: HTML>: HTML {
+public protocol _Attributed {
+    var _attributes: _AttributeStorage { get set }
+}
+
+extension HTML where Self: _Attributed {
+    /// Adds the specified attribute to the element.
+    /// - Parameters:
+    ///   - attribute: The attribute to add to the element.
+    ///   - condition: If set to false, the attribute will not be added.
+    /// - Returns: A new element with the specified attribute added.
+    @inlinable
+    public func attributes(_ attribute: HTMLAttribute<Tag>, when condition: Bool = true) -> Self {
+        if condition {
+            var element = self
+            element._attributes.append(_AttributeStorage(attribute))
+            return element
+        } else {
+            return self
+        }
+    }
+
+    /// Adds the specified attributes to the element.
+    /// - Parameters:
+    ///   - attributes: The attributes to add to the element.
+    ///   - condition: If set to false, the attributes will not be added.
+    /// - Returns: A new element with the specified attributes added.
+    @inlinable
+    public func attributes(_ attributes: HTMLAttribute<Tag>..., when condition: Bool = true) -> Self {
+        self.attributes(contentsOf: attributes, when: condition)
+    }
+
+    /// Adds the specified attributes to the element.
+    /// - Parameters:
+    ///   - attributes: The attributes to add to the element as an array.
+    ///   - condition: If set to false, the attributes will not be added.
+    /// - Returns: A new element with the specified attributes added.
+    @inlinable
+    public func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> Self {
+        if condition {
+            var element = self
+            element._attributes.append(_AttributeStorage(attributes))
+            return element
+        } else {
+            return self
+        }
+    }
+}
+
+public struct _AttributedElement<Content: HTML>: HTML, _Attributed {
     public typealias Body = Never
     public typealias Tag = Content.Tag
 
     public var content: Content
-    public var attributes: _AttributeStorage
+
+    @available(*, renamed: "_attributes")
+    public var attributes: _AttributeStorage {
+        _read { yield _attributes }
+        _modify { yield &_attributes }
+    }
+
+    public var _attributes: _AttributeStorage
 
     @usableFromInline
     init(content: Content, attributes: _AttributeStorage) {
         self.content = content
-        self.attributes = attributes
+        self._attributes = attributes
     }
 
     @inlinable
@@ -78,7 +133,7 @@ public struct _AttributedElement<Content: HTML>: HTML {
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) {
-        context.prependAttributes(html.attributes)
+        context.prependAttributes(html._attributes)
         Content._render(html.content, into: &renderer, with: context)
     }
 
@@ -89,7 +144,7 @@ public struct _AttributedElement<Content: HTML>: HTML {
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) async throws {
-        context.prependAttributes(html.attributes)
+        context.prependAttributes(html._attributes)
         try await Content._render(html.content, into: &renderer, with: context)
     }
 }
@@ -102,7 +157,7 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
     ///   - attribute: The attribute to add to the element.
     ///   - condition: If set to false, the attribute will not be added.
     /// - Returns: A new element with the specified attribute added.
-    @inlinable
+    @inlinable @_disfavoredOverload
     func attributes(_ attribute: HTMLAttribute<Tag>, when condition: Bool = true) -> _AttributedElement<Self> {
         if condition {
             return _AttributedElement(content: self, attributes: .init(attribute))
@@ -116,7 +171,7 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
     ///   - attributes: The attributes to add to the element.
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
-    @inlinable
+    @inlinable @_disfavoredOverload
     func attributes(_ attributes: HTMLAttribute<Tag>..., when condition: Bool = true) -> _AttributedElement<Self> {
         _AttributedElement(content: self, attributes: .init(condition ? attributes : []))
     }
@@ -126,7 +181,7 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
     ///   - attributes: The attributes to add to the element as an array.
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
-    @inlinable
+    @inlinable @_disfavoredOverload
     func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> _AttributedElement<Self> {
         _AttributedElement(content: self, attributes: .init(condition ? attributes : []))
     }
