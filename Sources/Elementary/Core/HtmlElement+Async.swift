@@ -13,7 +13,7 @@ public extension HTMLElement {
         @HTMLBuilder content: @escaping @Sendable () async throws -> AwaitedContent
     )
     where Self.Content == AsyncContent<AwaitedContent> {
-        _attributes = .init(attributes)
+        self.attributes = .init(attributes)
         self.content = AsyncContent(content: content)
     }
 
@@ -31,7 +31,7 @@ public extension HTMLElement {
         @HTMLBuilder content: @escaping @Sendable () async throws -> AwaitedContent
     )
     where Self.Content == AsyncContent<AwaitedContent> {
-        _attributes = .init(attributes)
+        self.attributes = .init(attributes)
         self.content = AsyncContent(content: content)
     }
 }

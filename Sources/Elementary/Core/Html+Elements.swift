@@ -5,7 +5,13 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     public typealias Body = Never
     public typealias Content = Content
 
-    public var _attributes: _AttributeStorage
+    @available(*, deprecated, message: "`var _attributes` is deprecated, use `var attributes` instead")
+    public var _attributes: _AttributeStorage {
+        get { attributes }
+        set { attributes = newValue }
+    }
+
+    public var attributes: _AttributeStorage
 
     // The content of the element.
     public var content: Content
@@ -14,7 +20,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     /// - Parameter content: The content of the element.
     @inlinable
     public init(@HTMLBuilder content: () -> Content) {
-        _attributes = .init()
+        self.attributes = .init()
         self.content = content()
     }
 
@@ -24,7 +30,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///   - content: The content of the element.
     @inlinable
     public init(_ attribute: HTMLAttribute<Tag>, @HTMLBuilder content: () -> Content) {
-        _attributes = .init(attribute)
+        self.attributes = .init(attribute)
         self.content = content()
     }
 
@@ -34,7 +40,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///  - content: The content of the element.
     @inlinable
     public init(_ attributes: HTMLAttribute<Tag>..., @HTMLBuilder content: () -> Content) {
-        _attributes = .init(attributes)
+        self.attributes = .init(attributes)
         self.content = content()
     }
 
@@ -44,7 +50,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///  - content: The content of the element.
     @inlinable
     public init(attributes: [HTMLAttribute<Tag>], @HTMLBuilder content: () -> Content) {
-        _attributes = .init(attributes)
+        self.attributes = .init(attributes)
         self.content = content()
     }
 
@@ -54,9 +60,9 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) {
-        html._attributes.append(context.attributes)
+        html.attributes.append(context.attributes)
 
-        renderer.appendToken(.startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: false, type: Tag.renderingType))
+        renderer.appendToken(.startTag(Tag.name, attributes: html.attributes.flattened(), isUnpaired: false, type: Tag.renderingType))
         Content._render(html.content, into: &renderer, with: .emptyContext)
         renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
@@ -68,10 +74,10 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) async throws {
-        html._attributes.append(context.attributes)
+        html.attributes.append(context.attributes)
 
         try await renderer.appendToken(
-            .startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: false, type: Tag.renderingType)
+            .startTag(Tag.name, attributes: html.attributes.flattened(), isUnpaired: false, type: Tag.renderingType)
         )
         try await Content._render(html.content, into: &renderer, with: .emptyContext)
         try await renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
@@ -82,33 +88,40 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
 public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where Tag: HTMLTrait.Unpaired {
     /// The type of the HTML tag this element represents.
     public typealias Tag = Tag
-    public var _attributes: _AttributeStorage
+
+    @available(*, deprecated, message: "`var _attributes` is deprecated, use `var attributes` instead")
+    public var _attributes: _AttributeStorage {
+        get { attributes }
+        set { attributes = newValue }
+    }
+
+    public var attributes: _AttributeStorage
 
     /// Creates a new HTML void element.
     @inlinable
     public init() {
-        _attributes = .init()
+        self.attributes = .init()
     }
 
     /// Creates a new HTML void element with the specified attribute.
     /// - Parameter attribute: The attribute to apply to the element.
     @inlinable
     public init(_ attribute: HTMLAttribute<Tag>) {
-        _attributes = .init(attribute)
+        self.attributes = .init(attribute)
     }
 
     /// Creates a new HTML void element with the specified attributes.
     /// - Parameter attributes: The attributes to apply to the element.
     @inlinable
     public init(_ attributes: HTMLAttribute<Tag>...) {
-        _attributes = .init(attributes)
+        self.attributes = .init(attributes)
     }
 
     /// Creates a new HTML void element with the specified attributes.
     /// - Parameter attributes: The attributes to apply to the element as an array.
     @inlinable
     public init(attributes: [HTMLAttribute<Tag>]) {
-        _attributes = .init(attributes)
+        self.attributes = .init(attributes)
     }
 
     @inlinable
@@ -117,8 +130,8 @@ public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where T
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) {
-        html._attributes.append(context.attributes)
-        renderer.appendToken(.startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType))
+        html.attributes.append(context.attributes)
+        renderer.appendToken(.startTag(Tag.name, attributes: html.attributes.flattened(), isUnpaired: true, type: Tag.renderingType))
     }
 
     @inlinable
@@ -128,9 +141,9 @@ public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where T
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) async throws {
-        html._attributes.append(context.attributes)
+        html.attributes.append(context.attributes)
         try await renderer.appendToken(
-            .startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType)
+            .startTag(Tag.name, attributes: html.attributes.flattened(), isUnpaired: true, type: Tag.renderingType)
         )
     }
 }
