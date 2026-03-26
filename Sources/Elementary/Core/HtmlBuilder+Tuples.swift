@@ -117,7 +117,20 @@ public extension HTMLBuilder {
     }
 
     @inlinable
-    static func buildBlock<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML, V9: HTML, V10: HTML, V11: HTML>(
+    static func buildBlock<
+        V0: HTML,
+        V1: HTML,
+        V2: HTML,
+        V3: HTML,
+        V4: HTML,
+        V5: HTML,
+        V6: HTML,
+        V7: HTML,
+        V8: HTML,
+        V9: HTML,
+        V10: HTML,
+        V11: HTML
+    >(
         _ v0: V0,
         _ v1: V1,
         _ v2: V2,
@@ -427,7 +440,8 @@ public struct _HTMLTuple7<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: 
     }
 }
 
-extension _HTMLTuple8: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable {}
+extension _HTMLTuple8: Sendable
+where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable {}
 public struct _HTMLTuple8<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML>: HTML {
     public let v0: V0
     public let v1: V1
@@ -488,7 +502,8 @@ public struct _HTMLTuple8<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: 
     }
 }
 
-extension _HTMLTuple9: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable, V8: Sendable {}
+extension _HTMLTuple9: Sendable
+where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable, V8: Sendable {}
 public struct _HTMLTuple9<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML>: HTML {
     public let v0: V0
     public let v1: V1
@@ -553,7 +568,19 @@ public struct _HTMLTuple9<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: 
     }
 }
 
-extension _HTMLTuple10: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable, V8: Sendable, V9: Sendable {}
+extension _HTMLTuple10: Sendable
+where
+    V0: Sendable,
+    V1: Sendable,
+    V2: Sendable,
+    V3: Sendable,
+    V4: Sendable,
+    V5: Sendable,
+    V6: Sendable,
+    V7: Sendable,
+    V8: Sendable,
+    V9: Sendable
+{}
 public struct _HTMLTuple10<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML, V9: HTML>: HTML {
     public let v0: V0
     public let v1: V1
@@ -622,8 +649,23 @@ public struct _HTMLTuple10<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5:
     }
 }
 
-extension _HTMLTuple11: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable, V8: Sendable, V9: Sendable, V10: Sendable {}
-public struct _HTMLTuple11<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML, V9: HTML, V10: HTML>: HTML {
+extension _HTMLTuple11: Sendable
+where
+    V0: Sendable,
+    V1: Sendable,
+    V2: Sendable,
+    V3: Sendable,
+    V4: Sendable,
+    V5: Sendable,
+    V6: Sendable,
+    V7: Sendable,
+    V8: Sendable,
+    V9: Sendable,
+    V10: Sendable
+{}
+public struct _HTMLTuple11<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML, V9: HTML, V10: HTML>:
+    HTML
+{
     public let v0: V0
     public let v1: V1
     public let v2: V2
@@ -695,8 +737,35 @@ public struct _HTMLTuple11<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5:
     }
 }
 
-extension _HTMLTuple12: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable, V6: Sendable, V7: Sendable, V8: Sendable, V9: Sendable, V10: Sendable, V11: Sendable {}
-public struct _HTMLTuple12<V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML, V6: HTML, V7: HTML, V8: HTML, V9: HTML, V10: HTML, V11: HTML>: HTML {
+extension _HTMLTuple12: Sendable
+where
+    V0: Sendable,
+    V1: Sendable,
+    V2: Sendable,
+    V3: Sendable,
+    V4: Sendable,
+    V5: Sendable,
+    V6: Sendable,
+    V7: Sendable,
+    V8: Sendable,
+    V9: Sendable,
+    V10: Sendable,
+    V11: Sendable
+{}
+public struct _HTMLTuple12<
+    V0: HTML,
+    V1: HTML,
+    V2: HTML,
+    V3: HTML,
+    V4: HTML,
+    V5: HTML,
+    V6: HTML,
+    V7: HTML,
+    V8: HTML,
+    V9: HTML,
+    V10: HTML,
+    V11: HTML
+>: HTML {
     public let v0: V0
     public let v1: V1
     public let v2: V2
