@@ -1,7 +1,7 @@
 /// A type that represents HTML content that can be rendered.
 ///
 /// You can create reusable HTML components by conforming to this protocol
-/// and implementing the ``content`` property.
+/// and implementing the ``body`` property.
 ///
 /// ```swift
 /// struct FeatureList: HTML {
@@ -28,7 +28,7 @@ public protocol HTML<Tag> {
     associatedtype Body: HTML
 
     /// The HTML content of this component.
-    @HTMLBuilder var body: Body { get }
+    @ContentBuilder var body: Body { get }
 
     static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,

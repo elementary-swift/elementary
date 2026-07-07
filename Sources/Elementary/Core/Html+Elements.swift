@@ -13,7 +13,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     /// Creates a new HTML element with the specified content.
     /// - Parameter content: The content of the element.
     @inlinable
-    public init(@HTMLBuilder content: () -> Content) {
+    public init(@ContentBuilder content: () -> Content) {
         self._attributes = .init()
         self.content = content()
     }
@@ -23,7 +23,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///   - attribute: The attribute to apply to the element.
     ///   - content: The content of the element.
     @inlinable
-    public init(_ attribute: HTMLAttribute<Tag>, @HTMLBuilder content: () -> Content) {
+    public init(_ attribute: HTMLAttribute<Tag>, @ContentBuilder content: () -> Content) {
         self._attributes = .init(attribute)
         self.content = content()
     }
@@ -33,7 +33,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///  - attributes: The attributes to apply to the element.
     ///  - content: The content of the element.
     @inlinable
-    public init(_ attributes: HTMLAttribute<Tag>..., @HTMLBuilder content: () -> Content) {
+    public init(_ attributes: HTMLAttribute<Tag>..., @ContentBuilder content: () -> Content) {
         self._attributes = .init(attributes)
         self.content = content()
     }
@@ -43,7 +43,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///  - attributes: The attributes to apply to the element as an array.
     ///  - content: The content of the element.
     @inlinable
-    public init(attributes: [HTMLAttribute<Tag>], @HTMLBuilder content: () -> Content) {
+    public init(attributes: [HTMLAttribute<Tag>], @ContentBuilder content: () -> Content) {
         self._attributes = .init(attributes)
         self.content = content()
     }

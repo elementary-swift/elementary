@@ -1,16 +1,14 @@
-/// An element that awaits its content before rendering.
+/// A container that awaits its content.
 ///
-/// The this element can only be rendered in an async context (ie: by calling ``HTML/render(into:chunkSize:)`` or ``HTML/renderAsync()``).
+/// When its content is HTML, this element can only be rendered in an async context (ie: by calling
+/// ``HTML/render(into:chunkSize:)`` or ``HTML/renderAsync()``).
 /// All HTML tag types (``HTMLElement``) support async content closures in their initializers, so you don't need to use this element directly in most cases.
 @_unavailableInEmbedded
-public struct AsyncContent<Content: HTML>: HTML, Sendable {
-    public typealias Body = Never
-    public typealias Tag = Content.Tag
-
+public struct AsyncContent<Content>: Sendable {
     @usableFromInline
     var content: @Sendable () async throws -> Content
 
-    /// Creates a new async HTML element with the specified content.
+    /// Creates a new async container with the specified content.
     ///
     /// - Parameters:
     ///   - content: The future content of the element.
@@ -22,9 +20,14 @@ public struct AsyncContent<Content: HTML>: HTML, Sendable {
     ///    span { value }
     /// }
     /// ```
-    public init(@HTMLBuilder content: @escaping @Sendable () async throws -> Content) {
+    public init(@ContentBuilder content: @escaping @Sendable () async throws -> Content) {
         self.content = content
     }
+}
+
+extension AsyncContent: HTML where Content: HTML {
+    public typealias Body = Never
+    public typealias Tag = Content.Tag
 
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
