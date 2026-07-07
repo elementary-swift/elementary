@@ -153,8 +153,7 @@ public extension ContentBuilder {
     #if !hasFeature(Embedded)
     @inlinable
     @available(iOS 17, *)
-    static func buildBlock<each Content>(_ content: repeat each Content) -> _TupleContent<repeat each Content>
-    {
+    static func buildBlock<each Content>(_ content: repeat each Content) -> _TupleContent<repeat each Content> {
         _TupleContent(repeat each content)
     }
     #endif
