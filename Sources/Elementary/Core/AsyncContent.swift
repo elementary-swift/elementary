@@ -25,6 +25,7 @@ public struct AsyncContent<Content>: Sendable {
     }
 }
 
+@_unavailableInEmbedded
 extension AsyncContent: HTML where Content: HTML {
     public typealias Body = Never
     public typealias Tag = Content.Tag
