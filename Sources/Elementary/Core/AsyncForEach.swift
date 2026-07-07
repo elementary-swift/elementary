@@ -1,7 +1,8 @@
 #if !hasFeature(Embedded)
-/// An element that lazily renders HTML for each element of an `AsyncSequence`.
+/// A container that lazily builds content for each element of an `AsyncSequence`.
 ///
-/// The this element can only be rendered in an async context (ie: by calling ``HTML/render(into:chunkSize:)`` or ``HTML/renderAsync()``).
+/// When its content is HTML, this element can only be rendered in an async context (ie: by calling
+/// ``HTML/render(into:chunkSize:)`` or ``HTML/renderAsync()``).
 ///
 /// ```swift
 /// ul {
@@ -11,23 +12,25 @@
 ///   }
 /// }
 /// ```
-public struct AsyncForEach<Source: AsyncSequence, Content: HTML>: HTML {
-    public typealias Body = Never
-
+public struct AsyncForEach<Source: AsyncSequence, Content> {
     @usableFromInline
     var sequence: Source
     @usableFromInline
     var contentBuilder: (Source.Element) -> Content
 
-    /// Creates a new async HTML element that renders the specified content for each element of the sequence.
+    /// Creates a new async container that builds the specified content for each element of the sequence.
     ///
     /// - Parameters:
     ///   - sequence: An `AsyncSequence` of data to render.
-    ///   - contentBuilder: A closure that builds the HTML content for each element in the sequence.
-    public init(_ sequence: Source, @HTMLBuilder contentBuilder: @escaping (Source.Element) -> Content) {
+    ///   - contentBuilder: A closure that builds content for each element in the sequence.
+    public init(_ sequence: Source, @ContentBuilder contentBuilder: @escaping (Source.Element) -> Content) {
         self.sequence = sequence
         self.contentBuilder = contentBuilder
     }
+}
+
+extension AsyncForEach: HTML where Content: HTML {
+    public typealias Body = Never
 
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(

@@ -40,8 +40,8 @@ public protocol HTMLDocument: HTML {
     /// By default this attribute is not set.
     var dir: HTMLAttributeValue.Direction { get }
 
-    @HTMLBuilder var head: HTMLHead { get }
-    @HTMLBuilder var body: HTMLBody { get }
+    @ContentBuilder var head: HTMLHead { get }
+    @ContentBuilder var body: HTMLBody { get }
 }
 
 // NOTE: The default implementation uses an empty string as the "magic value" for undefined.
@@ -90,7 +90,7 @@ public extension HTMLDocument {
         try await render(html.__body, into: &renderer, with: context)
     }
 
-    @HTMLBuilder var __body: some HTML {
+    @ContentBuilder var __body: some HTML {
         HTMLRaw("<!DOCTYPE html>")
         html {
             Elementary.head {

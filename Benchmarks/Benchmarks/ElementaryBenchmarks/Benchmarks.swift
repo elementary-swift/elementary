@@ -248,7 +248,7 @@ func makeSingleAttributeElements() -> some HTML {
 struct MyCustomElement<H: HTML>: HTML {
     var myContent: H
 
-    init(@HTMLBuilder content: () -> H) {
+    init(@ContentBuilder content: () -> H) {
         myContent = content()
     }
 
