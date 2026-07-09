@@ -27,7 +27,9 @@ public extension SVGTrait.Attributes {
 }
 
 public extension SVGTag {
-    enum svg: SVGTagDefinition, HTMLTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Root, SVGTrait.Attributes.ViewBox, SVGTrait.Attributes.Sizing, SVGTrait.Attributes.Presentation {
+    enum svg: SVGTagDefinition, HTMLTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Root, SVGTrait.Attributes.ViewBox,
+        SVGTrait.Attributes.Sizing, SVGTrait.Attributes.Presentation
+    {
         public static let name = "svg"
     }
 
@@ -43,7 +45,9 @@ public extension SVGTag {
         public static let name = "symbol"
     }
 
-    enum use: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes.Presentation {
+    enum use: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes
+            .Presentation
+    {
         public static let name = "use"
     }
 
@@ -51,7 +55,9 @@ public extension SVGTag {
         public static let name = "path"
     }
 
-    enum rect: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes.RectangleGeometry, SVGTrait.Attributes.Presentation {
+    enum rect: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes
+            .RectangleGeometry, SVGTrait.Attributes.Presentation
+    {
         public static let name = "rect"
     }
 
@@ -75,11 +81,15 @@ public extension SVGTag {
         public static let name = "polygon"
     }
 
-    enum text: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Presentation, SVGTrait.Attributes.TextPresentation {
+    enum text: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Presentation, SVGTrait
+            .Attributes.TextPresentation
+    {
         public static let name = "text"
     }
 
-    enum tspan: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Presentation, SVGTrait.Attributes.TextPresentation {
+    enum tspan: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Presentation, SVGTrait
+            .Attributes.TextPresentation
+    {
         public static let name = "tspan"
     }
 
@@ -107,7 +117,9 @@ public extension SVGTag {
         public static let name = "clipPath"
     }
 
-    enum mask: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes.Presentation {
+    enum mask: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes
+            .Presentation
+    {
         public static let name = "mask"
     }
 }

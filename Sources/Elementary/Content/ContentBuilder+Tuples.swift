@@ -171,39 +171,6 @@ public struct _TupleContent2<V0, V1> {
     }
 }
 
-extension _TupleContent2: _Renderable where V0: _Renderable, V1: _Renderable {
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-    }
-}
-
-extension _TupleContent2: MarkupContent where V0: MarkupContent, V1: MarkupContent {
-    public typealias Body = Never
-}
-
-extension _TupleContent2: HTML where V0: HTML, V1: HTML {}
-
 extension _TupleContent3: Sendable where V0: Sendable, V1: Sendable, V2: Sendable {}
 public struct _TupleContent3<V0, V1, V2> {
     public let v0: V0
@@ -217,41 +184,6 @@ public struct _TupleContent3<V0, V1, V2> {
         self.v2 = v2
     }
 }
-
-extension _TupleContent3: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable {
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-    }
-}
-
-extension _TupleContent3: MarkupContent where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent {
-    public typealias Body = Never
-}
-
-extension _TupleContent3: HTML where V0: HTML, V1: HTML, V2: HTML {}
 
 extension _TupleContent4: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable {}
 public struct _TupleContent4<V0, V1, V2, V3> {
@@ -268,43 +200,6 @@ public struct _TupleContent4<V0, V1, V2, V3> {
         self.v3 = v3
     }
 }
-
-extension _TupleContent4: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable {
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-    }
-}
-
-extension _TupleContent4: MarkupContent where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent, V3: MarkupContent {
-    public typealias Body = Never
-}
-
-extension _TupleContent4: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML {}
 
 extension _TupleContent5: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable {}
 public struct _TupleContent5<V0, V1, V2, V3, V4> {
@@ -323,45 +218,6 @@ public struct _TupleContent5<V0, V1, V2, V3, V4> {
         self.v4 = v4
     }
 }
-
-extension _TupleContent5: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable, V4: _Renderable {
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-        V4._render(html.v4, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-        try await V4._render(html.v4, into: &renderer, with: copy context)
-    }
-}
-
-extension _TupleContent5: MarkupContent where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent, V3: MarkupContent, V4: MarkupContent {
-    public typealias Body = Never
-}
-
-extension _TupleContent5: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML {}
 
 extension _TupleContent6: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable {}
 public struct _TupleContent6<V0, V1, V2, V3, V4, V5> {
@@ -383,47 +239,6 @@ public struct _TupleContent6<V0, V1, V2, V3, V4, V5> {
     }
 }
 
-extension _TupleContent6: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable, V4: _Renderable, V5: _Renderable {
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        V0._render(html.v0, into: &renderer, with: copy context)
-        V1._render(html.v1, into: &renderer, with: copy context)
-        V2._render(html.v2, into: &renderer, with: copy context)
-        V3._render(html.v3, into: &renderer, with: copy context)
-        V4._render(html.v4, into: &renderer, with: copy context)
-        V5._render(html.v5, into: &renderer, with: copy context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        try await V0._render(html.v0, into: &renderer, with: copy context)
-        try await V1._render(html.v1, into: &renderer, with: copy context)
-        try await V2._render(html.v2, into: &renderer, with: copy context)
-        try await V3._render(html.v3, into: &renderer, with: copy context)
-        try await V4._render(html.v4, into: &renderer, with: copy context)
-        try await V5._render(html.v5, into: &renderer, with: copy context)
-    }
-}
-
-extension _TupleContent6: MarkupContent where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent, V3: MarkupContent, V4: MarkupContent, V5: MarkupContent {
-    public typealias Body = Never
-}
-
-extension _TupleContent6: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML {}
-
 // variadic generics currently not supported in embedded
 #if !hasFeature(Embedded)
 @available(iOS 17, *)
@@ -439,47 +254,6 @@ public struct _TupleContent<each Child> {
     }
 }
 
-@available(iOS 17, *)
-extension _TupleContent: _Renderable where repeat each Child: _Renderable {
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertNoAttributes(self)
-
-        // NOTE: use iteration in swift 6
-        func renderElement<Element: _Renderable>(_ element: Element, _ renderer: inout Renderer) {
-            Element._render(element, into: &renderer, with: copy context)
-        }
-        repeat renderElement(each html.value, &renderer)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        // NOTE: use iteration in swift 6
-        func renderElement<Element: _Renderable>(_ element: Element, _ renderer: inout Renderer) async throws {
-            try await Element._render(element, into: &renderer, with: copy context)
-        }
-        repeat try await renderElement(each html.value, &renderer)
-    }
-}
-
-@available(iOS 17, *)
-extension _TupleContent: MarkupContent where repeat each Child: MarkupContent {
-    public typealias Body = Never
-}
-
-@available(iOS 17, *)
-extension _TupleContent: HTML where repeat each Child: HTML {}
 #endif
 
 /// Deprecated compatibility alias for ``_TupleContent2``.

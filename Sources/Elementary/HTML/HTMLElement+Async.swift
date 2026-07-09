@@ -1,4 +1,4 @@
-public extension MarkupElement where Tag: HTMLTrait.Paired {
+public extension MarkupElement where Self: MarkupContent, Tag: HTMLTrait.Paired {
     /// Creates a new paired markup element with the specified tag and async HTML content.
     ///
     /// The async content closure is automatically wrapped in an ``AsyncContent`` element and can only be rendered in an async context.

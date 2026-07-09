@@ -21,7 +21,7 @@ let package = Package(
         .library(
             name: "ElementarySVG",
             targets: ["ElementarySVG"]
-        )
+        ),
     ],
     targets: [
         .target(

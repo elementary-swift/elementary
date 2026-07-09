@@ -148,3 +148,11 @@ private func nextflattenedAttribute(
 extension _StoredAttribute {
     fileprivate static let blankedOut = _StoredAttribute(name: "")
 }
+
+extension _RenderingContext {
+    @usableFromInline
+    mutating func prependAttributes(_ attributes: consuming _AttributeStorage) {
+        attributes.append(self.attributes)
+        self.attributes = attributes
+    }
+}
