@@ -17,10 +17,7 @@ public struct Group<Content> {
     }
 }
 
-extension Group: HTML where Content: HTML {
-    public typealias Tag = Never
-    public typealias Body = Never
-
+extension Group: _Renderable where Content: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -42,5 +39,11 @@ extension Group: HTML where Content: HTML {
         try await Content._render(html.content, into: &renderer, with: context)
     }
 }
+
+extension Group: MarkupContent where Content: MarkupContent {
+    public typealias Body = Never
+}
+
+extension Group: HTML where Content: HTML {}
 
 extension Group: Sendable where Content: Sendable {}

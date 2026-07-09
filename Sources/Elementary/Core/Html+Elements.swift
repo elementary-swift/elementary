@@ -1,8 +1,7 @@
-/// An HTML element that can contain content.
-public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attributed where Tag: HTMLTrait.Paired {
+/// A markup element that can contain content.
+public struct MarkupElement<Tag: MarkupTagDefinition, Content>: _Attributed {
     /// The type of the HTML tag this element represents.
     public typealias Tag = Tag
-    public typealias Body = Never
     public typealias Content = Content
 
     public var _attributes: _AttributeStorage
@@ -23,7 +22,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///   - attribute: The attribute to apply to the element.
     ///   - content: The content of the element.
     @inlinable
-    public init(_ attribute: HTMLAttribute<Tag>, @ContentBuilder content: () -> Content) {
+    public init(_ attribute: MarkupAttribute<Tag>, @ContentBuilder content: () -> Content) {
         self._attributes = .init(attribute)
         self.content = content()
     }
@@ -33,7 +32,7 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///  - attributes: The attributes to apply to the element.
     ///  - content: The content of the element.
     @inlinable
-    public init(_ attributes: HTMLAttribute<Tag>..., @ContentBuilder content: () -> Content) {
+    public init(_ attributes: MarkupAttribute<Tag>..., @ContentBuilder content: () -> Content) {
         self._attributes = .init(attributes)
         self.content = content()
     }
@@ -43,11 +42,13 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     ///  - attributes: The attributes to apply to the element as an array.
     ///  - content: The content of the element.
     @inlinable
-    public init(attributes: [HTMLAttribute<Tag>], @ContentBuilder content: () -> Content) {
+    public init(attributes: [MarkupAttribute<Tag>], @ContentBuilder content: () -> Content) {
         self._attributes = .init(attributes)
         self.content = content()
     }
+}
 
+extension MarkupElement: _Renderable where Content: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -78,10 +79,50 @@ public struct HTMLElement<Tag: HTMLTagDefinition, Content: HTML>: HTML, _Attribu
     }
 }
 
+extension MarkupElement: MarkupContent where Content: MarkupContent {
+    public typealias Body = Never
+}
+
+public extension MarkupElement where Content == EmptyContent {
+    /// Creates a new empty paired markup element.
+    @inlinable
+    init() {
+        self._attributes = .init()
+        self.content = EmptyContent()
+    }
+
+    /// Creates a new empty paired markup element with the specified attribute.
+    @inlinable
+    init(_ attribute: MarkupAttribute<Tag>) {
+        self._attributes = .init(attribute)
+        self.content = EmptyContent()
+    }
+
+    /// Creates a new empty paired markup element with the specified attributes.
+    @inlinable
+    init(_ attributes: MarkupAttribute<Tag>...) {
+        self._attributes = .init(attributes)
+        self.content = EmptyContent()
+    }
+
+    /// Creates a new empty paired markup element with the specified attributes.
+    @inlinable
+    init(attributes: [MarkupAttribute<Tag>]) {
+        self._attributes = .init(attributes)
+        self.content = EmptyContent()
+    }
+}
+
+/// An HTML element that can contain content.
+public typealias HTMLElement<Tag: HTMLTrait.Paired, Content: HTML> = MarkupElement<Tag, Content>
+
+extension MarkupElement: HTML where Tag: HTMLTrait.Paired, Content: HTML {}
+
 /// An HTML element that does not contain content.
 public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where Tag: HTMLTrait.Unpaired {
     /// The type of the HTML tag this element represents.
     public typealias Tag = Tag
+    public typealias Body = Never
 
     public var _attributes: _AttributeStorage
 
@@ -140,6 +181,9 @@ public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where T
 ///
 /// A comment is rendered as `<!--text-->` and the text will be escaped if necessary.
 public struct HTMLComment: HTML {
+    public typealias Tag = Never
+    public typealias Body = Never
+
     /// The text of the comment.
     public var text: String
 
@@ -174,6 +218,9 @@ public struct HTMLComment: HTML {
 ///
 /// The text is rendered as-is without any validation or escaping.
 public struct HTMLRaw: HTML {
+    public typealias Tag = Never
+    public typealias Body = Never
+
     /// The raw HTML text.
     public var text: String
 
@@ -204,12 +251,12 @@ public struct HTMLRaw: HTML {
     }
 }
 
-extension HTMLElement: Sendable where Content: Sendable {}
+extension MarkupElement: Sendable where Content: Sendable {}
 extension HTMLVoidElement: Sendable {}
 extension HTMLComment: Sendable {}
 extension HTMLRaw: Sendable {}
 
-extension HTMLTagDefinition {
+extension MarkupTagDefinition {
     @usableFromInline
     static var renderingType: _HTMLRenderToken.RenderingType {
         _rendersInline ? .inline : .block

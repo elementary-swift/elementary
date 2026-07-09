@@ -1,5 +1,5 @@
-/// An HTML attribute that can be applied to an HTML element of the associated tag.
-public struct HTMLAttribute<Tag: HTMLTagDefinition>: Sendable {
+/// A markup attribute that can be applied to an element of the associated tag.
+public struct MarkupAttribute<Tag: MarkupTagDefinition>: Sendable {
     @usableFromInline
     var htmlAttribute: _StoredAttribute
 
@@ -10,8 +10,11 @@ public struct HTMLAttribute<Tag: HTMLTagDefinition>: Sendable {
     public var value: String? { htmlAttribute.value }
 }
 
+/// An HTML attribute that can be applied to an HTML element of the associated tag.
+public typealias HTMLAttribute<Tag: HTMLTagDefinition> = MarkupAttribute<Tag>
+
 /// The action to take when merging an attribute with the same name.
-public struct HTMLAttributeMergeAction: Sendable {
+public struct MarkupAttributeMergeAction: Sendable {
     @usableFromInline
     var mergeMode: _StoredAttribute.MergeMode
 
@@ -29,14 +32,17 @@ public struct HTMLAttributeMergeAction: Sendable {
     public static func appending(separatedBy: String) -> Self { .init(mergeMode: .appendValue(separatedBy)) }
 }
 
-extension HTMLAttribute {
-    /// Creates a new HTML attribute with the specified name and value.
+/// The action to take when merging an attribute with the same name.
+public typealias HTMLAttributeMergeAction = MarkupAttributeMergeAction
+
+extension MarkupAttribute {
+    /// Creates a new markup attribute with the specified name and value.
     /// - Parameters:
     ///   - name: The name of the attribute.
     ///   - value: The value of the attribute.
     ///   - action: The merge action to use with a previously attached attribute with the same name.
     @inlinable
-    public init(name: String, value: String?, mergedBy action: HTMLAttributeMergeAction = .replacing) {
+    public init(name: String, value: String?, mergedBy action: MarkupAttributeMergeAction = .replacing) {
         htmlAttribute = .init(name: name, value: value, mergeMode: action.mergeMode)
     }
 
@@ -44,7 +50,7 @@ extension HTMLAttribute {
     /// - Parameter action: The new merge action to use.
     /// - Returns: A modified attribute with the specified merge action.
     @inlinable
-    public consuming func mergedBy(_ action: HTMLAttributeMergeAction) -> HTMLAttribute {
+    public consuming func mergedBy(_ action: MarkupAttributeMergeAction) -> MarkupAttribute {
         .init(name: name, value: value, mergedBy: action)
     }
 
@@ -60,17 +66,19 @@ extension HTMLAttribute {
 }
 
 public protocol _Attributed {
+    associatedtype Tag: MarkupTagDefinition
+
     var _attributes: _AttributeStorage { get set }
 }
 
-extension HTML where Self: _Attributed {
+public extension _Attributed {
     /// Adds the specified attribute to the element.
     /// - Parameters:
     ///   - attribute: The attribute to add to the element.
     ///   - condition: If set to false, the attribute will not be added.
     /// - Returns: A new element with the specified attribute added.
     @inlinable
-    public func attributes(_ attribute: HTMLAttribute<Tag>, when condition: Bool = true) -> Self {
+    func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> Self {
         if condition {
             var element = self
             element._attributes.append(_AttributeStorage(attribute))
@@ -86,7 +94,7 @@ extension HTML where Self: _Attributed {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable
-    public func attributes(_ attributes: HTMLAttribute<Tag>..., when condition: Bool = true) -> Self {
+    func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> Self {
         self.attributes(contentsOf: attributes, when: condition)
     }
 
@@ -96,7 +104,7 @@ extension HTML where Self: _Attributed {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable
-    public func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> Self {
+    func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> Self {
         if condition {
             var element = self
             element._attributes.append(_AttributeStorage(attributes))
@@ -107,10 +115,7 @@ extension HTML where Self: _Attributed {
     }
 }
 
-public struct _AttributedElement<Content: HTML>: HTML, _Attributed {
-    public typealias Body = Never
-    public typealias Tag = Content.Tag
-
+public struct _AttributedElement<Tag: MarkupTagDefinition, Content>: _Attributed {
     public var content: Content
 
     @available(*, renamed: "_attributes")
@@ -121,12 +126,32 @@ public struct _AttributedElement<Content: HTML>: HTML, _Attributed {
 
     public var _attributes: _AttributeStorage
 
-    @usableFromInline
-    init(content: Content, attributes: _AttributeStorage) {
+    @inlinable
+    public init(content: Content) {
+        self.content = content
+        self._attributes = .init()
+    }
+
+    @inlinable
+    public init(content: Content, attribute: MarkupAttribute<Tag>) {
+        self.content = content
+        self._attributes = .init(attribute)
+    }
+
+    @inlinable
+    public init(content: Content, attributes: [MarkupAttribute<Tag>]) {
+        self.content = content
+        self._attributes = .init(attributes)
+    }
+
+    @inlinable
+    public init(content: Content, attributes: _AttributeStorage) {
         self.content = content
         self._attributes = attributes
     }
+}
 
+extension _AttributedElement: _Renderable where Content: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -149,6 +174,12 @@ public struct _AttributedElement<Content: HTML>: HTML, _Attributed {
     }
 }
 
+extension _AttributedElement: MarkupContent where Content: MarkupContent {
+    public typealias Body = Never
+}
+
+extension _AttributedElement: HTML where Tag: HTMLTagDefinition, Content: HTML {}
+
 extension _AttributedElement: Sendable where Content: Sendable {}
 
 public extension HTML where Tag: HTMLTrait.Attributes.Global {
@@ -158,11 +189,11 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
     ///   - condition: If set to false, the attribute will not be added.
     /// - Returns: A new element with the specified attribute added.
     @inlinable @_disfavoredOverload
-    func attributes(_ attribute: HTMLAttribute<Tag>, when condition: Bool = true) -> _AttributedElement<Self> {
+    func attributes(_ attribute: HTMLAttribute<Tag>, when condition: Bool = true) -> _AttributedElement<Tag, Self> {
         if condition {
-            return _AttributedElement(content: self, attributes: .init(attribute))
+            return _AttributedElement(content: self, attribute: attribute)
         } else {
-            return _AttributedElement(content: self, attributes: .init())
+            return _AttributedElement(content: self)
         }
     }
 
@@ -172,8 +203,8 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable @_disfavoredOverload
-    func attributes(_ attributes: HTMLAttribute<Tag>..., when condition: Bool = true) -> _AttributedElement<Self> {
-        _AttributedElement(content: self, attributes: .init(condition ? attributes : []))
+    func attributes(_ attributes: HTMLAttribute<Tag>..., when condition: Bool = true) -> _AttributedElement<Tag, Self> {
+        _AttributedElement(content: self, attributes: condition ? attributes : [])
     }
 
     /// Adds the specified attributes to the element.
@@ -182,8 +213,8 @@ public extension HTML where Tag: HTMLTrait.Attributes.Global {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable @_disfavoredOverload
-    func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> _AttributedElement<Self> {
-        _AttributedElement(content: self, attributes: .init(condition ? attributes : []))
+    func attributes(contentsOf attributes: [HTMLAttribute<Tag>], when condition: Bool = true) -> _AttributedElement<Tag, Self> {
+        _AttributedElement(content: self, attributes: condition ? attributes : [])
     }
 }
 

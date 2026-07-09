@@ -29,9 +29,7 @@ public struct AsyncForEach<Source: AsyncSequence, Content> {
     }
 }
 
-extension AsyncForEach: HTML where Content: HTML {
-    public typealias Body = Never
-
+extension AsyncForEach: _Renderable where Content: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -55,4 +53,10 @@ extension AsyncForEach: HTML where Content: HTML {
         }
     }
 }
+
+extension AsyncForEach: MarkupContent where Content: MarkupContent {
+    public typealias Body = Never
+}
+
+extension AsyncForEach: HTML where Content: HTML {}
 #endif

@@ -171,9 +171,7 @@ public struct _TupleContent2<V0, V1> {
     }
 }
 
-extension _TupleContent2: HTML where V0: HTML, V1: HTML {
-    public typealias Body = Never
-
+extension _TupleContent2: _Renderable where V0: _Renderable, V1: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -200,6 +198,12 @@ extension _TupleContent2: HTML where V0: HTML, V1: HTML {
     }
 }
 
+extension _TupleContent2: MarkupContent where V0: MarkupContent, V1: MarkupContent {
+    public typealias Body = Never
+}
+
+extension _TupleContent2: HTML where V0: HTML, V1: HTML {}
+
 extension _TupleContent3: Sendable where V0: Sendable, V1: Sendable, V2: Sendable {}
 public struct _TupleContent3<V0, V1, V2> {
     public let v0: V0
@@ -214,9 +218,7 @@ public struct _TupleContent3<V0, V1, V2> {
     }
 }
 
-extension _TupleContent3: HTML where V0: HTML, V1: HTML, V2: HTML {
-    public typealias Body = Never
-
+extension _TupleContent3: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -245,6 +247,12 @@ extension _TupleContent3: HTML where V0: HTML, V1: HTML, V2: HTML {
     }
 }
 
+extension _TupleContent3: MarkupContent where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent {
+    public typealias Body = Never
+}
+
+extension _TupleContent3: HTML where V0: HTML, V1: HTML, V2: HTML {}
+
 extension _TupleContent4: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable {}
 public struct _TupleContent4<V0, V1, V2, V3> {
     public let v0: V0
@@ -261,9 +269,7 @@ public struct _TupleContent4<V0, V1, V2, V3> {
     }
 }
 
-extension _TupleContent4: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML {
-    public typealias Body = Never
-
+extension _TupleContent4: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -294,6 +300,12 @@ extension _TupleContent4: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML {
     }
 }
 
+extension _TupleContent4: MarkupContent where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent, V3: MarkupContent {
+    public typealias Body = Never
+}
+
+extension _TupleContent4: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML {}
+
 extension _TupleContent5: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable {}
 public struct _TupleContent5<V0, V1, V2, V3, V4> {
     public let v0: V0
@@ -312,9 +324,7 @@ public struct _TupleContent5<V0, V1, V2, V3, V4> {
     }
 }
 
-extension _TupleContent5: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML {
-    public typealias Body = Never
-
+extension _TupleContent5: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable, V4: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -347,6 +357,12 @@ extension _TupleContent5: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4:
     }
 }
 
+extension _TupleContent5: MarkupContent where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent, V3: MarkupContent, V4: MarkupContent {
+    public typealias Body = Never
+}
+
+extension _TupleContent5: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML {}
+
 extension _TupleContent6: Sendable where V0: Sendable, V1: Sendable, V2: Sendable, V3: Sendable, V4: Sendable, V5: Sendable {}
 public struct _TupleContent6<V0, V1, V2, V3, V4, V5> {
     public let v0: V0
@@ -367,9 +383,7 @@ public struct _TupleContent6<V0, V1, V2, V3, V4, V5> {
     }
 }
 
-extension _TupleContent6: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML {
-    public typealias Body = Never
-
+extension _TupleContent6: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable, V4: _Renderable, V5: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -404,6 +418,12 @@ extension _TupleContent6: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4:
     }
 }
 
+extension _TupleContent6: MarkupContent where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent, V3: MarkupContent, V4: MarkupContent, V5: MarkupContent {
+    public typealias Body = Never
+}
+
+extension _TupleContent6: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML {}
+
 // variadic generics currently not supported in embedded
 #if !hasFeature(Embedded)
 @available(iOS 17, *)
@@ -420,9 +440,7 @@ public struct _TupleContent<each Child> {
 }
 
 @available(iOS 17, *)
-extension _TupleContent: HTML where repeat each Child: HTML {
-    public typealias Body = Never
-
+extension _TupleContent: _Renderable where repeat each Child: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -432,7 +450,7 @@ extension _TupleContent: HTML where repeat each Child: HTML {
         context.assertNoAttributes(self)
 
         // NOTE: use iteration in swift 6
-        func renderElement<Element: HTML>(_ element: Element, _ renderer: inout Renderer) {
+        func renderElement<Element: _Renderable>(_ element: Element, _ renderer: inout Renderer) {
             Element._render(element, into: &renderer, with: copy context)
         }
         repeat renderElement(each html.value, &renderer)
@@ -448,12 +466,20 @@ extension _TupleContent: HTML where repeat each Child: HTML {
         context.assertNoAttributes(self)
 
         // NOTE: use iteration in swift 6
-        func renderElement<Element: HTML>(_ element: Element, _ renderer: inout Renderer) async throws {
+        func renderElement<Element: _Renderable>(_ element: Element, _ renderer: inout Renderer) async throws {
             try await Element._render(element, into: &renderer, with: copy context)
         }
         repeat try await renderElement(each html.value, &renderer)
     }
 }
+
+@available(iOS 17, *)
+extension _TupleContent: MarkupContent where repeat each Child: MarkupContent {
+    public typealias Body = Never
+}
+
+@available(iOS 17, *)
+extension _TupleContent: HTML where repeat each Child: HTML {}
 #endif
 
 /// Deprecated compatibility alias for ``_TupleContent2``.

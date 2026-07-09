@@ -1,5 +1,5 @@
-public extension HTMLElement {
-    /// Creates a new HTML element with the specified tag and async content.
+public extension MarkupElement where Tag: HTMLTrait.Paired {
+    /// Creates a new paired markup element with the specified tag and async HTML content.
     ///
     /// The async content closure is automatically wrapped in an ``AsyncContent`` element and can only be rendered in an async context.
     ///
@@ -17,9 +17,9 @@ public extension HTMLElement {
         self.content = AsyncContent(content: content)
     }
 
-    /// Creates a new HTML element with the specified tag and async content.
+    /// Creates a new paired markup element with the specified tag and async HTML content.
     ///
-    /// The async content closure is automatically wrapped in an ``AsyncContent``  element and can only be rendered in an async context.
+    /// The async content closure is automatically wrapped in an ``AsyncContent`` element and can only be rendered in an async context.
     ///
     /// - Parameters:
     ///   - attributes: The attributes to apply to the element.

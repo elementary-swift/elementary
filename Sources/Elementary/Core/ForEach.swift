@@ -27,9 +27,7 @@ where Data: Sequence {
     }
 }
 
-extension ForEach: HTML where Content: HTML {
-    public typealias Body = Never
-
+extension ForEach: _Renderable where Content: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -57,5 +55,11 @@ extension ForEach: HTML where Content: HTML {
         }
     }
 }
+
+extension ForEach: MarkupContent where Content: MarkupContent {
+    public typealias Body = Never
+}
+
+extension ForEach: HTML where Content: HTML {}
 
 extension ForEach: Sendable where Data: Sendable {}

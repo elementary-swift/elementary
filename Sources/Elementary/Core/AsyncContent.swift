@@ -1,8 +1,8 @@
 /// A container that awaits its content.
 ///
-/// When its content is HTML, this element can only be rendered in an async context (ie: by calling
-/// ``HTML/render(into:chunkSize:)`` or ``HTML/renderAsync()``).
-/// All HTML tag types (``HTMLElement``) support async content closures in their initializers, so you don't need to use this element directly in most cases.
+/// When its content is rendered, this element can only be used in an async context (ie: by calling
+/// ``HTML/render(into:chunkSize:)`` or ``HTML/renderAsync()`` for HTML roots).
+/// Paired HTML and SVG elements support async content closures in their initializers, so you don't need to use this element directly in most cases.
 @_unavailableInEmbedded
 public struct AsyncContent<Content>: Sendable {
     @usableFromInline
@@ -26,10 +26,7 @@ public struct AsyncContent<Content>: Sendable {
 }
 
 @_unavailableInEmbedded
-extension AsyncContent: HTML where Content: HTML {
-    public typealias Body = Never
-    public typealias Tag = Content.Tag
-
+extension AsyncContent: _Renderable where Content: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -49,3 +46,12 @@ extension AsyncContent: HTML where Content: HTML {
         try await Content._render(await html.content(), into: &renderer, with: context)
     }
 }
+
+@_unavailableInEmbedded
+extension AsyncContent: MarkupContent where Content: MarkupContent {
+    public typealias Tag = Content.Tag
+    public typealias Body = Never
+}
+
+@_unavailableInEmbedded
+extension AsyncContent: HTML where Content: HTML {}

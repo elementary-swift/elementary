@@ -48,22 +48,14 @@
 /// Prefer ``ContentBuilder`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
 public typealias HTMLBuilder = ContentBuilder
 
-public extension HTML where Body == Never {
-    var body: Never {
-        #if hasFeature(Embedded)
-        fatalError("content was called on an unsupported type")
-        #else
-        fatalError("content cannot be called on \(Self.self)")
-        #endif
-    }
-}
-
-extension Never: HTML {
+extension Never: MarkupContent {
     public typealias Tag = Never
     public typealias Body = Never
 }
 
-extension Optional: HTML where Wrapped: HTML {
+extension Never: HTML {}
+
+extension Optional: _Renderable where Wrapped: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -90,8 +82,18 @@ extension Optional: HTML where Wrapped: HTML {
     }
 }
 
+extension Optional: MarkupContent where Wrapped: MarkupContent {
+    public typealias Tag = Wrapped.Tag
+    public typealias Body = Never
+}
+
+extension Optional: HTML where Wrapped: HTML {}
+
 /// A type that represents empty content.
-public struct EmptyContent: HTML, Sendable {
+public struct EmptyContent: _Renderable, MarkupContent, Sendable {
+    public typealias Tag = Never
+    public typealias Body = Never
+
     public init() {}
 
     @inlinable
@@ -114,6 +116,8 @@ public struct EmptyContent: HTML, Sendable {
     }
 }
 
+extension EmptyContent: HTML {}
+
 /// Compatibility alias for ``EmptyContent``.
 ///
 /// Prefer ``EmptyContent`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
@@ -122,7 +126,10 @@ public typealias EmptyHTML = EmptyContent
 /// A type that represents text content in an HTML document.
 ///
 /// The text will be escaped when rendered.
-public struct StringContent: HTML, Sendable {
+public struct StringContent: _Renderable, MarkupContent, Sendable {
+    public typealias Tag = Never
+    public typealias Body = Never
+
     /// The text content.
     public var text: String
 
@@ -154,6 +161,8 @@ public struct StringContent: HTML, Sendable {
     }
 }
 
+extension StringContent: HTML {}
+
 /// Compatibility alias for ``StringContent``.
 ///
 /// Prefer ``StringContent`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
@@ -176,9 +185,7 @@ public struct _ConditionalContent<TrueContent, FalseContent> {
     }
 }
 
-extension _ConditionalContent: HTML where TrueContent: HTML, FalseContent: HTML {
-    public typealias Body = Never
-
+extension _ConditionalContent: _Renderable where TrueContent: _Renderable, FalseContent: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -205,9 +212,15 @@ extension _ConditionalContent: HTML where TrueContent: HTML, FalseContent: HTML 
     }
 }
 
-public extension _ConditionalContent where TrueContent: HTML, FalseContent: HTML, TrueContent.Tag == FalseContent.Tag {
+extension _ConditionalContent: MarkupContent where TrueContent: MarkupContent, FalseContent: MarkupContent {
+    public typealias Body = Never
+}
+
+public extension _ConditionalContent where TrueContent: MarkupContent, FalseContent: MarkupContent, TrueContent.Tag == FalseContent.Tag {
     typealias Tag = TrueContent.Tag
 }
+
+extension _ConditionalContent: HTML where TrueContent: HTML, FalseContent: HTML {}
 
 /// Deprecated compatibility alias for ``_ConditionalContent``.
 ///
@@ -226,9 +239,7 @@ public struct _ArrayContent<Element> {
     }
 }
 
-extension _ArrayContent: HTML where Element: HTML {
-    public typealias Body = Never
-
+extension _ArrayContent: _Renderable where Element: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -256,6 +267,12 @@ extension _ArrayContent: HTML where Element: HTML {
         }
     }
 }
+
+extension _ArrayContent: MarkupContent where Element: MarkupContent {
+    public typealias Body = Never
+}
+
+extension _ArrayContent: HTML where Element: HTML {}
 
 /// Deprecated compatibility alias for ``_ArrayContent``.
 ///

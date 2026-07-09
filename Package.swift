@@ -17,6 +17,10 @@ let package = Package(
         .library(
             name: "Elementary",
             targets: ["Elementary"]
+        ),
+        .library(
+            name: "ElementarySVG",
+            targets: ["ElementarySVG"]
         )
     ],
     targets: [
@@ -24,9 +28,19 @@ let package = Package(
             name: "Elementary",
             swiftSettings: swiftSettings
         ),
+        .target(
+            name: "ElementarySVG",
+            dependencies: ["Elementary"],
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
             name: "ElementaryTests",
             dependencies: ["Elementary"],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "ElementarySVGTests",
+            dependencies: ["Elementary", "ElementarySVG"],
             swiftSettings: swiftSettings
         ),
     ]

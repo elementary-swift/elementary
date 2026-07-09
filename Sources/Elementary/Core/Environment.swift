@@ -74,13 +74,13 @@ public extension HTML {
     }
 }
 
-public struct _ModifiedTaskLocal<T: Sendable, Content: HTML>: HTML {
-    public typealias Tag = Content.Tag
-
+public struct _ModifiedTaskLocal<T: Sendable, Content> {
     var wrappedContent: Content
     var taskLocal: TaskLocal<T>
     var value: T
+}
 
+extension _ModifiedTaskLocal: _Renderable where Content: _Renderable {
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
@@ -102,6 +102,13 @@ public struct _ModifiedTaskLocal<T: Sendable, Content: HTML>: HTML {
         }
     }
 }
+
+extension _ModifiedTaskLocal: MarkupContent where Content: MarkupContent {
+    public typealias Tag = Content.Tag
+    public typealias Body = Never
+}
+
+extension _ModifiedTaskLocal: HTML where Content: HTML {}
 
 extension _ModifiedTaskLocal: Sendable where Content: Sendable {}
 #endif
