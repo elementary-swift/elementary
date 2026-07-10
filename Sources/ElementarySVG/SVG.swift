@@ -7,4 +7,3 @@ public protocol SVGContent<Tag>: MarkupContent where Tag: SVGTagDefinition, Body
 extension Never: SVGTagDefinition {}
 
 public typealias SVGAttribute<Tag: SVGTagDefinition> = MarkupAttribute<Tag>
-public typealias SVGElement<Tag: SVGTagDefinition, Content: SVGContent> = MarkupElement<Tag, Content>

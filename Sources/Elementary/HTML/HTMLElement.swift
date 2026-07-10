@@ -1,41 +1,102 @@
 /// An HTML element that can contain content.
-public typealias HTMLElement<Tag: HTMLTrait.Paired, Content: HTML> = MarkupElement<Tag, Content>
-
-/// An HTML element that does not contain content.
-public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where Tag: HTMLTrait.Unpaired {
-    /// The type of the HTML tag this element represents.
-    public typealias Tag = Tag
+public struct HTMLElement<Tag: HTMLTrait.Paired, Content: HTML>: _Attributed, HTML {
     public typealias Body = Never
 
     public var _attributes: _AttributeStorage
 
-    /// Creates a new HTML void element.
+    /// The content of the element.
+    public var content: Content
+
+    /// Creates a new HTML element with the specified content.
     @inlinable
-    public init() {
+    public init(@ContentBuilder content: () -> Content) {
         self._attributes = .init()
+        self.content = content()
     }
 
-    /// Creates a new HTML void element with the specified attribute.
-    /// - Parameter attribute: The attribute to apply to the element.
+    /// Creates a new HTML element with the specified attribute and content.
     @inlinable
-    public init(_ attribute: HTMLAttribute<Tag>) {
+    public init(_ attribute: MarkupAttribute<Tag>, @ContentBuilder content: () -> Content) {
         self._attributes = .init(attribute)
+        self.content = content()
     }
 
-    /// Creates a new HTML void element with the specified attributes.
-    /// - Parameter attributes: The attributes to apply to the element.
+    /// Creates a new HTML element with the specified attributes and content.
     @inlinable
-    public init(_ attributes: HTMLAttribute<Tag>...) {
+    public init(_ attributes: MarkupAttribute<Tag>..., @ContentBuilder content: () -> Content) {
         self._attributes = .init(attributes)
+        self.content = content()
     }
 
-    /// Creates a new HTML void element with the specified attributes.
-    /// - Parameter attributes: The attributes to apply to the element as an array.
+    /// Creates a new HTML element with the specified attributes and content.
     @inlinable
-    public init(attributes: [HTMLAttribute<Tag>]) {
+    public init(attributes: [MarkupAttribute<Tag>], @ContentBuilder content: () -> Content) {
         self._attributes = .init(attributes)
+        self.content = content()
+    }
+}
+
+public extension HTMLElement where Content == EmptyContent {
+    /// Creates a new empty HTML element.
+    @inlinable
+    init() {
+        self._attributes = .init()
+        self.content = EmptyContent()
     }
 
+    /// Creates a new empty HTML element with the specified attribute.
+    @inlinable
+    init(_ attribute: MarkupAttribute<Tag>) {
+        self._attributes = .init(attribute)
+        self.content = EmptyContent()
+    }
+
+    /// Creates a new empty HTML element with the specified attributes.
+    @inlinable
+    init(_ attributes: MarkupAttribute<Tag>...) {
+        self._attributes = .init(attributes)
+        self.content = EmptyContent()
+    }
+
+    /// Creates a new empty HTML element with the specified attributes.
+    @inlinable
+    init(attributes: [MarkupAttribute<Tag>]) {
+        self._attributes = .init(attributes)
+        self.content = EmptyContent()
+    }
+}
+
+#if !hasFeature(Embedded)
+public extension HTMLElement {
+    /// Creates a new HTML element with async content.
+    @inlinable
+    @_unavailableInEmbedded
+    init<AwaitedContent: HTML>(
+        _ attributes: MarkupAttribute<Tag>...,
+        @ContentBuilder content: @escaping @Sendable () async throws -> AwaitedContent
+    )
+    where Content == AsyncContent<AwaitedContent> {
+        self._attributes = .init(attributes)
+        self.content = AsyncContent(content: content)
+    }
+
+    /// Creates a new HTML element with async content.
+    @inlinable
+    @_unavailableInEmbedded
+    init<AwaitedContent: HTML>(
+        attributes: [MarkupAttribute<Tag>],
+        @ContentBuilder content: @escaping @Sendable () async throws -> AwaitedContent
+    )
+    where Content == AsyncContent<AwaitedContent> {
+        self._attributes = .init(attributes)
+        self.content = AsyncContent(content: content)
+    }
+}
+#endif
+
+extension HTMLElement: Sendable where Content: Sendable {}
+
+extension HTMLElement {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -43,7 +104,10 @@ public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where T
         with context: consuming _RenderingContext
     ) {
         html._attributes.append(context.attributes)
-        renderer.appendToken(.startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType))
+
+        renderer.appendToken(.startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: false, type: Tag.renderingType))
+        Content._render(html.content, into: &renderer, with: .emptyContext)
+        renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
 
     @inlinable
@@ -54,9 +118,12 @@ public struct HTMLVoidElement<Tag: HTMLTagDefinition>: HTML, _Attributed where T
         with context: consuming _RenderingContext
     ) async throws {
         html._attributes.append(context.attributes)
+
         try await renderer.appendToken(
-            .startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType)
+            .startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: false, type: Tag.renderingType)
         )
+        try await Content._render(html.content, into: &renderer, with: .emptyContext)
+        try await renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
 }
 
@@ -134,6 +201,5 @@ public struct HTMLRaw: HTML {
     }
 }
 
-extension HTMLVoidElement: Sendable {}
 extension HTMLComment: Sendable {}
 extension HTMLRaw: Sendable {}

@@ -9,7 +9,7 @@ public enum SVGTrait {
 }
 
 public extension SVGTrait.Attributes {
-    protocol Global {}
+    protocol Global: MarkupTrait.AllowsAttributes {}
     protocol Root {}
     protocol ViewBox {}
     protocol Sizing {}
@@ -125,7 +125,7 @@ public extension SVGTag {
 }
 
 public extension SVG {
-    typealias svg<Content: SVGContent> = SVGRoot<Content>
+    typealias svg<Content: SVGContent> = SVGElement<SVGTag.svg, Content>
     typealias g<Content: SVGContent> = SVGElement<SVGTag.g, Content>
     typealias defs<Content: SVGContent> = SVGElement<SVGTag.defs, Content>
     typealias symbol<Content: SVGContent> = SVGElement<SVGTag.symbol, Content>

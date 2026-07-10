@@ -33,6 +33,7 @@ public enum _HTMLRenderToken {
 
     case startTag(String, attributes: _MergedAttributes, isUnpaired: Bool, type: RenderingType)
     case endTag(String, type: RenderingType)
+    case selfClosingTag(String, attributes: _MergedAttributes)
     case text(String)
     case raw(String)
     case comment(String)

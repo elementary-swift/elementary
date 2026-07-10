@@ -21,24 +21,3 @@ public extension MarkupContent where Body == Never {
         #endif
     }
 }
-
-public extension MarkupContent {
-    @inlinable
-    static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        Body._render(html.body, into: &renderer, with: context)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        try await Body._render(html.body, into: &renderer, with: context)
-    }
-}

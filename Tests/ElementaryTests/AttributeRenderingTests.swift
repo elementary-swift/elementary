@@ -11,8 +11,8 @@ struct AttributeRenderingTests {
 
     @Test func testRendersAttributes() async throws {
         try await HTMLAssertEqual(
-            p(.id("foo"), .class("foo"), .hidden) {},
-            #"<p id="foo" class="foo" hidden></p>"#
+            p(.id("foo"), .class("foo"), .role("note"), .hidden) {},
+            #"<p id="foo" class="foo" role="note" hidden></p>"#
         )
     }
 

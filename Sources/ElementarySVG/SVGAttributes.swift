@@ -1,52 +1,5 @@
 import Elementary
 
-public extension SVGAttribute where Tag: SVGTrait.Attributes.Global {
-    static func custom(name: String, value: String? = nil) -> Self {
-        SVGAttribute(name: name, value: value)
-    }
-
-    static func id(_ value: String) -> Self {
-        SVGAttribute(name: "id", value: value)
-    }
-
-    static func `class`(_ value: String) -> Self {
-        SVGAttribute(name: "class", value: value, mergedBy: .appending(separatedBy: " "))
-    }
-
-    @inlinable
-    static func `class`(_ values: some Sequence<String>) -> Self {
-        SVGAttribute(name: "class", value: values.joined(separator: " "), mergedBy: .appending(separatedBy: " "))
-    }
-
-    static func style(_ value: String) -> Self {
-        SVGAttribute(name: "style", value: value, mergedBy: .appending(separatedBy: ";"))
-    }
-
-    @inlinable
-    static func style(_ values: KeyValuePairs<String, String>) -> Self {
-        style(values.map { (key: $0.key, value: $0.value) })
-    }
-
-    @inlinable
-    @_disfavoredOverload
-    static func style(_ values: some Sequence<(key: String, value: String)>) -> Self {
-        let value = values.map { "\($0.key):\($0.value)" }.joined(separator: ";")
-        return SVGAttribute(name: "style", value: value, mergedBy: .appending(separatedBy: ";"))
-    }
-
-    static func data(_ key: String, value: String) -> Self {
-        SVGAttribute(name: "data-\(key)", value: value)
-    }
-
-    static func aria(_ key: String, _ value: String) -> Self {
-        SVGAttribute(name: "aria-\(key)", value: value)
-    }
-
-    static func role(_ value: String) -> Self {
-        SVGAttribute(name: "role", value: value)
-    }
-}
-
 public extension SVGAttribute where Tag: SVGTrait.Attributes.Root {
     static func xmlns(_ value: String = "http://www.w3.org/2000/svg") -> Self {
         SVGAttribute(name: "xmlns", value: value)

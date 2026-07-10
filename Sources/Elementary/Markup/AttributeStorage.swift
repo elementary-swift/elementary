@@ -10,17 +10,17 @@ public enum _AttributeStorage: Sendable, Equatable {
     case multiple([_StoredAttribute])
 
     @inlinable
-    init() {
+    public init() {
         self = .none
     }
 
     @inlinable
-    init(_ attribute: MarkupAttribute<some MarkupTagDefinition>) {
+    public init(_ attribute: MarkupAttribute<some MarkupTagDefinition>) {
         self = .single(attribute.htmlAttribute)
     }
 
     @inlinable
-    init(_ attributes: [MarkupAttribute<some MarkupTagDefinition>]) {
+    public init(_ attributes: [MarkupAttribute<some MarkupTagDefinition>]) {
         switch attributes.count {
         case 0: self = .none
         case 1: self = .single(attributes[0].htmlAttribute)
@@ -55,6 +55,11 @@ public enum _AttributeStorage: Sendable, Equatable {
             existing.append(contentsOf: others)
             self = .multiple(existing)
         }
+    }
+
+    @inlinable
+    public mutating func append(_ context: consuming _RenderingContext) {
+        append(context.attributes)
     }
 
     public consuming func flattened() -> _MergedAttributes {

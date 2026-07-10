@@ -22,9 +22,15 @@ struct SVGRenderingTests {
         )
     }
 
+    @Test func rendersDirectSVGElementAsPairedElement() async throws {
+        #expect(#"<path d="M0 0"></path>"# == SVGElement<SVGTag.path, EmptyContent>(.d("M0 0")).render())
+        let asyncText = try await SVGElement<SVGTag.path, EmptyContent>(.d("M0 0")).renderAsync()
+        #expect(#"<path d="M0 0"></path>"# == asyncText)
+    }
+
     @Test func rendersNestedGroupsAndAccessibilityText() async throws {
         try await HTMLAssertEqual(
-            SVG.svg(.viewBox(0, 0, 10, 10)) {
+            SVG.svg(.viewBox(0, 0, 10, 10), .role("img")) {
                 SVG.title { "A & B" }
                 SVG.desc { "Use <carefully>" }
                 SVG.g(.id("layer")) {
@@ -32,7 +38,7 @@ struct SVGRenderingTests {
                 }
             },
             """
-            <svg viewBox="0 0 10 10"><title>A &amp; B</title><desc>Use &lt;carefully&gt;</desc><g id="layer"><circle cx="5" cy="5" r="4" fill="red"></circle></g></svg>
+            <svg viewBox="0 0 10 10" role="img"><title>A &amp; B</title><desc>Use &lt;carefully&gt;</desc><g id="layer"><circle cx="5" cy="5" r="4" fill="red"></circle></g></svg>
             """
         )
     }

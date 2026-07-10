@@ -58,3 +58,62 @@ extension MarkupAttribute {
         htmlAttribute = .init(styles)
     }
 }
+
+public extension MarkupAttribute where Tag: MarkupTrait.AllowsAttributes {
+    static func custom(name: String, value: String? = nil) -> Self {
+        MarkupAttribute(name: name, value: value)
+    }
+
+    static func id(_ value: String) -> Self {
+        MarkupAttribute(name: "id", value: value)
+    }
+
+    static func data(_ key: String, value: String) -> Self {
+        MarkupAttribute(name: "data-\(key)", value: value)
+    }
+
+    static func role(_ role: MarkupAttributeValue.Role) -> Self {
+        MarkupAttribute(name: "role", value: role.rawValue)
+    }
+
+    static func `class`(_ value: String) -> Self {
+        MarkupAttribute(name: "class", value: value, mergedBy: .appending(separatedBy: " "))
+    }
+
+    @inlinable
+    static func `class`(_ values: some Sequence<String>) -> Self {
+        MarkupAttribute(classes: .init(values))
+    }
+
+    static func style(_ value: String) -> Self {
+        MarkupAttribute(name: "style", value: value, mergedBy: .appending(separatedBy: ";"))
+    }
+
+    @inlinable
+    static func style(_ values: KeyValuePairs<String, String>) -> Self {
+        MarkupAttribute(styles: .init(values))
+    }
+
+    @inlinable
+    @_disfavoredOverload
+    static func style(_ values: some Sequence<(key: String, value: String)>) -> Self {
+        MarkupAttribute(styles: .init(values))
+    }
+}
+
+/// A namespace for shared value types used in markup attributes.
+public enum MarkupAttributeValue {}
+
+public extension MarkupAttributeValue {
+    struct Role: ExpressibleByStringLiteral, RawRepresentable, Sendable {
+        public let rawValue: String
+
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+
+        public init(stringLiteral value: String) {
+            rawValue = value
+        }
+    }
+}

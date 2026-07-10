@@ -45,6 +45,16 @@ extension [UInt8] {
                 }
             }
             append(62)  // >
+        case let .selfClosingTag(tagName, attributes: attributes):
+            append(60)  // <
+            appendString(tagName)
+            if !attributes.isEmpty {
+                for attribute in attributes {
+                    append(32)  // space
+                    appendString(attribute.name)
+                }
+            }
+            append(contentsOf: [32, 47, 62])  // />
         case let .endTag(tagName, _):
             append(contentsOf: [60, 47])  // </
             appendString(tagName)

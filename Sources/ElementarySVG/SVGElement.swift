@@ -1,0 +1,132 @@
+import Elementary
+
+/// An SVG element that can contain SVG content.
+public struct SVGElement<Tag: SVGTagDefinition, Content: SVGContent>: _Attributed, SVGContent {
+    public typealias Body = Never
+
+    public var _attributes: _AttributeStorage
+
+    /// The content of the element.
+    public var content: Content
+
+    /// Creates a new SVG element with the specified content.
+    @inlinable
+    public init(@ContentBuilder content: () -> Content) {
+        self._attributes = .init()
+        self.content = content()
+    }
+
+    /// Creates a new SVG element with the specified attribute and content.
+    @inlinable
+    public init(_ attribute: SVGAttribute<Tag>, @ContentBuilder content: () -> Content) {
+        self._attributes = .init(attribute)
+        self.content = content()
+    }
+
+    /// Creates a new SVG element with the specified attributes and content.
+    @inlinable
+    public init(_ attributes: SVGAttribute<Tag>..., @ContentBuilder content: () -> Content) {
+        self._attributes = .init(attributes)
+        self.content = content()
+    }
+
+    /// Creates a new SVG element with the specified attributes and content.
+    @inlinable
+    public init(attributes: [SVGAttribute<Tag>], @ContentBuilder content: () -> Content) {
+        self._attributes = .init(attributes)
+        self.content = content()
+    }
+}
+
+public extension SVGElement where Content == EmptyContent {
+    /// Creates a new empty SVG element.
+    @inlinable
+    init() {
+        self._attributes = .init()
+        self.content = EmptyContent()
+    }
+
+    /// Creates a new empty SVG element with the specified attribute.
+    @inlinable
+    init(_ attribute: SVGAttribute<Tag>) {
+        self._attributes = .init(attribute)
+        self.content = EmptyContent()
+    }
+
+    /// Creates a new empty SVG element with the specified attributes.
+    @inlinable
+    init(_ attributes: SVGAttribute<Tag>...) {
+        self._attributes = .init(attributes)
+        self.content = EmptyContent()
+    }
+
+    /// Creates a new empty SVG element with the specified attributes.
+    @inlinable
+    init(attributes: [SVGAttribute<Tag>]) {
+        self._attributes = .init(attributes)
+        self.content = EmptyContent()
+    }
+}
+
+#if !hasFeature(Embedded)
+public extension SVGElement {
+    /// Creates a new SVG element with async content.
+    @inlinable
+    @_unavailableInEmbedded
+    init<AwaitedContent: SVGContent>(
+        _ attributes: SVGAttribute<Tag>...,
+        @ContentBuilder content: @escaping @Sendable () async throws -> AwaitedContent
+    )
+    where Content == AsyncContent<AwaitedContent> {
+        self._attributes = .init(attributes)
+        self.content = AsyncContent(content: content)
+    }
+
+    /// Creates a new SVG element with async content.
+    @inlinable
+    @_unavailableInEmbedded
+    init<AwaitedContent: SVGContent>(
+        attributes: [SVGAttribute<Tag>],
+        @ContentBuilder content: @escaping @Sendable () async throws -> AwaitedContent
+    )
+    where Content == AsyncContent<AwaitedContent> {
+        self._attributes = .init(attributes)
+        self.content = AsyncContent(content: content)
+    }
+}
+#endif
+
+extension SVGElement: Sendable where Content: Sendable {}
+
+extension SVGElement: HTML where Tag == SVGTag.svg {}
+
+extension SVGElement {
+    @inlinable
+    public static func _render<Renderer: _HTMLRendering>(
+        _ svg: consuming Self,
+        into renderer: inout Renderer,
+        with context: consuming _RenderingContext
+    ) {
+        svg._attributes.append(context)
+
+        renderer.appendToken(.startTag(Tag.name, attributes: svg._attributes.flattened(), isUnpaired: false, type: .block))
+        Content._render(svg.content, into: &renderer, with: .emptyContext)
+        renderer.appendToken(.endTag(Tag.name, type: .block))
+    }
+
+    @inlinable
+    @_unavailableInEmbedded
+    public static func _render<Renderer: _AsyncHTMLRendering>(
+        _ svg: consuming Self,
+        into renderer: inout Renderer,
+        with context: consuming _RenderingContext
+    ) async throws {
+        svg._attributes.append(context)
+
+        try await renderer.appendToken(
+            .startTag(Tag.name, attributes: svg._attributes.flattened(), isUnpaired: false, type: .block)
+        )
+        try await Content._render(svg.content, into: &renderer, with: .emptyContext)
+        try await renderer.appendToken(.endTag(Tag.name, type: .block))
+    }
+}

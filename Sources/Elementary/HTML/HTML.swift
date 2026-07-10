@@ -19,9 +19,30 @@
 public protocol HTML<Tag>: MarkupContent, _Renderable where Tag: HTMLTagDefinition, Body: HTML {}
 
 /// A type that represents an HTML tag.
-public protocol HTMLTagDefinition: MarkupTagDefinition {}
+public protocol HTMLTagDefinition: MarkupTagDefinition {
+    /// Internal property that controls formatted rendering of the element (inline or block).
+    ///
+    /// A default implementation is provided that returns `false`.
+    static var _rendersInline: Bool { get }
+}
 
 extension Never: HTMLTagDefinition {}
+
+public extension HTMLTagDefinition {
+    @inlinable
+    static var _rendersInline: Bool { false }
+}
+
+extension HTMLTagDefinition {
+    @inlinable
+    static var renderingType: _HTMLRenderToken.RenderingType {
+        _rendersInline ? .inline : .block
+    }
+}
+
+public extension HTMLTagDefinition where Self: HTMLTrait.RenderedInline {
+    static var _rendersInline: Bool { true }
+}
 
 /// Compatibility alias for ``ContentBuilder``.
 ///
@@ -37,6 +58,14 @@ public typealias EmptyHTML = EmptyContent
 ///
 /// Prefer ``StringContent`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
 public typealias HTMLText = StringContent
+
+extension _AttributedElement: HTML where Tag: HTMLTagDefinition, Content: HTML {}
+
+/// An HTML attribute that can be applied to an HTML element of the associated tag.
+public typealias HTMLAttribute<Tag: HTMLTagDefinition> = MarkupAttribute<Tag>
+
+/// The action to take when merging an attribute with the same name.
+public typealias HTMLAttributeMergeAction = MarkupAttributeMergeAction
 
 /// Deprecated compatibility alias for ``_ArrayContent``.
 ///

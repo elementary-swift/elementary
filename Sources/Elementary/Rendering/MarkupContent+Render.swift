@@ -1,5 +1,5 @@
 #if !hasFeature(Embedded)
-public extension HTML {
+public extension MarkupContent {
     /// Renders the HTML content into a single string.
     /// - Returns: The rendered HTML content.
     ///
