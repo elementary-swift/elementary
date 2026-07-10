@@ -1,3 +1,3 @@
 import Elementary
 
-extension _AttributedElement: SVGContent where Content: SVGContent {}
+extension _AttributedContent: SVGContent where Content: SVGContent {}

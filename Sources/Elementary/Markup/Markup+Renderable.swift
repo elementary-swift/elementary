@@ -20,7 +20,7 @@ public extension MarkupContent {
     }
 }
 
-extension _AttributedElement: _Renderable where Content: _Renderable {
+extension _AttributedContent: _Renderable where Content: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,

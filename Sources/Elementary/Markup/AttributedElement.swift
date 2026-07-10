@@ -1,10 +1,44 @@
-public protocol _Attributed {
-    associatedtype Tag: MarkupTagDefinition
+public struct _AttributedContent<Content: MarkupContent>: MarkupContent {
+    public typealias Body = Never
+    public typealias Tag = Content.Tag
 
+    public var content: Content
+
+    public var _attributes: _AttributeStorage
+
+    @inlinable
+    public init(content: Content) {
+        self.content = content
+        self._attributes = .init()
+    }
+
+    @inlinable
+    public init(content: Content, attribute: MarkupAttribute<Tag>) {
+        self.content = content
+        self._attributes = .init(attribute)
+    }
+
+    @inlinable
+    public init(content: Content, attributes: [MarkupAttribute<Tag>]) {
+        self.content = content
+        self._attributes = .init(attributes)
+    }
+
+    @inlinable
+    public init(content: Content, attributes: _AttributeStorage) {
+        self.content = content
+        self._attributes = attributes
+    }
+}
+
+extension _AttributedContent: Sendable where Content: Sendable {}
+extension _AttributedContent: _Attributed {}
+
+public protocol _Attributed {
     var _attributes: _AttributeStorage { get set }
 }
 
-public extension _Attributed {
+public extension MarkupContent where Self: _Attributed {
     /// Adds the specified attribute to the element.
     /// - Parameters:
     ///   - attribute: The attribute to add to the element.
@@ -48,47 +82,6 @@ public extension _Attributed {
     }
 }
 
-public struct _AttributedElement<Content: MarkupContent>: _Attributed, MarkupContent {
-    public typealias Body = Never
-    public typealias Tag = Content.Tag
-
-    public var content: Content
-
-    @available(*, renamed: "_attributes")
-    public var attributes: _AttributeStorage {
-        _read { yield _attributes }
-        _modify { yield &_attributes }
-    }
-
-    public var _attributes: _AttributeStorage
-
-    @inlinable
-    public init(content: Content) {
-        self.content = content
-        self._attributes = .init()
-    }
-
-    @inlinable
-    public init(content: Content, attribute: MarkupAttribute<Tag>) {
-        self.content = content
-        self._attributes = .init(attribute)
-    }
-
-    @inlinable
-    public init(content: Content, attributes: [MarkupAttribute<Tag>]) {
-        self.content = content
-        self._attributes = .init(attributes)
-    }
-
-    @inlinable
-    public init(content: Content, attributes: _AttributeStorage) {
-        self.content = content
-        self._attributes = attributes
-    }
-}
-
-extension _AttributedElement: Sendable where Content: Sendable {}
-
 public extension MarkupContent where Tag: MarkupTrait.AllowsAttributes {
     /// Adds the specified attribute to the element.
     /// - Parameters:
@@ -96,11 +89,11 @@ public extension MarkupContent where Tag: MarkupTrait.AllowsAttributes {
     ///   - condition: If set to false, the attribute will not be added.
     /// - Returns: A new element with the specified attribute added.
     @inlinable @_disfavoredOverload
-    func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> _AttributedElement<Self> {
+    func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> _AttributedContent<Self> {
         if condition {
-            return _AttributedElement(content: self, attribute: attribute)
+            return _AttributedContent(content: self, attribute: attribute)
         } else {
-            return _AttributedElement(content: self)
+            return _AttributedContent(content: self)
         }
     }
 
@@ -110,8 +103,8 @@ public extension MarkupContent where Tag: MarkupTrait.AllowsAttributes {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable @_disfavoredOverload
-    func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> _AttributedElement<Self> {
-        _AttributedElement(content: self, attributes: condition ? attributes : [])
+    func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> _AttributedContent<Self> {
+        _AttributedContent(content: self, attributes: condition ? attributes : [])
     }
 
     /// Adds the specified attributes to the element.
@@ -120,7 +113,7 @@ public extension MarkupContent where Tag: MarkupTrait.AllowsAttributes {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable @_disfavoredOverload
-    func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> _AttributedElement<Self> {
-        _AttributedElement(content: self, attributes: condition ? attributes : [])
+    func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> _AttributedContent<Self> {
+        _AttributedContent(content: self, attributes: condition ? attributes : [])
     }
 }
