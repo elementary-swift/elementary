@@ -42,32 +42,8 @@ public struct SVGLength: ExpressibleByStringLiteral, ExpressibleByIntegerLiteral
     }
 }
 
-public protocol SVGLengthConvertible {
-    var svgLength: SVGLength { get }
-}
-
-extension SVGLength: SVGLengthConvertible {
-    public var svgLength: SVGLength { self }
-}
-
-extension Int: SVGLengthConvertible {
-    public var svgLength: SVGLength { SVGLength(self) }
-}
-
-extension Double: SVGLengthConvertible {
-    public var svgLength: SVGLength { SVGLength(self) }
-}
-
-extension String: SVGLengthConvertible {
-    public var svgLength: SVGLength { SVGLength(self) }
-}
-
-public struct SVGNumber: ExpressibleByStringLiteral, ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral, Sendable {
+public struct SVGNumber: ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral, Sendable {
     public let value: String
-
-    public init(_ value: String) {
-        self.value = value
-    }
 
     public init(_ value: Int) {
         self.value = "\(value)"
@@ -75,10 +51,6 @@ public struct SVGNumber: ExpressibleByStringLiteral, ExpressibleByIntegerLiteral
 
     public init(_ value: Double) {
         self.value = "\(value)"
-    }
-
-    public init(stringLiteral value: String) {
-        self.value = value
     }
 
     public init(integerLiteral value: Int) {
@@ -103,16 +75,4 @@ public struct SVGPaint: ExpressibleByStringLiteral, Sendable {
 
     public static var none: Self { .init("none") }
     public static var currentColor: Self { .init("currentColor") }
-}
-
-public struct SVGPathData: ExpressibleByStringLiteral, Sendable {
-    public let value: String
-
-    public init(_ value: String) {
-        self.value = value
-    }
-
-    public init(stringLiteral value: String) {
-        self.value = value
-    }
 }

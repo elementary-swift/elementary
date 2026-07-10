@@ -4,124 +4,28 @@ public enum SVG {}
 
 public enum SVGTag {}
 
-public enum SVGTrait {
-    public enum Attributes {}
-}
-
-public extension SVGTrait.Attributes {
-    protocol Global: MarkupTrait.AllowsAttributes {}
-    protocol Root {}
-    protocol ViewBox {}
-    protocol Sizing {}
-    protocol Position {}
-    protocol PathData {}
-    protocol RectangleGeometry {}
-    protocol CircleGeometry {}
-    protocol EllipseGeometry {}
-    protocol LineGeometry {}
-    protocol Points {}
-    protocol Presentation {}
-    protocol TextPresentation {}
-    protocol Gradient {}
-    protocol GradientStop {}
-}
-
 public extension SVGTag {
-    enum svg: SVGTagDefinition, HTMLTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Root, SVGTrait.Attributes.ViewBox,
-        SVGTrait.Attributes.Sizing, SVGTrait.Attributes.Presentation
-    {
-        public static let name = "svg"
-    }
-
-    enum g: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Presentation {
-        public static let name = "g"
-    }
-
-    enum defs: SVGTagDefinition, SVGTrait.Attributes.Global {
-        public static let name = "defs"
-    }
-
-    enum symbol: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.ViewBox, SVGTrait.Attributes.Presentation {
-        public static let name = "symbol"
-    }
-
-    enum use: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes
-            .Presentation
-    {
-        public static let name = "use"
-    }
-
-    enum path: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.PathData, SVGTrait.Attributes.Presentation {
-        public static let name = "path"
-    }
-
-    enum rect: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes
-            .RectangleGeometry, SVGTrait.Attributes.Presentation
-    {
-        public static let name = "rect"
-    }
-
-    enum circle: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.CircleGeometry, SVGTrait.Attributes.Presentation {
-        public static let name = "circle"
-    }
-
-    enum ellipse: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.EllipseGeometry, SVGTrait.Attributes.Presentation {
-        public static let name = "ellipse"
-    }
-
-    enum line: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.LineGeometry, SVGTrait.Attributes.Presentation {
-        public static let name = "line"
-    }
-
-    enum polyline: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Points, SVGTrait.Attributes.Presentation {
-        public static let name = "polyline"
-    }
-
-    enum polygon: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Points, SVGTrait.Attributes.Presentation {
-        public static let name = "polygon"
-    }
-
-    enum text: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Presentation, SVGTrait
-            .Attributes.TextPresentation
-    {
-        public static let name = "text"
-    }
-
-    enum tspan: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Presentation, SVGTrait
-            .Attributes.TextPresentation
-    {
-        public static let name = "tspan"
-    }
-
-    enum title: SVGTagDefinition, SVGTrait.Attributes.Global {
-        public static let name = "title"
-    }
-
-    enum desc: SVGTagDefinition, SVGTrait.Attributes.Global {
-        public static let name = "desc"
-    }
-
-    enum linearGradient: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Gradient {
-        public static let name = "linearGradient"
-    }
-
-    enum radialGradient: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Gradient {
-        public static let name = "radialGradient"
-    }
-
-    enum stop: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.GradientStop {
-        public static let name = "stop"
-    }
-
-    enum clipPath: SVGTagDefinition, SVGTrait.Attributes.Global {
-        public static let name = "clipPath"
-    }
-
-    enum mask: SVGTagDefinition, SVGTrait.Attributes.Global, SVGTrait.Attributes.Position, SVGTrait.Attributes.Sizing, SVGTrait.Attributes
-            .Presentation
-    {
-        public static let name = "mask"
-    }
+    enum svg: SVGTagDefinition, HTMLTagDefinition { public static let name = "svg" }
+    enum g: SVGTagDefinition { public static let name = "g" }
+    enum defs: SVGTagDefinition { public static let name = "defs" }
+    enum symbol: SVGTagDefinition { public static let name = "symbol" }
+    enum use: SVGTagDefinition { public static let name = "use" }
+    enum path: SVGTagDefinition { public static let name = "path" }
+    enum rect: SVGTagDefinition { public static let name = "rect" }
+    enum circle: SVGTagDefinition { public static let name = "circle" }
+    enum ellipse: SVGTagDefinition { public static let name = "ellipse" }
+    enum line: SVGTagDefinition { public static let name = "line" }
+    enum polyline: SVGTagDefinition { public static let name = "polyline" }
+    enum polygon: SVGTagDefinition { public static let name = "polygon" }
+    enum text: SVGTagDefinition { public static let name = "text" }
+    enum tspan: SVGTagDefinition { public static let name = "tspan" }
+    enum title: SVGTagDefinition { public static let name = "title" }
+    enum desc: SVGTagDefinition { public static let name = "desc" }
+    enum linearGradient: SVGTagDefinition { public static let name = "linearGradient" }
+    enum radialGradient: SVGTagDefinition { public static let name = "radialGradient" }
+    enum stop: SVGTagDefinition { public static let name = "stop" }
+    enum clipPath: SVGTagDefinition { public static let name = "clipPath" }
+    enum mask: SVGTagDefinition { public static let name = "mask" }
 }
 
 public extension SVG {

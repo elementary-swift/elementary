@@ -55,7 +55,7 @@ struct SVGRenderingTests {
                         SVG.circle(.cx(5), .cy(5), .r(5))
                     }
                     for item in items {
-                        SVG.line(.x1(0), .y1(item), .x2(10), .y2(item))
+                        SVG.line(.x1(0), .y1(SVGLength(item)), .x2(10), .y2(SVGLength(item)))
                     }
                     ForEach(items) { item in
                         SVG.path(.d("M0 \(item) L10 \(item)"))
@@ -103,6 +103,28 @@ struct SVGRenderingTests {
             },
             """
             <svg data-label="Grüße &amp; &quot;SVG&quot;"><text>café</text></svg>
+            """
+        )
+    }
+
+    @Test func rendersSharedAndElementConstrainedSVGAttributes() async throws {
+        try await HTMLAssertEqual(
+            SVG.svg {
+                SVG.defs {
+                    SVG.symbol(.id("icon"), .viewBox(0, 0, 16, 16), .preserveAspectRatio("xMidYMid meet")) {
+                        SVG.path(.d("M0 0h16v16H0z"))
+                    }
+                    SVG.linearGradient(.id("fade"), .x1(0), .y1(0), .x2(1), .y2(1), .gradientUnits("objectBoundingBox")) {
+                        SVG.stop(.offset(.percent(0)), .stopColor("red"), .stopOpacity(0.5))
+                        SVG.stop(.offset(.percent(100)), .stopColor("blue"), .stopOpacity(1))
+                    }
+                    SVG.radialGradient(.id("spot"), .cx(.percent(50)), .cy(.percent(50)), .r(.percent(75))) {
+                        SVG.stop(.offset(0), .stopColor("white"))
+                    }
+                }
+            },
+            """
+            <svg><defs><symbol id="icon" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><path d="M0 0h16v16H0z"></path></symbol><linearGradient id="fade" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop offset="0%" stop-color="red" stop-opacity="0.5"></stop><stop offset="100%" stop-color="blue" stop-opacity="1"></stop></linearGradient><radialGradient id="spot" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="white"></stop></radialGradient></defs></svg>
             """
         )
     }
