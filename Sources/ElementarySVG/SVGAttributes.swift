@@ -215,39 +215,3 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.GradientStop {
         SVGAttribute(name: "stop-opacity", value: value.value)
     }
 }
-
-public extension SVGContent where Tag: SVGTrait.Attributes.Global {
-    /// Adds the specified attribute to the SVG content.
-    /// - Parameters:
-    ///   - attribute: The attribute to add to the content.
-    ///   - condition: If set to false, the attribute will not be added.
-    /// - Returns: New content with the specified attribute added.
-    @inlinable @_disfavoredOverload
-    func attributes(_ attribute: SVGAttribute<Tag>, when condition: Bool = true) -> _AttributedElement<Tag, Self> {
-        if condition {
-            return _AttributedElement(content: self, attribute: attribute)
-        } else {
-            return _AttributedElement(content: self)
-        }
-    }
-
-    /// Adds the specified attributes to the SVG content.
-    /// - Parameters:
-    ///   - attributes: The attributes to add to the content.
-    ///   - condition: If set to false, the attributes will not be added.
-    /// - Returns: New content with the specified attributes added.
-    @inlinable @_disfavoredOverload
-    func attributes(_ attributes: SVGAttribute<Tag>..., when condition: Bool = true) -> _AttributedElement<Tag, Self> {
-        _AttributedElement(content: self, attributes: condition ? attributes : [])
-    }
-
-    /// Adds the specified attributes to the SVG content.
-    /// - Parameters:
-    ///   - attributes: The attributes to add to the content as an array.
-    ///   - condition: If set to false, the attributes will not be added.
-    /// - Returns: New content with the specified attributes added.
-    @inlinable @_disfavoredOverload
-    func attributes(contentsOf attributes: [SVGAttribute<Tag>], when condition: Bool = true) -> _AttributedElement<Tag, Self> {
-        _AttributedElement(content: self, attributes: condition ? attributes : [])
-    }
-}

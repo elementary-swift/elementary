@@ -48,7 +48,10 @@ public extension _Attributed {
     }
 }
 
-public struct _AttributedElement<Tag: MarkupTagDefinition, Content>: _Attributed {
+public struct _AttributedElement<Content: MarkupContent>: _Attributed, MarkupContent {
+    public typealias Body = Never
+    public typealias Tag = Content.Tag
+
     public var content: Content
 
     @available(*, renamed: "_attributes")
@@ -86,18 +89,14 @@ public struct _AttributedElement<Tag: MarkupTagDefinition, Content>: _Attributed
 
 extension _AttributedElement: Sendable where Content: Sendable {}
 
-extension _AttributedElement: MarkupContent where Content: MarkupContent {
-    public typealias Body = Never
-}
-
-public extension MarkupContent where Tag: HTMLTrait.Attributes.Global {
+public extension MarkupContent where Tag: MarkupTrait.AllowsAttributes {
     /// Adds the specified attribute to the element.
     /// - Parameters:
     ///   - attribute: The attribute to add to the element.
     ///   - condition: If set to false, the attribute will not be added.
     /// - Returns: A new element with the specified attribute added.
     @inlinable @_disfavoredOverload
-    func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> _AttributedElement<Tag, Self> {
+    func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> _AttributedElement<Self> {
         if condition {
             return _AttributedElement(content: self, attribute: attribute)
         } else {
@@ -111,7 +110,7 @@ public extension MarkupContent where Tag: HTMLTrait.Attributes.Global {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable @_disfavoredOverload
-    func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> _AttributedElement<Tag, Self> {
+    func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> _AttributedElement<Self> {
         _AttributedElement(content: self, attributes: condition ? attributes : [])
     }
 
@@ -121,7 +120,7 @@ public extension MarkupContent where Tag: HTMLTrait.Attributes.Global {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable @_disfavoredOverload
-    func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> _AttributedElement<Tag, Self> {
+    func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> _AttributedElement<Self> {
         _AttributedElement(content: self, attributes: condition ? attributes : [])
     }
 }

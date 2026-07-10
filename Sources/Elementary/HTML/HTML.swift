@@ -52,7 +52,7 @@ public typealias EmptyHTML = EmptyContent
 /// Prefer ``StringContent`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
 public typealias HTMLText = StringContent
 
-extension _AttributedElement: HTML where Tag: HTMLTagDefinition, Content: HTML {}
+extension _AttributedElement: HTML where Content: HTML {}
 
 /// An HTML attribute that can be applied to an HTML element of the associated tag.
 public typealias HTMLAttribute<Tag: HTMLTagDefinition> = MarkupAttribute<Tag>
