@@ -132,7 +132,16 @@ struct SVGRenderingTests {
                     SVG.clipPath(.id("clip"), .clipPathUnits("objectBoundingBox")) {
                         SVG.path(.d("M0 0h1v1H0z"))
                     }
-                    SVG.mask(.id("mask"), .x(.percent(0)), .y(.percent(0)), .width(.percent(100)), .height(.percent(100)), .maskType("luminance"), .maskUnits("objectBoundingBox"), .maskContentUnits("userSpaceOnUse")) {
+                    SVG.mask(
+                        .id("mask"),
+                        .x(.percent(0)),
+                        .y(.percent(0)),
+                        .width(.percent(100)),
+                        .height(.percent(100)),
+                        .maskType("luminance"),
+                        .maskUnits("objectBoundingBox"),
+                        .maskContentUnits("userSpaceOnUse")
+                    ) {
                         SVG.rect(.width(16), .height(16), .fill("white"), .fillOpacity(0.75))
                     }
                 }
@@ -239,7 +248,8 @@ private func HTMLAssertEqual(_ html: some HTML, _ expected: String, sourceLocati
     try await HTMLAssertEqualAsyncOnly(html, expected, sourceLocation: sourceLocation)
 }
 
-private func HTMLAssertEqualAsyncOnly(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws {
+private func HTMLAssertEqualAsyncOnly(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws
+{
     let asyncText = try await html.renderAsync()
     #expect(expected == asyncText, sourceLocation: sourceLocation)
 }
@@ -254,7 +264,7 @@ private func asyncPathData(_ value: String) async -> String {
 }
 
 private struct CheckmarkIcon: SVGContent {
-    var body: SVG.path {
+    var body: some SVGContent {
         SVG.path(
             .d("M20 6 9 17l-5-5"),
             .fill(.none),

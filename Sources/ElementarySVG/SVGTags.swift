@@ -1,9 +1,5 @@
 import Elementary
 
-public enum SVG {}
-
-public enum SVGTag {}
-
 public extension SVGTag {
     enum svg: SVGTagDefinition, HTMLTagDefinition { public static let name = "svg" }
     enum g: SVGTagDefinition { public static let name = "g" }
@@ -42,13 +38,13 @@ public extension SVG {
     typealias clipPath<Content: SVGContent> = SVGElement<SVGTag.clipPath, Content>
     typealias mask<Content: SVGContent> = SVGElement<SVGTag.mask, Content>
 
-    typealias use = SVGElement<SVGTag.use, EmptyContent>
-    typealias path = SVGElement<SVGTag.path, EmptyContent>
-    typealias rect = SVGElement<SVGTag.rect, EmptyContent>
-    typealias circle = SVGElement<SVGTag.circle, EmptyContent>
-    typealias ellipse = SVGElement<SVGTag.ellipse, EmptyContent>
-    typealias line = SVGElement<SVGTag.line, EmptyContent>
-    typealias polyline = SVGElement<SVGTag.polyline, EmptyContent>
-    typealias polygon = SVGElement<SVGTag.polygon, EmptyContent>
-    typealias stop = SVGElement<SVGTag.stop, EmptyContent>
+    typealias use<Content: SVGContent> = SVGElement<SVGTag.use, Content>
+    typealias path<Content: SVGContent> = SVGElement<SVGTag.path, Content>
+    typealias rect<Content: SVGContent> = SVGElement<SVGTag.rect, Content>
+    typealias circle<Content: SVGContent> = SVGElement<SVGTag.circle, Content>
+    typealias ellipse<Content: SVGContent> = SVGElement<SVGTag.ellipse, Content>
+    typealias line<Content: SVGContent> = SVGElement<SVGTag.line, Content>
+    typealias polyline<Content: SVGContent> = SVGElement<SVGTag.polyline, Content>
+    typealias polygon<Content: SVGContent> = SVGElement<SVGTag.polygon, Content>
+    typealias stop<Content: SVGContent> = SVGElement<SVGTag.stop, Content>
 }
