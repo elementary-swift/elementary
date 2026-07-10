@@ -68,34 +68,6 @@ public extension SVGElement where Content == EmptyContent {
     }
 }
 
-#if !hasFeature(Embedded)
-public extension SVGElement {
-    /// Creates a new SVG element with async content.
-    @inlinable
-    @_unavailableInEmbedded
-    init<AwaitedContent: SVGContent>(
-        _ attributes: SVGAttribute<Tag>...,
-        @ContentBuilder content: @escaping @Sendable () async throws -> AwaitedContent
-    )
-    where Content == AsyncContent<AwaitedContent> {
-        self._attributes = .init(attributes)
-        self.content = AsyncContent(content: content)
-    }
-
-    /// Creates a new SVG element with async content.
-    @inlinable
-    @_unavailableInEmbedded
-    init<AwaitedContent: SVGContent>(
-        attributes: [SVGAttribute<Tag>],
-        @ContentBuilder content: @escaping @Sendable () async throws -> AwaitedContent
-    )
-    where Content == AsyncContent<AwaitedContent> {
-        self._attributes = .init(attributes)
-        self.content = AsyncContent(content: content)
-    }
-}
-#endif
-
 extension SVGElement: Sendable where Content: Sendable {}
 
 extension SVGElement: HTML where Tag == SVGTag.svg {}

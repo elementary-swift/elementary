@@ -194,7 +194,6 @@ struct SVGRenderingTests {
         )
     }
 
-    #if !hasFeature(Embedded)
     @Test func rendersAsyncSVGContent() async throws {
         try await HTMLAssertEqualAsyncOnly(
             SVG.svg {
@@ -206,40 +205,21 @@ struct SVGRenderingTests {
         )
     }
 
-    @Test func rendersAsyncRootSVGInitializer() async throws {
-        try await HTMLAssertEqualAsyncOnly(
-            SVG.svg {
-                let pathData = await asyncPathData("M0 0")
-                SVG.path(.d(pathData))
-            },
-            "<svg><path d=\"M0 0\"></path></svg>"
-        )
-    }
-
-    @Test func rendersAsyncNestedSVGInitializerWithVariadicAttributes() async throws {
-        try await HTMLAssertEqualAsyncOnly(
-            SVG.svg {
-                SVG.g(.id("x")) {
-                    let pathData = await asyncPathData("M1 1")
-                    SVG.path(.d(pathData))
-                }
-            },
-            "<svg><g id=\"x\"><path d=\"M1 1\"></path></g></svg>"
-        )
-    }
-
     @Test func rendersAsyncNestedSVGInitializerWithAttributeArray() async throws {
         try await HTMLAssertEqualAsyncOnly(
             SVG.svg {
                 SVG.g(attributes: [.id("x")]) {
-                    let pathData = await asyncPathData("M2 2")
-                    SVG.path(.d(pathData))
+                    AsyncContent {
+                        let pathData = await asyncPathData("M2 2")
+                        SVG.path(.d(pathData)) {
+                            SVG.title { "Async Path" }
+                        }
+                    }
                 }
             },
-            "<svg><g id=\"x\"><path d=\"M2 2\"></path></g></svg>"
+            "<svg><g id=\"x\"><path d=\"M2 2\"><title>Async Path</title></path></g></svg>"
         )
     }
-    #endif
 }
 
 private func HTMLAssertEqual(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws {
