@@ -109,22 +109,37 @@ struct SVGRenderingTests {
 
     @Test func rendersSharedAndElementConstrainedSVGAttributes() async throws {
         try await HTMLAssertEqual(
-            SVG.svg {
+            SVG.svg(.x(0), .y(0)) {
                 SVG.defs {
-                    SVG.symbol(.id("icon"), .viewBox(0, 0, 16, 16), .preserveAspectRatio("xMidYMid meet")) {
-                        SVG.path(.d("M0 0h16v16H0z"))
+                    SVG.symbol(
+                        .id("icon"),
+                        .x(1),
+                        .y(2),
+                        .width(16),
+                        .height(16),
+                        .viewBox(0, 0, 16, 16),
+                        .preserveAspectRatio("xMidYMid meet")
+                    ) {
+                        SVG.path(.d("M0 0h16v16H0z"), .fillRule("evenodd"), .clipRule("evenodd"))
                     }
                     SVG.linearGradient(.id("fade"), .x1(0), .y1(0), .x2(1), .y2(1), .gradientUnits("objectBoundingBox")) {
                         SVG.stop(.offset(.percent(0)), .stopColor("red"), .stopOpacity(0.5))
-                        SVG.stop(.offset(.percent(100)), .stopColor("blue"), .stopOpacity(1))
+                        SVG.stop(.offset(.percent(100)), .stopColor("blue"), .stopOpacity(1.0))
                     }
                     SVG.radialGradient(.id("spot"), .cx(.percent(50)), .cy(.percent(50)), .r(.percent(75))) {
                         SVG.stop(.offset(0), .stopColor("white"))
                     }
+                    SVG.clipPath(.id("clip"), .clipPathUnits("objectBoundingBox")) {
+                        SVG.path(.d("M0 0h1v1H0z"))
+                    }
+                    SVG.mask(.id("mask"), .x(.percent(0)), .y(.percent(0)), .width(.percent(100)), .height(.percent(100)), .maskType("luminance"), .maskUnits("objectBoundingBox"), .maskContentUnits("userSpaceOnUse")) {
+                        SVG.rect(.width(16), .height(16), .fill("white"), .fillOpacity(0.75))
+                    }
                 }
+                SVG.use(.href("#icon"), .x(4), .y(4), .width(16), .height(16), .stroke("black"), .strokeOpacity(0.25))
             },
             """
-            <svg><defs><symbol id="icon" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><path d="M0 0h16v16H0z"></path></symbol><linearGradient id="fade" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop offset="0%" stop-color="red" stop-opacity="0.5"></stop><stop offset="100%" stop-color="blue" stop-opacity="1"></stop></linearGradient><radialGradient id="spot" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="white"></stop></radialGradient></defs></svg>
+            <svg x="0" y="0"><defs><symbol id="icon" x="1" y="2" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><path d="M0 0h16v16H0z" fill-rule="evenodd" clip-rule="evenodd"></path></symbol><linearGradient id="fade" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop offset="0%" stop-color="red" stop-opacity="0.5"></stop><stop offset="100%" stop-color="blue" stop-opacity="1.0"></stop></linearGradient><radialGradient id="spot" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="white"></stop></radialGradient><clipPath id="clip" clipPathUnits="objectBoundingBox"><path d="M0 0h1v1H0z"></path></clipPath><mask id="mask" x="0%" y="0%" width="100%" height="100%" mask-type="luminance" maskUnits="objectBoundingBox" maskContentUnits="userSpaceOnUse"><rect width="16" height="16" fill="white" fill-opacity="0.75"></rect></mask></defs><use href="#icon" x="4" y="4" width="16" height="16" stroke="black" stroke-opacity="0.25"></use></svg>
             """
         )
     }

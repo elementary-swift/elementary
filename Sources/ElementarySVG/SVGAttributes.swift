@@ -32,6 +32,7 @@ public extension SVGTrait.Attributes {
 }
 
 extension SVGTag.svg: SVGTrait.Attributes.Sizing {}
+extension SVGTag.symbol: SVGTrait.Attributes.Sizing {}
 extension SVGTag.use: SVGTrait.Attributes.Sizing {}
 extension SVGTag.rect: SVGTrait.Attributes.Sizing {}
 extension SVGTag.mask: SVGTrait.Attributes.Sizing {}
@@ -50,6 +51,8 @@ public extension SVGTrait.Attributes {
     protocol Position {}
 }
 
+extension SVGTag.svg: SVGTrait.Attributes.Position {}
+extension SVGTag.symbol: SVGTrait.Attributes.Position {}
 extension SVGTag.use: SVGTrait.Attributes.Position {}
 extension SVGTag.rect: SVGTrait.Attributes.Position {}
 extension SVGTag.text: SVGTrait.Attributes.Position {}
@@ -103,8 +106,20 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.Presentation {
         SVGAttribute(name: "fill", value: value.value)
     }
 
+    static func fillOpacity(_ value: Double) -> Self {
+        SVGAttribute(name: "fill-opacity", value: "\(value)")
+    }
+
+    static func fillRule(_ value: String) -> Self {
+        SVGAttribute(name: "fill-rule", value: value)
+    }
+
     static func stroke(_ value: SVGPaint) -> Self {
         SVGAttribute(name: "stroke", value: value.value)
+    }
+
+    static func strokeOpacity(_ value: Double) -> Self {
+        SVGAttribute(name: "stroke-opacity", value: "\(value)")
     }
 
     static func strokeWidth(_ value: SVGLength) -> Self {
@@ -123,8 +138,8 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.Presentation {
         SVGAttribute(name: "stroke-dasharray", value: value)
     }
 
-    static func opacity(_ value: SVGNumber) -> Self {
-        SVGAttribute(name: "opacity", value: value.value)
+    static func opacity(_ value: Double) -> Self {
+        SVGAttribute(name: "opacity", value: "\(value)")
     }
 
     static func transform(_ value: String) -> Self {
@@ -133,6 +148,10 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.Presentation {
 
     static func color(_ value: SVGPaint) -> Self {
         SVGAttribute(name: "color", value: value.value)
+    }
+
+    static func clipRule(_ value: String) -> Self {
+        SVGAttribute(name: "clip-rule", value: value)
     }
 }
 
@@ -177,6 +196,12 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.Gradient {
 public extension SVGAttribute where Tag == SVGTag.path {
     static func d(_ value: String) -> Self {
         SVGAttribute(name: "d", value: value)
+    }
+}
+
+public extension SVGAttribute where Tag == SVGTag.use {
+    static func href(_ value: String) -> Self {
+        SVGAttribute(name: "href", value: value)
     }
 }
 
@@ -281,7 +306,27 @@ public extension SVGAttribute where Tag == SVGTag.stop {
         SVGAttribute(name: "stop-color", value: value.value)
     }
 
-    static func stopOpacity(_ value: SVGNumber) -> Self {
-        SVGAttribute(name: "stop-opacity", value: value.value)
+    static func stopOpacity(_ value: Double) -> Self {
+        SVGAttribute(name: "stop-opacity", value: "\(value)")
+    }
+}
+
+public extension SVGAttribute where Tag == SVGTag.clipPath {
+    static func clipPathUnits(_ value: String) -> Self {
+        SVGAttribute(name: "clipPathUnits", value: value)
+    }
+}
+
+public extension SVGAttribute where Tag == SVGTag.mask {
+    static func maskType(_ value: String) -> Self {
+        SVGAttribute(name: "mask-type", value: value)
+    }
+
+    static func maskUnits(_ value: String) -> Self {
+        SVGAttribute(name: "maskUnits", value: value)
+    }
+
+    static func maskContentUnits(_ value: String) -> Self {
+        SVGAttribute(name: "maskContentUnits", value: value)
     }
 }
