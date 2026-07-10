@@ -10,22 +10,19 @@ struct SVGRenderingTests {
                 SVG.path(
                     .d("M20 6 9 17l-5-5"),
                     .fill(.none),
-                    .stroke(.currentColor),
+                    .stroke("blue"),
                     .strokeWidth(2),
                     .strokeLinecap("round"),
                     .strokeLinejoin("round")
                 )
             },
             """
-            <svg viewBox="0 0 24 24" width="24" height="24"><title>Checkmark</title><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24"><title>Checkmark</title><path d="M20 6 9 17l-5-5" fill="none" stroke="blue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
             """
         )
     }
-
-    @Test func rendersDirectSVGElementAsPairedElement() async throws {
-        #expect(#"<path d="M0 0"></path>"# == SVGElement<SVGTag.path, EmptyContent>(.d("M0 0")).render())
-        let asyncText = try await SVGElement<SVGTag.path, EmptyContent>(.d("M0 0")).renderAsync()
-        #expect(#"<path d="M0 0"></path>"# == asyncText)
+    @Test func preservesAttributeValuesOnSelfClosingSVGElement() {
+        #expect(#"<path data-label="A&amp;&quot;B" />"# == SVG.path(.custom(name: "data-label", value: "A&\"B")).render())
     }
 
     @Test func rendersNestedGroupsAndAccessibilityText() async throws {
@@ -38,7 +35,7 @@ struct SVGRenderingTests {
                 }
             },
             """
-            <svg viewBox="0 0 10 10" role="img"><title>A &amp; B</title><desc>Use &lt;carefully&gt;</desc><g id="layer"><circle cx="5" cy="5" r="4" fill="red"></circle></g></svg>
+            <svg viewBox="0 0 10 10" role="img"><title>A &amp; B</title><desc>Use &lt;carefully&gt;</desc><g id="layer"><circle cx="5" cy="5" r="4" fill="red" /></g></svg>
             """
         )
     }
@@ -63,7 +60,7 @@ struct SVGRenderingTests {
                 }
             },
             """
-            <svg><rect x="1" y="1" width="8" height="8"></rect><line x1="0" y1="2" x2="10" y2="2"></line><line x1="0" y1="4" x2="10" y2="4"></line><path d="M0 2 L10 2"></path><path d="M0 4 L10 4"></path></svg>
+            <svg><rect x="1" y="1" width="8" height="8" /><line x1="0" y1="2" x2="10" y2="2" /><line x1="0" y1="4" x2="10" y2="4" /><path d="M0 2 L10 2" /><path d="M0 4 L10 4" /></svg>
             """
         )
     }
@@ -76,7 +73,7 @@ struct SVGRenderingTests {
                 }
             },
             """
-            <div><svg viewBox="0 0 1 1"><rect width="1" height="1"></rect></svg></div>
+            <div><svg viewBox="0 0 1 1"><rect width="1" height="1" /></svg></div>
             """
         )
     }
@@ -91,7 +88,7 @@ struct SVGRenderingTests {
                 .attributes(.style(["fill": "none"]))
             },
             """
-            <svg><g class="base active" style="stroke:red;fill:none"><path d="M0 0"></path></g></svg>
+            <svg><g class="base active" style="stroke:red;fill:none"><path d="M0 0" /></g></svg>
             """
         )
     }
@@ -148,7 +145,7 @@ struct SVGRenderingTests {
                 SVG.use(.href("#icon"), .x(4), .y(4), .width(16), .height(16), .stroke("black"), .strokeOpacity(0.25))
             },
             """
-            <svg x="0" y="0"><defs><symbol id="icon" x="1" y="2" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><path d="M0 0h16v16H0z" fill-rule="evenodd" clip-rule="evenodd"></path></symbol><linearGradient id="fade" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop offset="0%" stop-color="red" stop-opacity="0.5"></stop><stop offset="100%" stop-color="blue" stop-opacity="1.0"></stop></linearGradient><radialGradient id="spot" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="white"></stop></radialGradient><clipPath id="clip" clipPathUnits="objectBoundingBox"><path d="M0 0h1v1H0z"></path></clipPath><mask id="mask" x="0%" y="0%" width="100%" height="100%" mask-type="luminance" maskUnits="objectBoundingBox" maskContentUnits="userSpaceOnUse"><rect width="16" height="16" fill="white" fill-opacity="0.75"></rect></mask></defs><use href="#icon" x="4" y="4" width="16" height="16" stroke="black" stroke-opacity="0.25"></use></svg>
+            <svg x="0" y="0"><defs><symbol id="icon" x="1" y="2" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><path d="M0 0h16v16H0z" fill-rule="evenodd" clip-rule="evenodd" /></symbol><linearGradient id="fade" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop offset="0%" stop-color="red" stop-opacity="0.5" /><stop offset="100%" stop-color="blue" stop-opacity="1.0" /></linearGradient><radialGradient id="spot" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="white" /></radialGradient><clipPath id="clip" clipPathUnits="objectBoundingBox"><path d="M0 0h1v1H0z" /></clipPath><mask id="mask" x="0%" y="0%" width="100%" height="100%" mask-type="luminance" maskUnits="objectBoundingBox" maskContentUnits="userSpaceOnUse"><rect width="16" height="16" fill="white" fill-opacity="0.75" /></mask></defs><use href="#icon" x="4" y="4" width="16" height="16" stroke="black" stroke-opacity="0.25" /></svg>
             """
         )
     }
@@ -159,7 +156,7 @@ struct SVGRenderingTests {
                 CheckmarkIcon()
             },
             """
-            <svg><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor"></path></svg>
+            <svg><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" /></svg>
             """
         )
     }
@@ -172,8 +169,49 @@ struct SVGRenderingTests {
                     .attributes(.class("primary"))
             },
             """
-            <svg><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" id="check" class="primary"></path></svg>
+            <svg><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" id="check" class="primary" /></svg>
             """
+        )
+    }
+
+    @Test func selfClosesElementWithKnownEmptyOptionalContent() {
+        #expect(
+            #"<g />"#
+                == SVG.g {
+                    if false {
+                        SVG.path(.d("M0 0"))
+                    }
+                }.render()
+        )
+    }
+
+    @Test func selfClosesElementWithKnownEmptyConditionalContent() {
+        let shouldRender = false
+
+        #expect(
+            #"<g />"#
+                == SVG.g {
+                    if shouldRender {
+                        SVG.path(.d("M0 0"))
+                    } else {
+                        EmptyContent()
+                    }
+                }.render()
+        )
+    }
+
+    @Test func keepsElementPairedWithKnownNonEmptyConditionalContent() {
+        let shouldRender = true
+
+        #expect(
+            #"<g><path d="M0 0" /></g>"#
+                == SVG.g {
+                    if shouldRender {
+                        SVG.path(.d("M0 0"))
+                    } else {
+                        EmptyContent()
+                    }
+                }.render()
         )
     }
 
@@ -187,7 +225,7 @@ struct SVGRenderingTests {
             """
             <svg>
               <g>
-                <path d="M0 0"></path>
+                <path d="M0 0" />
               </g>
             </svg>
             """
@@ -201,7 +239,7 @@ struct SVGRenderingTests {
                     SVG.path(.d("M0 0"))
                 }
             },
-            "<svg><path d=\"M0 0\"></path></svg>"
+            "<svg><path d=\"M0 0\" /></svg>"
         )
     }
 
@@ -248,7 +286,7 @@ private struct CheckmarkIcon: SVGContent {
         SVG.path(
             .d("M20 6 9 17l-5-5"),
             .fill(.none),
-            .stroke(.currentColor)
+            .stroke("currentColor")
         )
     }
 }

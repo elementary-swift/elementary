@@ -53,6 +53,11 @@ extension [UInt8] {
                 for attribute in attributes {
                     append(32)  // space
                     appendString(attribute.name)
+                    if let value = attribute.value {
+                        append(contentsOf: [61, 34])  // ="
+                        appendEscapedAttributeValue(value)
+                        append(34)  // "
+                    }
                 }
             }
             append(contentsOf: [32, 47, 62])  // />

@@ -12,7 +12,14 @@ import Elementary
 ///   }
 /// }
 /// ```
-public protocol SVGContent<Tag>: MarkupContent where Tag: SVGTagDefinition, Body: SVGContent {}
+public protocol SVGContent<Tag>: MarkupContent where Tag: SVGTagDefinition, Body: SVGContent {
+    var _isKnownEmpty: Bool { get }
+}
+
+public extension SVGContent {
+    @inlinable
+    var _isKnownEmpty: Bool { false }
+}
 
 /// A namespace for SVG element types.
 ///

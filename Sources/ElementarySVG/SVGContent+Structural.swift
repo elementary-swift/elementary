@@ -2,19 +2,46 @@ import Elementary
 
 extension Never: SVGContent {}
 
-extension Optional: SVGContent where Wrapped: SVGContent {}
+extension Optional: SVGContent where Wrapped: SVGContent {
+    @inlinable
+    public var _isKnownEmpty: Bool {
+        switch self {
+        case .none: true
+        case let .some(content): content._isKnownEmpty
+        }
+    }
+}
 
-extension EmptyContent: SVGContent {}
+extension EmptyContent: SVGContent {
+    @inlinable
+    public var _isKnownEmpty: Bool { true }
+}
 
 extension StringContent: SVGContent {}
 
-extension Group: SVGContent where Content: SVGContent {}
+extension Group: SVGContent where Content: SVGContent {
+    @inlinable
+    public var _isKnownEmpty: Bool {
+        content._isKnownEmpty
+    }
+}
 
 extension ForEach: SVGContent where Content: SVGContent {}
 
-extension _ConditionalContent: SVGContent where TrueContent: SVGContent, FalseContent: SVGContent {}
+extension _ConditionalContent: SVGContent where TrueContent: SVGContent, FalseContent: SVGContent {
+    @inlinable
+    public var _isKnownEmpty: Bool {
+        switch value {
+        case let .trueContent(content): content._isKnownEmpty
+        case let .falseContent(content): content._isKnownEmpty
+        }
+    }
+}
 
-extension _ArrayContent: SVGContent where Element: SVGContent {}
+extension _ArrayContent: SVGContent where Element: SVGContent {
+    @inlinable
+    public var _isKnownEmpty: Bool { value.isEmpty }
+}
 
 extension _TupleContent2: SVGContent where V0: SVGContent, V1: SVGContent {}
 

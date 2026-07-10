@@ -10,7 +10,13 @@ extension SVGElement {
     ) {
         svg._attributes.append(context.attributes)
 
-        renderer.appendToken(.startTag(Tag.name, attributes: svg._attributes.flattened(), isUnpaired: false, type: .block))
+        let attributes = svg._attributes.flattened()
+        guard !svg.content._isKnownEmpty else {
+            renderer.appendToken(.selfClosingTag(Tag.name, attributes: attributes))
+            return
+        }
+
+        renderer.appendToken(.startTag(Tag.name, attributes: attributes, isUnpaired: false, type: .block))
         Content._render(svg.content, into: &renderer, with: .emptyContext)
         renderer.appendToken(.endTag(Tag.name, type: .block))
     }
@@ -24,9 +30,13 @@ extension SVGElement {
     ) async throws {
         svg._attributes.append(context.attributes)
 
-        try await renderer.appendToken(
-            .startTag(Tag.name, attributes: svg._attributes.flattened(), isUnpaired: false, type: .block)
-        )
+        let attributes = svg._attributes.flattened()
+        guard !svg.content._isKnownEmpty else {
+            try await renderer.appendToken(.selfClosingTag(Tag.name, attributes: attributes))
+            return
+        }
+
+        try await renderer.appendToken(.startTag(Tag.name, attributes: attributes, isUnpaired: false, type: .block))
         try await Content._render(svg.content, into: &renderer, with: .emptyContext)
         try await renderer.appendToken(.endTag(Tag.name, type: .block))
     }

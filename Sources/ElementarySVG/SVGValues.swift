@@ -74,5 +74,4 @@ public struct SVGPaint: ExpressibleByStringLiteral, Sendable {
     }
 
     public static var none: Self { .init("none") }
-    public static var currentColor: Self { .init("currentColor") }
 }
