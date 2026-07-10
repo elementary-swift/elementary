@@ -32,28 +32,3 @@ public struct HTMLVoidElement<Tag: HTMLTrait.Unpaired>: _Attributed, HTML {
 }
 
 extension HTMLVoidElement: Sendable {}
-
-extension HTMLVoidElement: _Renderable {
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        html._attributes.append(context.attributes)
-        renderer.appendToken(.startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType))
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        html._attributes.append(context.attributes)
-        try await renderer.appendToken(
-            .startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType)
-        )
-    }
-}
