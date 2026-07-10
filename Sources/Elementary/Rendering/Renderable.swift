@@ -8,13 +8,12 @@ public protocol _Renderable {
         with context: consuming _RenderingContext
     )
 
-    #if !hasFeature(Embedded)
+    @_unavailableInEmbedded
     static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) async throws
-    #endif
 }
 
 public struct _RenderingContext {
