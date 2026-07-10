@@ -1,3 +1,11 @@
+#if !hasFeature(Embedded)
+extension HTMLTagDefinition {
+    @inlinable
+    static var renderingType: _HTMLRenderToken.RenderingType {
+        _rendersInline ? .inline : .block
+    }
+}
+
 extension HTMLElement {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
@@ -29,7 +37,7 @@ extension HTMLElement {
     }
 }
 
-extension HTMLVoidElement: _Renderable {
+extension HTMLVoidElement {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
         _ html: consuming Self,
@@ -99,3 +107,5 @@ extension HTMLRaw {
         try await renderer.appendToken(.raw(html.text))
     }
 }
+
+#endif

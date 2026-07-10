@@ -57,11 +57,6 @@ public enum _AttributeStorage: Sendable, Equatable {
         }
     }
 
-    @inlinable
-    public mutating func append(_ context: consuming _RenderingContext) {
-        append(context.attributes)
-    }
-
     public consuming func flattened() -> _MergedAttributes {
         .init(storage: self)
     }
@@ -152,12 +147,4 @@ private func nextflattenedAttribute(
 
 extension _StoredAttribute {
     fileprivate static let blankedOut = _StoredAttribute(name: "")
-}
-
-extension _RenderingContext {
-    @usableFromInline
-    mutating func prependAttributes(_ attributes: consuming _AttributeStorage) {
-        attributes.append(self.attributes)
-        self.attributes = attributes
-    }
 }

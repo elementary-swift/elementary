@@ -1,3 +1,4 @@
+#if !hasFeature(Embedded)
 extension Optional: _Renderable where Wrapped: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
@@ -437,4 +438,5 @@ extension _TupleContent: _Renderable where repeat each Child: _Renderable {
         repeat try await renderElement(each html.value, &renderer)
     }
 }
+#endif
 #endif

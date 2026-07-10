@@ -1,3 +1,4 @@
+#if !hasFeature(Embedded)
 public extension MarkupContent {
     @inlinable
     static func _render<Renderer: _HTMLRendering>(
@@ -41,3 +42,12 @@ extension _AttributedElement: _Renderable where Content: _Renderable {
         try await Content._render(html.content, into: &renderer, with: context)
     }
 }
+
+extension _RenderingContext {
+    @usableFromInline
+    mutating func prependAttributes(_ attributes: consuming _AttributeStorage) {
+        attributes.append(self.attributes)
+        self.attributes = attributes
+    }
+}
+#endif

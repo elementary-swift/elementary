@@ -16,7 +16,7 @@
 ///   }
 /// }
 /// ```
-public protocol HTML<Tag>: MarkupContent, _Renderable where Tag: HTMLTagDefinition, Body: HTML {}
+public protocol HTML<Tag>: MarkupContent where Tag: HTMLTagDefinition, Body: HTML {}
 
 /// A type that represents an HTML tag.
 public protocol HTMLTagDefinition: MarkupTagDefinition {
@@ -31,13 +31,6 @@ extension Never: HTMLTagDefinition {}
 public extension HTMLTagDefinition {
     @inlinable
     static var _rendersInline: Bool { false }
-}
-
-extension HTMLTagDefinition {
-    @inlinable
-    static var renderingType: _HTMLRenderToken.RenderingType {
-        _rendersInline ? .inline : .block
-    }
 }
 
 public extension HTMLTagDefinition where Self: HTMLTrait.RenderedInline {
