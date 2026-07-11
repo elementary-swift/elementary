@@ -73,7 +73,6 @@ public typealias canvas<Content: HTML> = HTMLElement<HTMLTag.canvas, Content>
 public typealias figcaption<Content: HTML> = HTMLElement<HTMLTag.figcaption, Content>
 public typealias figure<Content: HTML> = HTMLElement<HTMLTag.figure, Content>
 public typealias picture<Content: HTML> = HTMLElement<HTMLTag.picture, Content>
-public typealias svg<Content: HTML> = HTMLElement<HTMLTag.svg, Content>
 
 // Audio / Video
 public typealias audio<Content: HTML> = HTMLElement<HTMLTag.audio, Content>
