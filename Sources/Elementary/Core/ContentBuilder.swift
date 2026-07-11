@@ -1,48 +1,52 @@
-/// A result builder for building HTML components.
-@resultBuilder public struct HTMLBuilder {
+/// A result builder for building content components.
+@resultBuilder public struct ContentBuilder {
     @inlinable
-    public static func buildExpression<Content>(_ content: Content) -> Content where Content: HTML {
+    public static func buildExpression<Content>(_ content: Content) -> Content {
         content
     }
 
     @inlinable
-    public static func buildExpression(_ content: String) -> HTMLText {
-        HTMLText(content)
+    public static func buildExpression(_ content: String) -> StringContent {
+        StringContent(content)
     }
 
     @inlinable
-    public static func buildBlock() -> EmptyHTML {
-        EmptyHTML()
+    public static func buildBlock() -> EmptyContent {
+        EmptyContent()
     }
 
     @inlinable
-    public static func buildBlock<Content>(_ content: Content) -> Content where Content: HTML {
+    public static func buildBlock<Content>(_ content: Content) -> Content {
         content
     }
 
     @inlinable
-    public static func buildIf<Content>(_ content: Content?) -> Content? where Content: HTML {
+    public static func buildIf<Content>(_ content: Content?) -> Content? {
         content
     }
 
     @inlinable
-    public static func buildEither<TrueContent: HTML, FalseContent: HTML>(first: TrueContent) -> _HTMLConditional<TrueContent, FalseContent>
-    {
-        _HTMLConditional(.trueContent(first))
+    public static func buildEither<TrueContent, FalseContent>(first: TrueContent) -> _ConditionalContent<TrueContent, FalseContent> {
+        _ConditionalContent(.trueContent(first))
     }
 
     @inlinable
-    public static func buildEither<TrueContent: HTML, FalseContent: HTML>(
+    public static func buildEither<TrueContent, FalseContent>(
         second: FalseContent
-    ) -> _HTMLConditional<TrueContent, FalseContent> {
-        _HTMLConditional(.falseContent(second))
+    ) -> _ConditionalContent<TrueContent, FalseContent> {
+        _ConditionalContent(.falseContent(second))
     }
 
     @inlinable
-    public static func buildArray<Element: HTML>(_ components: [Element]) -> _HTMLArray<Element> {
-        _HTMLArray(components)
+    public static func buildArray<Element>(_ components: [Element]) -> _ArrayContent<Element> {
+        _ArrayContent(components)
     }
 }
+
+/// Compatibility alias for ``ContentBuilder``.
+///
+/// Prefer ``ContentBuilder`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
+public typealias HTMLBuilder = ContentBuilder
 
 public extension HTML where Body == Never {
     var body: Never {
@@ -86,8 +90,8 @@ extension Optional: HTML where Wrapped: HTML {
     }
 }
 
-/// A type that represents empty HTML.
-public struct EmptyHTML: HTML, Sendable {
+/// A type that represents empty content.
+public struct EmptyContent: HTML, Sendable {
     public init() {}
 
     @inlinable
@@ -110,10 +114,15 @@ public struct EmptyHTML: HTML, Sendable {
     }
 }
 
+/// Compatibility alias for ``EmptyContent``.
+///
+/// Prefer ``EmptyContent`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
+public typealias EmptyHTML = EmptyContent
+
 /// A type that represents text content in an HTML document.
 ///
 /// The text will be escaped when rendered.
-public struct HTMLText: HTML, Sendable {
+public struct StringContent: HTML, Sendable {
     /// The text content.
     public var text: String
 
@@ -145,10 +154,15 @@ public struct HTMLText: HTML, Sendable {
     }
 }
 
-extension _HTMLConditional.Value: Sendable where TrueContent: Sendable, FalseContent: Sendable {}
-extension _HTMLConditional: Sendable where _HTMLConditional.Value: Sendable {}
+/// Compatibility alias for ``StringContent``.
+///
+/// Prefer ``StringContent`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
+public typealias HTMLText = StringContent
 
-public struct _HTMLConditional<TrueContent: HTML, FalseContent: HTML>: HTML {
+extension _ConditionalContent.Value: Sendable where TrueContent: Sendable, FalseContent: Sendable {}
+extension _ConditionalContent: Sendable where _ConditionalContent.Value: Sendable {}
+
+public struct _ConditionalContent<TrueContent, FalseContent> {
     public enum Value {
         case trueContent(TrueContent)
         case falseContent(FalseContent)
@@ -160,6 +174,10 @@ public struct _HTMLConditional<TrueContent: HTML, FalseContent: HTML>: HTML {
     public init(_ value: Value) {
         self.value = value
     }
+}
+
+extension _ConditionalContent: HTML where TrueContent: HTML, FalseContent: HTML {
+    public typealias Body = Never
 
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
@@ -187,19 +205,29 @@ public struct _HTMLConditional<TrueContent: HTML, FalseContent: HTML>: HTML {
     }
 }
 
-public extension _HTMLConditional where TrueContent.Tag == FalseContent.Tag {
+public extension _ConditionalContent where TrueContent: HTML, FalseContent: HTML, TrueContent.Tag == FalseContent.Tag {
     typealias Tag = TrueContent.Tag
 }
 
-extension _HTMLArray: Sendable where Element: Sendable {}
+/// Deprecated compatibility alias for ``_ConditionalContent``.
+///
+/// Prefer ``_ConditionalContent`` for new code. This alias is kept for the upgrade path and will be removed in a future release.
+@available(*, deprecated, renamed: "_ConditionalContent")
+public typealias _HTMLConditional<TrueContent, FalseContent> = _ConditionalContent<TrueContent, FalseContent>
 
-public struct _HTMLArray<Element: HTML>: HTML {
+extension _ArrayContent: Sendable where Element: Sendable {}
+
+public struct _ArrayContent<Element> {
     public let value: [Element]
 
     @inlinable
     public init(_ value: [Element]) {
         self.value = value
     }
+}
+
+extension _ArrayContent: HTML where Element: HTML {
+    public typealias Body = Never
 
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
@@ -228,3 +256,9 @@ public struct _HTMLArray<Element: HTML>: HTML {
         }
     }
 }
+
+/// Deprecated compatibility alias for ``_ArrayContent``.
+///
+/// Prefer ``_ArrayContent`` for new code. This alias is kept for the upgrade path and will be removed in a future release.
+@available(*, deprecated, renamed: "_ArrayContent")
+public typealias _HTMLArray<Element> = _ArrayContent<Element>

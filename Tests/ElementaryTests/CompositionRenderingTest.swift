@@ -93,7 +93,7 @@ struct MyRTLPage: HTMLDocument {
     var dir: HTMLAttributeValue.Direction = .rtl
 
     var head: some HTML {
-        EmptyHTML()
+        EmptyContent()
     }
 
     var body: some HTML {
