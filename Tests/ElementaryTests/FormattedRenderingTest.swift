@@ -158,6 +158,23 @@ struct FormatedRenderingTests {
         )
     }
 
+    @Test func testFormatsInlineElementWithTextAfterBlockSibling() {
+        // An inline element (span) that contains text and follows a block sibling (p)
+        // inside a block parent. The text must stay inside the inline element.
+        HTMLFormattedAssertEqual(
+            div {
+                p { "a" }
+                span { "hi" }
+            },
+            """
+            <div>
+              <p>a</p>
+              <span>hi</span>
+            </div>
+            """
+        )
+    }
+
     @Test func testFormatsAttributes() {
         HTMLFormattedAssertEqual(
             div(.id("1")) {
