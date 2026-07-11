@@ -59,7 +59,6 @@ public extension HTMLDocument {
     var bodyAttributes: [HTMLAttribute<HTMLTag.body>] { [] }
 }
 
-#if !hasFeature(Embedded)
 // NOTE: this is a bit messy after the renaming of var content to var body
 public extension HTMLDocument {
     static func _render<Renderer: _HTMLRendering>(
@@ -74,6 +73,7 @@ public extension HTMLDocument {
         render(html.__body, into: &renderer, with: context)
     }
 
+    #if !hasFeature(Embedded)
     @_unavailableInEmbedded
     static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
@@ -90,6 +90,7 @@ public extension HTMLDocument {
 
         try await render(html.__body, into: &renderer, with: context)
     }
+    #endif
 
     @ContentBuilder var __body: some HTML {
         HTMLRaw("<!DOCTYPE html>")
@@ -104,4 +105,3 @@ public extension HTMLDocument {
         .attributes(.dir(dir), when: dir.value != defaultUndefinedDirection)
     }
 }
-#endif

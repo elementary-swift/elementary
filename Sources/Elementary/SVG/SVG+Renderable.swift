@@ -1,4 +1,3 @@
-#if !hasFeature(Embedded)
 extension SVGTagDefinition {
     @inlinable
     static var renderingType: _HTMLRenderToken.RenderingType {
@@ -26,6 +25,7 @@ extension SVGElement {
         renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -45,5 +45,5 @@ extension SVGElement {
         try await Content._render(svg.content, into: &renderer, with: .emptyContext)
         try await renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
+    #endif
 }
-#endif

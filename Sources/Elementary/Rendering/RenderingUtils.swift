@@ -1,4 +1,3 @@
-#if !hasFeature(Embedded)
 extension _RenderingContext {
     @inline(__always)
     @usableFromInline
@@ -139,4 +138,3 @@ extension [UInt8] {
         }
     }
 }
-#endif

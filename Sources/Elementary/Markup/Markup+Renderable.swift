@@ -1,4 +1,3 @@
-#if !hasFeature(Embedded)
 public extension MarkupContent {
     @inlinable
     static func _render<Renderer: _HTMLRendering>(
@@ -9,6 +8,7 @@ public extension MarkupContent {
         Body._render(html.body, into: &renderer, with: context)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     static func _render<Renderer: _AsyncHTMLRendering>(
@@ -18,6 +18,7 @@ public extension MarkupContent {
     ) async throws {
         try await Body._render(html.body, into: &renderer, with: context)
     }
+    #endif
 }
 
 extension _AttributedContent: _Renderable where Content: _Renderable {
@@ -31,6 +32,7 @@ extension _AttributedContent: _Renderable where Content: _Renderable {
         Content._render(html.content, into: &renderer, with: context)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -41,6 +43,7 @@ extension _AttributedContent: _Renderable where Content: _Renderable {
         context.prependAttributes(html._attributes)
         try await Content._render(html.content, into: &renderer, with: context)
     }
+    #endif
 }
 
 extension _RenderingContext {
@@ -50,4 +53,3 @@ extension _RenderingContext {
         self.attributes = attributes
     }
 }
-#endif

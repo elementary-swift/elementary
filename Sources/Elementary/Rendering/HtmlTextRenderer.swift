@@ -2,7 +2,6 @@
 import Foundation
 #endif
 
-#if !hasFeature(Embedded)
 struct HTMLTextRenderer: _HTMLRendering {
     private var result: [UInt8] = []
 
@@ -20,6 +19,7 @@ struct HTMLTextRenderer: _HTMLRendering {
     }
 }
 
+#if !hasFeature(Embedded)
 struct PrettyHTMLTextRenderer {
     let indentation: String
 

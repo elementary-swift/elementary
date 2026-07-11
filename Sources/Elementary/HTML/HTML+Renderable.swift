@@ -1,4 +1,3 @@
-#if !hasFeature(Embedded)
 extension HTMLTagDefinition {
     @inlinable
     static var renderingType: _HTMLRenderToken.RenderingType {
@@ -20,6 +19,7 @@ extension HTMLElement {
         renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -35,6 +35,7 @@ extension HTMLElement {
         try await Content._render(html.content, into: &renderer, with: .emptyContext)
         try await renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
+    #endif
 }
 
 extension HTMLVoidElement {
@@ -48,6 +49,7 @@ extension HTMLVoidElement {
         renderer.appendToken(.startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType))
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -60,6 +62,7 @@ extension HTMLVoidElement {
             .startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType)
         )
     }
+    #endif
 }
 
 extension HTMLComment {
@@ -73,6 +76,7 @@ extension HTMLComment {
         renderer.appendToken(.comment(html.text))
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -83,6 +87,7 @@ extension HTMLComment {
         context.assertNoAttributes(self)
         try await renderer.appendToken(.comment(html.text))
     }
+    #endif
 }
 
 extension HTMLRaw {
@@ -96,6 +101,7 @@ extension HTMLRaw {
         renderer.appendToken(.raw(html.text))
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -106,6 +112,6 @@ extension HTMLRaw {
         context.assertNoAttributes(self)
         try await renderer.appendToken(.raw(html.text))
     }
+    #endif
 }
 
-#endif

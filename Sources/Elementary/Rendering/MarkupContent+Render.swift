@@ -1,4 +1,3 @@
-#if !hasFeature(Embedded)
 public extension MarkupContent {
     /// Renders the HTML content into a single string.
     /// - Returns: The rendered HTML content.
@@ -10,7 +9,10 @@ public extension MarkupContent {
         Self._render(self, into: &renderer, with: .emptyContext)
         return renderer.collect()
     }
+}
 
+#if !hasFeature(Embedded)
+public extension MarkupContent {
     /// Renders the HTML content into a formatted string.
     /// - Returns: The rendered HTML content.
     ///

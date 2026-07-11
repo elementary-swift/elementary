@@ -1,4 +1,3 @@
-#if !hasFeature(Embedded)
 /// A type that represents markup content that can be rendered.
 ///
 /// This protocol contains the namespace-neutral rendering machinery shared by HTML and SVG.
@@ -9,12 +8,14 @@ public protocol _Renderable {
         with context: consuming _RenderingContext
     )
 
+    #if !hasFeature(Embedded)
     @_unavailableInEmbedded
     static func _render<Renderer: _AsyncHTMLRendering>(
         _ html: consuming Self,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
     ) async throws
+    #endif
 }
 
 public struct _RenderingContext {
@@ -43,10 +44,8 @@ public protocol _HTMLRendering {
     mutating func appendToken(_ token: consuming _HTMLRenderToken)
 }
 
+#if !hasFeature(Embedded)
 public protocol _AsyncHTMLRendering {
     mutating func appendToken(_ token: consuming _HTMLRenderToken) async throws
 }
-#else
-// empty protocol for embedded
-public typealias _Renderable = Any
 #endif

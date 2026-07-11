@@ -1,4 +1,3 @@
-#if !hasFeature(Embedded)
 extension Optional: _Renderable where Wrapped: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
@@ -12,6 +11,7 @@ extension Optional: _Renderable where Wrapped: _Renderable {
         }
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -24,6 +24,7 @@ extension Optional: _Renderable where Wrapped: _Renderable {
         case let .some(value): try await Wrapped._render(value, into: &renderer, with: context)
         }
     }
+    #endif
 }
 
 extension EmptyContent: _Renderable {
@@ -36,6 +37,7 @@ extension EmptyContent: _Renderable {
         context.assertNoAttributes(self)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -45,6 +47,7 @@ extension EmptyContent: _Renderable {
     ) async throws {
         context.assertNoAttributes(self)
     }
+    #endif
 }
 
 extension StringContent: _Renderable {
@@ -58,6 +61,7 @@ extension StringContent: _Renderable {
         renderer.appendToken(.text(html.text))
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -68,6 +72,7 @@ extension StringContent: _Renderable {
         context.assertNoAttributes(self)
         try await renderer.appendToken(.text(html.text))
     }
+    #endif
 }
 
 extension Group: _Renderable where Content: _Renderable {
@@ -81,6 +86,7 @@ extension Group: _Renderable where Content: _Renderable {
         Content._render(html.content, into: &renderer, with: context)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -91,6 +97,7 @@ extension Group: _Renderable where Content: _Renderable {
         context.assertNoAttributes(self)
         try await Content._render(html.content, into: &renderer, with: context)
     }
+    #endif
 }
 
 extension ForEach: _Renderable where Content: _Renderable {
@@ -107,6 +114,7 @@ extension ForEach: _Renderable where Content: _Renderable {
         }
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -120,6 +128,7 @@ extension ForEach: _Renderable where Content: _Renderable {
             try await Content._render(html._contentBuilder(element), into: &renderer, with: copy context)
         }
     }
+    #endif
 }
 
 extension _ConditionalContent: _Renderable where TrueContent: _Renderable, FalseContent: _Renderable {
@@ -135,6 +144,7 @@ extension _ConditionalContent: _Renderable where TrueContent: _Renderable, False
         }
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -147,6 +157,7 @@ extension _ConditionalContent: _Renderable where TrueContent: _Renderable, False
         case let .falseContent(content): try await FalseContent._render(content, into: &renderer, with: context)
         }
     }
+    #endif
 }
 
 extension _ArrayContent: _Renderable where Element: _Renderable {
@@ -163,6 +174,7 @@ extension _ArrayContent: _Renderable where Element: _Renderable {
         }
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -176,6 +188,7 @@ extension _ArrayContent: _Renderable where Element: _Renderable {
             try await Element._render(element, into: &renderer, with: copy context)
         }
     }
+    #endif
 }
 
 extension _TupleContent2: _Renderable where V0: _Renderable, V1: _Renderable {
@@ -191,6 +204,7 @@ extension _TupleContent2: _Renderable where V0: _Renderable, V1: _Renderable {
         V1._render(html.v1, into: &renderer, with: copy context)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -203,6 +217,7 @@ extension _TupleContent2: _Renderable where V0: _Renderable, V1: _Renderable {
         try await V0._render(html.v0, into: &renderer, with: copy context)
         try await V1._render(html.v1, into: &renderer, with: copy context)
     }
+    #endif
 }
 
 extension _TupleContent3: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable {
@@ -219,6 +234,7 @@ extension _TupleContent3: _Renderable where V0: _Renderable, V1: _Renderable, V2
         V2._render(html.v2, into: &renderer, with: copy context)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -232,6 +248,7 @@ extension _TupleContent3: _Renderable where V0: _Renderable, V1: _Renderable, V2
         try await V1._render(html.v1, into: &renderer, with: copy context)
         try await V2._render(html.v2, into: &renderer, with: copy context)
     }
+    #endif
 }
 
 extension _TupleContent4: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable {
@@ -249,6 +266,7 @@ extension _TupleContent4: _Renderable where V0: _Renderable, V1: _Renderable, V2
         V3._render(html.v3, into: &renderer, with: copy context)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -263,6 +281,7 @@ extension _TupleContent4: _Renderable where V0: _Renderable, V1: _Renderable, V2
         try await V2._render(html.v2, into: &renderer, with: copy context)
         try await V3._render(html.v3, into: &renderer, with: copy context)
     }
+    #endif
 }
 
 extension _TupleContent5: _Renderable where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable, V4: _Renderable {
@@ -281,6 +300,7 @@ extension _TupleContent5: _Renderable where V0: _Renderable, V1: _Renderable, V2
         V4._render(html.v4, into: &renderer, with: copy context)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -296,6 +316,7 @@ extension _TupleContent5: _Renderable where V0: _Renderable, V1: _Renderable, V2
         try await V3._render(html.v3, into: &renderer, with: copy context)
         try await V4._render(html.v4, into: &renderer, with: copy context)
     }
+    #endif
 }
 
 extension _TupleContent6: _Renderable
@@ -316,6 +337,7 @@ where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable, V4: _R
         V5._render(html.v5, into: &renderer, with: copy context)
     }
 
+    #if !hasFeature(Embedded)
     @inlinable
     @_unavailableInEmbedded
     public static func _render<Renderer: _AsyncHTMLRendering>(
@@ -332,6 +354,7 @@ where V0: _Renderable, V1: _Renderable, V2: _Renderable, V3: _Renderable, V4: _R
         try await V4._render(html.v4, into: &renderer, with: copy context)
         try await V5._render(html.v5, into: &renderer, with: copy context)
     }
+    #endif
 }
 
 #if !hasFeature(Embedded)
@@ -438,5 +461,4 @@ extension _TupleContent: _Renderable where repeat each Child: _Renderable {
         repeat try await renderElement(each html.value, &renderer)
     }
 }
-#endif
 #endif
