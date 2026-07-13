@@ -12,8 +12,8 @@ struct SVGRenderingTests {
                     .fill(.none),
                     .stroke("blue"),
                     .strokeWidth(2),
-                    .strokeLinecap("round"),
-                    .strokeLinejoin("round")
+                    .strokeLinecap(.round),
+                    .strokeLinejoin(.round)
                 )
             },
             """
@@ -52,7 +52,7 @@ struct SVGRenderingTests {
                         SVG.circle(.cx(5), .cy(5), .r(5))
                     }
                     for item in items {
-                        SVG.line(.x1(0), .y1(SVGLength(item)), .x2(10), .y2(SVGLength(item)))
+                        SVG.line(.x1(0), .y1(SVGAttributeValue.Length(item)), .x2(10), .y2(SVGAttributeValue.Length(item)))
                     }
                     ForEach(items) { item in
                         SVG.path(.d("M0 \(item) L10 \(item)"))
@@ -115,18 +115,18 @@ struct SVGRenderingTests {
                         .width(16),
                         .height(16),
                         .viewBox(0, 0, 16, 16),
-                        .preserveAspectRatio("xMidYMid meet")
+                        .preserveAspectRatio(.xMidYMid())
                     ) {
-                        SVG.path(.d("M0 0h16v16H0z"), .fillRule("evenodd"), .clipRule("evenodd"))
+                        SVG.path(.d("M0 0h16v16H0z"), .fillRule(.evenodd), .clipRule(.evenodd))
                     }
-                    SVG.linearGradient(.id("fade"), .x1(0), .y1(0), .x2(1), .y2(1), .gradientUnits("objectBoundingBox")) {
+                    SVG.linearGradient(.id("fade"), .x1(0), .y1(0), .x2(1), .y2(1), .gradientUnits(.objectBoundingBox)) {
                         SVG.stop(.offset(.percent(0)), .stopColor("red"), .stopOpacity(0.5))
                         SVG.stop(.offset(.percent(100)), .stopColor("blue"), .stopOpacity(1.0))
                     }
                     SVG.radialGradient(.id("spot"), .cx(.percent(50)), .cy(.percent(50)), .r(.percent(75))) {
                         SVG.stop(.offset(0), .stopColor("white"))
                     }
-                    SVG.clipPath(.id("clip"), .clipPathUnits("objectBoundingBox")) {
+                    SVG.clipPath(.id("clip"), .clipPathUnits(.objectBoundingBox)) {
                         SVG.path(.d("M0 0h1v1H0z"))
                     }
                     SVG.mask(
@@ -135,9 +135,9 @@ struct SVGRenderingTests {
                         .y(.percent(0)),
                         .width(.percent(100)),
                         .height(.percent(100)),
-                        .maskType("luminance"),
-                        .maskUnits("objectBoundingBox"),
-                        .maskContentUnits("userSpaceOnUse")
+                        .maskType(.luminance),
+                        .maskUnits(.objectBoundingBox),
+                        .maskContentUnits(.userSpaceOnUse)
                     ) {
                         SVG.rect(.width(16), .height(16), .fill("white"), .fillOpacity(0.75))
                     }
@@ -145,7 +145,7 @@ struct SVGRenderingTests {
                 SVG.use(.href("#icon"), .x(4), .y(4), .width(16), .height(16), .stroke("black"), .strokeOpacity(0.25))
             },
             """
-            <svg x="0" y="0"><defs><symbol id="icon" x="1" y="2" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet"><path d="M0 0h16v16H0z" fill-rule="evenodd" clip-rule="evenodd" /></symbol><linearGradient id="fade" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop offset="0%" stop-color="red" stop-opacity="0.5" /><stop offset="100%" stop-color="blue" stop-opacity="1.0" /></linearGradient><radialGradient id="spot" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="white" /></radialGradient><clipPath id="clip" clipPathUnits="objectBoundingBox"><path d="M0 0h1v1H0z" /></clipPath><mask id="mask" x="0%" y="0%" width="100%" height="100%" mask-type="luminance" maskUnits="objectBoundingBox" maskContentUnits="userSpaceOnUse"><rect width="16" height="16" fill="white" fill-opacity="0.75" /></mask></defs><use href="#icon" x="4" y="4" width="16" height="16" stroke="black" stroke-opacity="0.25" /></svg>
+            <svg x="0" y="0"><defs><symbol id="icon" x="1" y="2" width="16" height="16" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid"><path d="M0 0h16v16H0z" fill-rule="evenodd" clip-rule="evenodd" /></symbol><linearGradient id="fade" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop offset="0%" stop-color="red" stop-opacity="0.5" /><stop offset="100%" stop-color="blue" stop-opacity="1.0" /></linearGradient><radialGradient id="spot" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="white" /></radialGradient><clipPath id="clip" clipPathUnits="objectBoundingBox"><path d="M0 0h1v1H0z" /></clipPath><mask id="mask" x="0%" y="0%" width="100%" height="100%" mask-type="luminance" maskUnits="objectBoundingBox" maskContentUnits="userSpaceOnUse"><rect width="16" height="16" fill="white" fill-opacity="0.75" /></mask></defs><use href="#icon" x="4" y="4" width="16" height="16" stroke="black" stroke-opacity="0.25" /></svg>
             """
         )
     }
@@ -154,7 +154,7 @@ struct SVGRenderingTests {
         try await HTMLAssertEqual(
             SVG.svg {
                 SVG.defs {
-                    SVG.clipPath(.id("clip"), .clipPathUnits("userSpaceOnUse"), .transform("translate(1 2)")) {
+                    SVG.clipPath(.id("clip"), .clipPathUnits(.userSpaceOnUse), .transform("translate(1 2)")) {
                         SVG.rect(.width(8), .height(8))
                     }
                     SVG.mask(.id("mask")) {
@@ -183,9 +183,9 @@ struct SVGRenderingTests {
                 SVG.defs {
                     SVG.linearGradient(
                         .id("shine"),
-                        .gradientUnits("userSpaceOnUse"),
+                        .gradientUnits(.userSpaceOnUse),
                         .gradientTransform("rotate(45)"),
-                        .spreadMethod("reflect")
+                        .spreadMethod(.reflect)
                     ) {
                         SVG.stop(.offset(0), .stopColor("white"))
                     }
@@ -197,7 +197,7 @@ struct SVGRenderingTests {
                         .fx(.percent(25)),
                         .fy(.percent(30)),
                         .fr(.percent(5)),
-                        .spreadMethod("repeat")
+                        .spreadMethod(.repeat)
                     ) {
                         SVG.stop(.offset(.percent(100)), .stopColor("black"))
                     }
@@ -232,9 +232,9 @@ struct SVGRenderingTests {
                         .width(4),
                         .height(4),
                         .viewBox(0, 0, 4, 4),
-                        .preserveAspectRatio("xMidYMid meet"),
-                        .patternUnits("userSpaceOnUse"),
-                        .patternContentUnits("userSpaceOnUse"),
+                        .preserveAspectRatio(.xMidYMid()),
+                        .patternUnits(.userSpaceOnUse),
+                        .patternContentUnits(.userSpaceOnUse),
                         .patternTransform("rotate(45)")
                     ) {
                         SVG.rect(.width(4), .height(4), .fill("gold"))
@@ -243,10 +243,10 @@ struct SVGRenderingTests {
                         .id("arrow"),
                         .markerWidth(6),
                         .markerHeight(6),
-                        .markerUnits("strokeWidth"),
+                        .markerUnits(.strokeWidth),
                         .refX(5),
                         .refY(3),
-                        .orient("auto-start-reverse"),
+                        .orient(.autoStartReverse),
                         .viewBox(0, 0, 6, 6),
                         .fill("currentColor")
                     ) {
@@ -259,13 +259,27 @@ struct SVGRenderingTests {
                     .y(2),
                     .width(16),
                     .height(16),
-                    .preserveAspectRatio("xMidYMid slice"),
+                    .preserveAspectRatio(.xMidYMid(.slice)),
                     .opacity(0.5)
                 )
             },
             """
-            <svg><defs><pattern id="tiles" x="0" y="0" width="4" height="4" viewBox="0 0 4 4" preserveAspectRatio="xMidYMid meet" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="gold" /></pattern><marker id="arrow" markerWidth="6" markerHeight="6" markerUnits="strokeWidth" refX="5" refY="3" orient="auto-start-reverse" viewBox="0 0 6 6" fill="currentColor"><path d="M0 0L6 3L0 6z" /></marker></defs><image href="icon.png" x="1" y="2" width="16" height="16" preserveAspectRatio="xMidYMid slice" opacity="0.5" /></svg>
+            <svg><defs><pattern id="tiles" x="0" y="0" width="4" height="4" viewBox="0 0 4 4" preserveAspectRatio="xMidYMid" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="gold" /></pattern><marker id="arrow" markerWidth="6" markerHeight="6" markerUnits="strokeWidth" refX="5" refY="3" orient="auto-start-reverse" viewBox="0 0 6 6" fill="currentColor"><path d="M0 0L6 3L0 6z" /></marker></defs><image href="icon.png" x="1" y="2" width="16" height="16" preserveAspectRatio="xMidYMid slice" opacity="0.5" /></svg>
             """
+        )
+    }
+
+    @Test func rendersStringLiteralSVGAttributeValues() {
+        #expect(
+            #"<marker orient="45deg" markerUnits="customUnits" preserveAspectRatio="defer xMaxYMax slice"><path d="M0 0" /></marker>"# ==
+                SVG.marker(
+                    .orient("45deg"),
+                    .markerUnits("customUnits"),
+                    .preserveAspectRatio("defer xMaxYMax slice")
+                ) {
+                    SVG.path(.d("M0 0"))
+                }
+                .render()
         )
     }
 
