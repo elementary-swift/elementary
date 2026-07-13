@@ -103,6 +103,7 @@ extension SVGTag.svg: SVGTrait.Attributes.Presentation {}
 extension SVGTag.g: SVGTrait.Attributes.Presentation {}
 extension SVGTag.symbol: SVGTrait.Attributes.Presentation {}
 extension SVGTag.use: SVGTrait.Attributes.Presentation {}
+extension SVGTag.a: SVGTrait.Attributes.Presentation {}
 extension SVGTag.path: SVGTrait.Attributes.Presentation {}
 extension SVGTag.rect: SVGTrait.Attributes.Presentation {}
 extension SVGTag.circle: SVGTrait.Attributes.Presentation {}
@@ -112,6 +113,7 @@ extension SVGTag.polyline: SVGTrait.Attributes.Presentation {}
 extension SVGTag.polygon: SVGTrait.Attributes.Presentation {}
 extension SVGTag.text: SVGTrait.Attributes.Presentation {}
 extension SVGTag.tspan: SVGTrait.Attributes.Presentation {}
+extension SVGTag.textPath: SVGTrait.Attributes.Presentation {}
 extension SVGTag.clipPath: SVGTrait.Attributes.Presentation {}
 extension SVGTag.mask: SVGTrait.Attributes.Presentation {}
 extension SVGTag.image: SVGTrait.Attributes.Presentation {}
@@ -194,6 +196,7 @@ public extension SVGTrait.Attributes {
 
 extension SVGTag.text: SVGTrait.Attributes.TextPresentation {}
 extension SVGTag.tspan: SVGTrait.Attributes.TextPresentation {}
+extension SVGTag.textPath: SVGTrait.Attributes.TextPresentation {}
 
 public extension SVGAttribute where Tag: SVGTrait.Attributes.TextPresentation {
     static func fontFamily(_ value: String) -> Self {
@@ -264,15 +267,24 @@ public extension SVGAttribute where Tag == SVGTag.path {
     }
 }
 
-public extension SVGAttribute where Tag == SVGTag.use {
+public extension SVGTrait.Attributes {
+    protocol Href {}
+}
+
+extension SVGTag.use: SVGTrait.Attributes.Href {}
+extension SVGTag.image: SVGTrait.Attributes.Href {}
+extension SVGTag.a: SVGTrait.Attributes.Href {}
+extension SVGTag.textPath: SVGTrait.Attributes.Href {}
+
+public extension SVGAttribute where Tag: SVGTrait.Attributes.Href {
     static func href(_ value: String) -> Self {
         SVGAttribute(name: "href", value: value)
     }
 }
 
-public extension SVGAttribute where Tag == SVGTag.image {
-    static func href(_ value: String) -> Self {
-        SVGAttribute(name: "href", value: value)
+public extension SVGAttribute where Tag == SVGTag.a {
+    static func target(_ value: SVGAttributeValue.Target) -> Self {
+        SVGAttribute(name: "target", value: value.rawValue)
     }
 }
 
@@ -333,6 +345,20 @@ public extension SVGAttribute where Tag == SVGTag.line {
 
     static func y2(_ value: SVGAttributeValue.Length) -> Self {
         SVGAttribute(name: "y2", value: value.value)
+    }
+}
+
+public extension SVGAttribute where Tag == SVGTag.textPath {
+    static func startOffset(_ value: SVGAttributeValue.Length) -> Self {
+        SVGAttribute(name: "startOffset", value: value.value)
+    }
+
+    static func method(_ value: SVGAttributeValue.TextPathMethod) -> Self {
+        SVGAttribute(name: "method", value: value.rawValue)
+    }
+
+    static func spacing(_ value: SVGAttributeValue.TextPathSpacing) -> Self {
+        SVGAttribute(name: "spacing", value: value.rawValue)
     }
 }
 

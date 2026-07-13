@@ -6,6 +6,7 @@ public extension SVGTag {
     enum defs: SVGTagDefinition { public static let name = "defs" }
     enum symbol: SVGTagDefinition { public static let name = "symbol" }
     enum use: SVGTagDefinition { public static let name = "use" }
+    enum a: SVGTagDefinition, SVGTrait.RenderedInline { public static let name = "a" }
     enum path: SVGTagDefinition { public static let name = "path" }
     enum rect: SVGTagDefinition { public static let name = "rect" }
     enum circle: SVGTagDefinition { public static let name = "circle" }
@@ -15,8 +16,10 @@ public extension SVGTag {
     enum polygon: SVGTagDefinition { public static let name = "polygon" }
     enum text: SVGTagDefinition { public static let name = "text" }
     enum tspan: SVGTagDefinition, SVGTrait.RenderedInline { public static let name = "tspan" }
+    enum textPath: SVGTagDefinition, SVGTrait.RenderedInline { public static let name = "textPath" }
     enum title: SVGTagDefinition { public static let name = "title" }
     enum desc: SVGTagDefinition { public static let name = "desc" }
+    enum style: SVGTagDefinition { public static let name = "style" }
     enum linearGradient: SVGTagDefinition { public static let name = "linearGradient" }
     enum radialGradient: SVGTagDefinition { public static let name = "radialGradient" }
     enum stop: SVGTagDefinition { public static let name = "stop" }
@@ -32,10 +35,13 @@ public extension SVG {
     typealias g<Content: SVGContent> = SVGElement<SVGTag.g, Content>
     typealias defs<Content: SVGContent> = SVGElement<SVGTag.defs, Content>
     typealias symbol<Content: SVGContent> = SVGElement<SVGTag.symbol, Content>
+    typealias a<Content: SVGContent> = SVGElement<SVGTag.a, Content>
     typealias text<Content: SVGContent> = SVGElement<SVGTag.text, Content>
     typealias tspan<Content: SVGContent> = SVGElement<SVGTag.tspan, Content>
+    typealias textPath<Content: SVGContent> = SVGElement<SVGTag.textPath, Content>
     typealias title<Content: SVGContent> = SVGElement<SVGTag.title, Content>
     typealias desc<Content: SVGContent> = SVGElement<SVGTag.desc, Content>
+    typealias style<Content: SVGContent> = SVGElement<SVGTag.style, Content>
     typealias linearGradient<Content: SVGContent> = SVGElement<SVGTag.linearGradient, Content>
     typealias radialGradient<Content: SVGContent> = SVGElement<SVGTag.radialGradient, Content>
     typealias clipPath<Content: SVGContent> = SVGElement<SVGTag.clipPath, Content>

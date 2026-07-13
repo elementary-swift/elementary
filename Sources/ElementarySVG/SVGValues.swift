@@ -227,6 +227,59 @@ public extension SVGAttributeValue {
 }
 
 public extension SVGAttributeValue {
+    struct Target: ExpressibleByStringLiteral, RawRepresentable, Sendable, Equatable {
+        public let rawValue: String
+
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+
+        public init(stringLiteral value: String) {
+            rawValue = value
+        }
+
+        public static var blank: Self { "_blank" }
+        public static var parent: Self { "_parent" }
+        public static var `self`: Self { "_self" }
+        public static var top: Self { "_top" }
+    }
+}
+
+public extension SVGAttributeValue {
+    struct TextPathMethod: ExpressibleByStringLiteral, RawRepresentable, Sendable, Equatable {
+        public let rawValue: String
+
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+
+        public init(stringLiteral value: String) {
+            rawValue = value
+        }
+
+        public static var align: Self { "align" }
+        public static var stretch: Self { "stretch" }
+    }
+}
+
+public extension SVGAttributeValue {
+    struct TextPathSpacing: ExpressibleByStringLiteral, RawRepresentable, Sendable, Equatable {
+        public let rawValue: String
+
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+
+        public init(stringLiteral value: String) {
+            rawValue = value
+        }
+
+        public static var auto: Self { "auto" }
+        public static var exact: Self { "exact" }
+    }
+}
+
+public extension SVGAttributeValue {
     struct PreserveAspectRatio: ExpressibleByStringLiteral, RawRepresentable, Sendable, Equatable {
         public struct MeetOrSlice: ExpressibleByStringLiteral, RawRepresentable, Sendable, Equatable {
             public let rawValue: String

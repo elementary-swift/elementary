@@ -269,6 +269,36 @@ struct SVGRenderingTests {
         )
     }
 
+    @Test func rendersLinksStylesAndTextPathElements() async throws {
+        try await HTMLAssertEqual(
+            SVG.svg(.viewBox(0, 0, 120, 40)) {
+                SVG.style {
+                    ".accent{fill:currentColor}"
+                }
+                SVG.defs {
+                    SVG.path(.id("baseline"), .d("M0 30 C 30 0, 90 0, 120 30"))
+                }
+                SVG.a(.href("https://example.com"), .target(.blank), .fill("tomato")) {
+                    SVG.circle(.cx(8), .cy(8), .r(4))
+                }
+                SVG.text {
+                    SVG.textPath(
+                        .href("#baseline"),
+                        .startOffset(.percent(50)),
+                        .method(.align),
+                        .spacing(.exact),
+                        .textAnchor("middle")
+                    ) {
+                        "Hello"
+                    }
+                }
+            },
+            """
+            <svg viewBox="0 0 120 40"><style>.accent{fill:currentColor}</style><defs><path id="baseline" d="M0 30 C 30 0, 90 0, 120 30" /></defs><a href="https://example.com" target="_blank" fill="tomato"><circle cx="8" cy="8" r="4" /></a><text><textPath href="#baseline" startOffset="50%" method="align" spacing="exact" text-anchor="middle">Hello</textPath></text></svg>
+            """
+        )
+    }
+
     @Test func rendersStringLiteralSVGAttributeValues() {
         #expect(
             #"<marker orient="45deg" markerUnits="customUnits" preserveAspectRatio="defer xMaxYMax slice"><path d="M0 0" /></marker>"# ==
@@ -280,6 +310,44 @@ struct SVGRenderingTests {
                     SVG.path(.d("M0 0"))
                 }
                 .render()
+        )
+    }
+
+    @Test func rendersStringLiteralSVGLinkAndTextPathAttributeValues() {
+        #expect(
+            ##"<text><textPath href="#curve" method="customMethod" spacing="customSpacing">Hi</textPath></text>"## ==
+                SVG.text {
+                    SVG.textPath(.href("#curve"), .method("customMethod"), .spacing("customSpacing")) {
+                        "Hi"
+                    }
+                }
+                .render()
+        )
+        #expect(
+            #"<a href="/next" target="frame"><path d="M0 0" /></a>"# ==
+                SVG.a(.href("/next"), .target("frame")) {
+                    SVG.path(.d("M0 0"))
+                }
+                .render()
+        )
+    }
+
+    @Test func rendersFormattedLinksAndTextPathInline() {
+        HTMLFormattedAssertEqual(
+            SVG.svg {
+                SVG.text {
+                    SVG.a(.href("/label")) {
+                        SVG.textPath(.href("#curve")) {
+                            "Label"
+                        }
+                    }
+                }
+            },
+            """
+            <svg>
+              <text><a href="/label"><textPath href="#curve">Label</textPath></a></text>
+            </svg>
+            """
         )
     }
 
