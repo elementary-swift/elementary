@@ -97,6 +97,7 @@ public extension HTMLTag {
     enum figcaption: HTMLTrait.Paired { public static let name = "figcaption" }
     enum figure: HTMLTrait.Paired { public static let name = "figure" }
     enum picture: HTMLTrait.Paired { public static let name = "picture" }
+    @available(*, deprecated)
     enum svg: HTMLTrait.Paired { public static let name = "svg" }
 
     // Audio / Video

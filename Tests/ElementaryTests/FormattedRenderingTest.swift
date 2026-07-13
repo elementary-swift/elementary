@@ -118,7 +118,7 @@ struct FormatedRenderingTests {
                 img()
                 img()
                 p {
-                    svg {}
+                    span {}
                     img()
                 }
             },
@@ -128,7 +128,7 @@ struct FormatedRenderingTests {
               <img>
               <img>
               <p>
-                <svg></svg>
+                <span></span>
                 <img>
               </p>
             </div>
