@@ -1,6 +1,9 @@
 import Elementary
 
 public enum SVGTrait {
+    /// A marker that indicates that an SVG tag should be rendered inline in formatted output.
+    public protocol RenderedInline {}
+
     public enum Attributes {}
 }
 
@@ -11,17 +14,23 @@ public extension SVGAttribute where Tag == SVGTag.svg {
 }
 
 public extension SVGTrait.Attributes {
-    protocol ViewBox {}
+    protocol PreserveAspectRatio {}
+    protocol ViewBox: PreserveAspectRatio {}
 }
 
 extension SVGTag.svg: SVGTrait.Attributes.ViewBox {}
 extension SVGTag.symbol: SVGTrait.Attributes.ViewBox {}
+extension SVGTag.marker: SVGTrait.Attributes.ViewBox {}
+extension SVGTag.pattern: SVGTrait.Attributes.ViewBox {}
+extension SVGTag.image: SVGTrait.Attributes.PreserveAspectRatio {}
 
-public extension SVGAttribute where Tag: SVGTrait.Attributes.ViewBox {
+public extension SVGAttribute where Tag: SVGTrait.Attributes.PreserveAspectRatio {
     static func preserveAspectRatio(_ value: String) -> Self {
         SVGAttribute(name: "preserveAspectRatio", value: value)
     }
+}
 
+public extension SVGAttribute where Tag: SVGTrait.Attributes.ViewBox {
     static func viewBox(_ minX: SVGNumber, _ minY: SVGNumber, _ width: SVGNumber, _ height: SVGNumber) -> Self {
         SVGAttribute(name: "viewBox", value: "\(minX.value) \(minY.value) \(width.value) \(height.value)")
     }
@@ -36,6 +45,8 @@ extension SVGTag.symbol: SVGTrait.Attributes.Sizing {}
 extension SVGTag.use: SVGTrait.Attributes.Sizing {}
 extension SVGTag.rect: SVGTrait.Attributes.Sizing {}
 extension SVGTag.mask: SVGTrait.Attributes.Sizing {}
+extension SVGTag.image: SVGTrait.Attributes.Sizing {}
+extension SVGTag.pattern: SVGTrait.Attributes.Sizing {}
 
 public extension SVGAttribute where Tag: SVGTrait.Attributes.Sizing {
     static func width(_ value: SVGLength) -> Self {
@@ -58,6 +69,8 @@ extension SVGTag.rect: SVGTrait.Attributes.Position {}
 extension SVGTag.text: SVGTrait.Attributes.Position {}
 extension SVGTag.tspan: SVGTrait.Attributes.Position {}
 extension SVGTag.mask: SVGTrait.Attributes.Position {}
+extension SVGTag.image: SVGTrait.Attributes.Position {}
+extension SVGTag.pattern: SVGTrait.Attributes.Position {}
 
 public extension SVGAttribute where Tag: SVGTrait.Attributes.Position {
     static func x(_ value: SVGLength) -> Self {
@@ -99,7 +112,11 @@ extension SVGTag.polyline: SVGTrait.Attributes.Presentation {}
 extension SVGTag.polygon: SVGTrait.Attributes.Presentation {}
 extension SVGTag.text: SVGTrait.Attributes.Presentation {}
 extension SVGTag.tspan: SVGTrait.Attributes.Presentation {}
+extension SVGTag.clipPath: SVGTrait.Attributes.Presentation {}
 extension SVGTag.mask: SVGTrait.Attributes.Presentation {}
+extension SVGTag.image: SVGTrait.Attributes.Presentation {}
+extension SVGTag.marker: SVGTrait.Attributes.Presentation {}
+extension SVGTag.pattern: SVGTrait.Attributes.Presentation {}
 
 public extension SVGAttribute where Tag: SVGTrait.Attributes.Presentation {
     static func fill(_ value: SVGPaint) -> Self {
@@ -138,6 +155,14 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.Presentation {
         SVGAttribute(name: "stroke-dasharray", value: value)
     }
 
+    static func strokeDashoffset(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "stroke-dashoffset", value: value.value)
+    }
+
+    static func strokeMiterlimit(_ value: SVGNumber) -> Self {
+        SVGAttribute(name: "stroke-miterlimit", value: value.value)
+    }
+
     static func opacity(_ value: Double) -> Self {
         SVGAttribute(name: "opacity", value: "\(value)")
     }
@@ -152,6 +177,14 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.Presentation {
 
     static func clipRule(_ value: String) -> Self {
         SVGAttribute(name: "clip-rule", value: value)
+    }
+
+    static func clipPath(_ value: String) -> Self {
+        SVGAttribute(name: "clip-path", value: value)
+    }
+
+    static func mask(_ value: String) -> Self {
+        SVGAttribute(name: "mask", value: value)
     }
 }
 
@@ -169,6 +202,30 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.TextPresentation {
 
     static func fontSize(_ value: SVGLength) -> Self {
         SVGAttribute(name: "font-size", value: value.value)
+    }
+
+    static func fontWeight(_ value: String) -> Self {
+        SVGAttribute(name: "font-weight", value: value)
+    }
+
+    static func fontStyle(_ value: String) -> Self {
+        SVGAttribute(name: "font-style", value: value)
+    }
+
+    static func fontVariant(_ value: String) -> Self {
+        SVGAttribute(name: "font-variant", value: value)
+    }
+
+    static func letterSpacing(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "letter-spacing", value: value.value)
+    }
+
+    static func wordSpacing(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "word-spacing", value: value.value)
+    }
+
+    static func textDecoration(_ value: String) -> Self {
+        SVGAttribute(name: "text-decoration", value: value)
     }
 
     static func textAnchor(_ value: String) -> Self {
@@ -191,6 +248,14 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.Gradient {
     static func gradientUnits(_ value: String) -> Self {
         SVGAttribute(name: "gradientUnits", value: value)
     }
+
+    static func gradientTransform(_ value: String) -> Self {
+        SVGAttribute(name: "gradientTransform", value: value)
+    }
+
+    static func spreadMethod(_ value: String) -> Self {
+        SVGAttribute(name: "spreadMethod", value: value)
+    }
 }
 
 public extension SVGAttribute where Tag == SVGTag.path {
@@ -200,6 +265,12 @@ public extension SVGAttribute where Tag == SVGTag.path {
 }
 
 public extension SVGAttribute where Tag == SVGTag.use {
+    static func href(_ value: String) -> Self {
+        SVGAttribute(name: "href", value: value)
+    }
+}
+
+public extension SVGAttribute where Tag == SVGTag.image {
     static func href(_ value: String) -> Self {
         SVGAttribute(name: "href", value: value)
     }
@@ -294,6 +365,58 @@ public extension SVGAttribute where Tag == SVGTag.radialGradient {
 
     static func r(_ value: SVGLength) -> Self {
         SVGAttribute(name: "r", value: value.value)
+    }
+
+    static func fx(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "fx", value: value.value)
+    }
+
+    static func fy(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "fy", value: value.value)
+    }
+
+    static func fr(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "fr", value: value.value)
+    }
+}
+
+public extension SVGAttribute where Tag == SVGTag.marker {
+    static func markerWidth(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "markerWidth", value: value.value)
+    }
+
+    static func markerHeight(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "markerHeight", value: value.value)
+    }
+
+    static func markerUnits(_ value: String) -> Self {
+        SVGAttribute(name: "markerUnits", value: value)
+    }
+
+    static func refX(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "refX", value: value.value)
+    }
+
+    static func refY(_ value: SVGLength) -> Self {
+        SVGAttribute(name: "refY", value: value.value)
+    }
+
+    static func orient(_ value: String) -> Self {
+        SVGAttribute(name: "orient", value: value)
+    }
+}
+
+public extension SVGAttribute where Tag == SVGTag.pattern {
+    static func patternUnits(_ value: String) -> Self {
+        SVGAttribute(name: "patternUnits", value: value)
+    }
+
+    static func patternContentUnits(_ value: String) -> Self {
+        SVGAttribute(name: "patternContentUnits", value: value)
+    }
+
+    static func patternTransform(_ value: String) -> Self {
+        SVGAttribute(name: "patternTransform", value: value)
     }
 }
 

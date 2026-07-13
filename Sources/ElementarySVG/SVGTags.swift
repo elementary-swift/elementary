@@ -14,7 +14,7 @@ public extension SVGTag {
     enum polyline: SVGTagDefinition { public static let name = "polyline" }
     enum polygon: SVGTagDefinition { public static let name = "polygon" }
     enum text: SVGTagDefinition { public static let name = "text" }
-    enum tspan: SVGTagDefinition { public static let name = "tspan" }
+    enum tspan: SVGTagDefinition, SVGTrait.RenderedInline { public static let name = "tspan" }
     enum title: SVGTagDefinition { public static let name = "title" }
     enum desc: SVGTagDefinition { public static let name = "desc" }
     enum linearGradient: SVGTagDefinition { public static let name = "linearGradient" }
@@ -22,6 +22,9 @@ public extension SVGTag {
     enum stop: SVGTagDefinition { public static let name = "stop" }
     enum clipPath: SVGTagDefinition { public static let name = "clipPath" }
     enum mask: SVGTagDefinition { public static let name = "mask" }
+    enum image: SVGTagDefinition { public static let name = "image" }
+    enum marker: SVGTagDefinition { public static let name = "marker" }
+    enum pattern: SVGTagDefinition { public static let name = "pattern" }
 }
 
 public extension SVG {
@@ -37,6 +40,8 @@ public extension SVG {
     typealias radialGradient<Content: SVGContent> = SVGElement<SVGTag.radialGradient, Content>
     typealias clipPath<Content: SVGContent> = SVGElement<SVGTag.clipPath, Content>
     typealias mask<Content: SVGContent> = SVGElement<SVGTag.mask, Content>
+    typealias marker<Content: SVGContent> = SVGElement<SVGTag.marker, Content>
+    typealias pattern<Content: SVGContent> = SVGElement<SVGTag.pattern, Content>
 
     typealias use<Content: SVGContent> = SVGElement<SVGTag.use, Content>
     typealias path<Content: SVGContent> = SVGElement<SVGTag.path, Content>
@@ -47,4 +52,5 @@ public extension SVG {
     typealias polyline<Content: SVGContent> = SVGElement<SVGTag.polyline, Content>
     typealias polygon<Content: SVGContent> = SVGElement<SVGTag.polygon, Content>
     typealias stop<Content: SVGContent> = SVGElement<SVGTag.stop, Content>
+    typealias image<Content: SVGContent> = SVGElement<SVGTag.image, Content>
 }

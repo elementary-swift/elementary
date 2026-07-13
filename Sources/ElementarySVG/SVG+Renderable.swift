@@ -1,6 +1,13 @@
 import Elementary
 
 #if !hasFeature(Embedded)
+extension SVGTagDefinition {
+    @inlinable
+    static var renderingType: _HTMLRenderToken.RenderingType {
+        _svgRendersInline ? .inline : .block
+    }
+}
+
 extension SVGElement {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
@@ -16,9 +23,9 @@ extension SVGElement {
             return
         }
 
-        renderer.appendToken(.startTag(Tag.name, attributes: attributes, isUnpaired: false, type: .block))
+        renderer.appendToken(.startTag(Tag.name, attributes: attributes, isUnpaired: false, type: Tag.renderingType))
         Content._render(svg.content, into: &renderer, with: .emptyContext)
-        renderer.appendToken(.endTag(Tag.name, type: .block))
+        renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
 
     @inlinable
@@ -36,9 +43,9 @@ extension SVGElement {
             return
         }
 
-        try await renderer.appendToken(.startTag(Tag.name, attributes: attributes, isUnpaired: false, type: .block))
+        try await renderer.appendToken(.startTag(Tag.name, attributes: attributes, isUnpaired: false, type: Tag.renderingType))
         try await Content._render(svg.content, into: &renderer, with: .emptyContext)
-        try await renderer.appendToken(.endTag(Tag.name, type: .block))
+        try await renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
 }
 #endif

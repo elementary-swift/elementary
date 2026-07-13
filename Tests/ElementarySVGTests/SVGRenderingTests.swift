@@ -150,6 +150,125 @@ struct SVGRenderingTests {
         )
     }
 
+    @Test func rendersAdditionalPresentationAttributesAndReferences() async throws {
+        try await HTMLAssertEqual(
+            SVG.svg {
+                SVG.defs {
+                    SVG.clipPath(.id("clip"), .clipPathUnits("userSpaceOnUse"), .transform("translate(1 2)")) {
+                        SVG.rect(.width(8), .height(8))
+                    }
+                    SVG.mask(.id("mask")) {
+                        SVG.rect(.width(8), .height(8), .fill("white"))
+                    }
+                }
+                SVG.path(
+                    .d("M0 0h8v8H0z"),
+                    .stroke("black"),
+                    .strokeDasharray("2 1"),
+                    .strokeDashoffset(0.5),
+                    .strokeMiterlimit(8),
+                    .clipPath("url(#clip)"),
+                    .mask("url(#mask)")
+                )
+            },
+            """
+            <svg><defs><clipPath id="clip" clipPathUnits="userSpaceOnUse" transform="translate(1 2)"><rect width="8" height="8" /></clipPath><mask id="mask"><rect width="8" height="8" fill="white" /></mask></defs><path d="M0 0h8v8H0z" stroke="black" stroke-dasharray="2 1" stroke-dashoffset="0.5" stroke-miterlimit="8" clip-path="url(#clip)" mask="url(#mask)" /></svg>
+            """
+        )
+    }
+
+    @Test func rendersAdditionalGradientAndTextAttributes() async throws {
+        try await HTMLAssertEqual(
+            SVG.svg {
+                SVG.defs {
+                    SVG.linearGradient(
+                        .id("shine"),
+                        .gradientUnits("userSpaceOnUse"),
+                        .gradientTransform("rotate(45)"),
+                        .spreadMethod("reflect")
+                    ) {
+                        SVG.stop(.offset(0), .stopColor("white"))
+                    }
+                    SVG.radialGradient(
+                        .id("spot"),
+                        .cx(.percent(50)),
+                        .cy(.percent(50)),
+                        .r(.percent(40)),
+                        .fx(.percent(25)),
+                        .fy(.percent(30)),
+                        .fr(.percent(5)),
+                        .spreadMethod("repeat")
+                    ) {
+                        SVG.stop(.offset(.percent(100)), .stopColor("black"))
+                    }
+                }
+                SVG.text(
+                    .fontFamily("Inter"),
+                    .fontSize(12),
+                    .fontWeight("700"),
+                    .fontStyle("italic"),
+                    .fontVariant("small-caps"),
+                    .letterSpacing(1),
+                    .wordSpacing(2),
+                    .textDecoration("underline")
+                ) {
+                    "Hello"
+                }
+            },
+            """
+            <svg><defs><linearGradient id="shine" gradientUnits="userSpaceOnUse" gradientTransform="rotate(45)" spreadMethod="reflect"><stop offset="0" stop-color="white" /></linearGradient><radialGradient id="spot" cx="50%" cy="50%" r="40%" fx="25%" fy="30%" fr="5%" spreadMethod="repeat"><stop offset="100%" stop-color="black" /></radialGradient></defs><text font-family="Inter" font-size="12" font-weight="700" font-style="italic" font-variant="small-caps" letter-spacing="1" word-spacing="2" text-decoration="underline">Hello</text></svg>
+            """
+        )
+    }
+
+    @Test func rendersImagePatternAndMarkerElements() async throws {
+        try await HTMLAssertEqual(
+            SVG.svg {
+                SVG.defs {
+                    SVG.pattern(
+                        .id("tiles"),
+                        .x(0),
+                        .y(0),
+                        .width(4),
+                        .height(4),
+                        .viewBox(0, 0, 4, 4),
+                        .preserveAspectRatio("xMidYMid meet"),
+                        .patternUnits("userSpaceOnUse"),
+                        .patternContentUnits("userSpaceOnUse"),
+                        .patternTransform("rotate(45)")
+                    ) {
+                        SVG.rect(.width(4), .height(4), .fill("gold"))
+                    }
+                    SVG.marker(
+                        .id("arrow"),
+                        .markerWidth(6),
+                        .markerHeight(6),
+                        .markerUnits("strokeWidth"),
+                        .refX(5),
+                        .refY(3),
+                        .orient("auto-start-reverse"),
+                        .viewBox(0, 0, 6, 6),
+                        .fill("currentColor")
+                    ) {
+                        SVG.path(.d("M0 0L6 3L0 6z"))
+                    }
+                }
+                SVG.image(
+                    .href("icon.png"),
+                    .x(1),
+                    .y(2),
+                    .width(16),
+                    .height(16),
+                    .preserveAspectRatio("xMidYMid slice"),
+                    .opacity(0.5)
+                )
+            },
+            """
+            <svg><defs><pattern id="tiles" x="0" y="0" width="4" height="4" viewBox="0 0 4 4" preserveAspectRatio="xMidYMid meet" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="gold" /></pattern><marker id="arrow" markerWidth="6" markerHeight="6" markerUnits="strokeWidth" refX="5" refY="3" orient="auto-start-reverse" viewBox="0 0 6 6" fill="currentColor"><path d="M0 0L6 3L0 6z" /></marker></defs><image href="icon.png" x="1" y="2" width="16" height="16" preserveAspectRatio="xMidYMid slice" opacity="0.5" /></svg>
+            """
+        )
+    }
+
     @Test func rendersReusableSVGContentWithBody() async throws {
         try await HTMLAssertEqual(
             SVG.svg {
@@ -229,6 +348,23 @@ struct SVGRenderingTests {
               </g>
             </svg>
             """
+        )
+    }
+
+    @Test func rendersFormattedTextLikeSVGElementsInline() {
+        HTMLFormattedAssertEqual(
+            SVG.svg {
+                SVG.text(.x(0), .y(10)) {
+                    SVG.tspan { "one" }
+                    "Hello"
+                    SVG.tspan { "two" }
+                }
+            },
+            #"""
+            <svg>
+              <text x="0" y="10"><tspan>one</tspan>Hello<tspan>two</tspan></text>
+            </svg>
+            """#
         )
     }
 

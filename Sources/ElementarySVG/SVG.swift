@@ -30,7 +30,22 @@ public enum SVG {}
 public enum SVGTag {}
 
 /// A type that represents an SVG tag.
-public protocol SVGTagDefinition: MarkupTagDefinition, MarkupTrait.AllowsAttributes {}
+public protocol SVGTagDefinition: MarkupTagDefinition, MarkupTrait.AllowsAttributes {
+    /// Internal property that controls formatted rendering of the element (inline or block).
+    ///
+    /// A default implementation is provided that returns `false`.
+    static var _svgRendersInline: Bool { get }
+}
+
+public extension SVGTagDefinition {
+    @inlinable
+    static var _svgRendersInline: Bool { false }
+}
+
+public extension SVGTagDefinition where Self: SVGTrait.RenderedInline {
+    @inlinable
+    static var _svgRendersInline: Bool { true }
+}
 
 /// An SVG attribute that can be applied to an SVG element of the associated tag.
 public typealias SVGAttribute = MarkupAttribute
