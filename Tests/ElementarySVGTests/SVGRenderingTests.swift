@@ -299,6 +299,16 @@ struct SVGRenderingTests {
         )
     }
 
+    @Test func rendersRawSVGContent() {
+        #expect(
+            #"<style>.label::after{content:"&"}</style>"# ==
+                SVG.style {
+                    SVGRaw(#".label::after{content:"&"}"#)
+                }
+                .render()
+        )
+    }
+
     @Test func rendersStringLiteralSVGAttributeValues() {
         #expect(
             #"<marker orient="45deg" markerUnits="customUnits" preserveAspectRatio="defer xMaxYMax slice"><path d="M0 0" /></marker>"# ==

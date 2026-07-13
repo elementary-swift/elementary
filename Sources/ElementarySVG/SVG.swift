@@ -50,6 +50,10 @@ public extension SVGTagDefinition where Self: SVGTrait.RenderedInline {
 /// An SVG attribute that can be applied to an SVG element of the associated tag.
 public typealias SVGAttribute = MarkupAttribute
 
+/// Raw, unescaped SVG content.
+public typealias SVGRaw = HTMLRaw
+
 extension Never: SVGTagDefinition {}
 
 extension _AttributedContent: SVGContent where Content: SVGContent {}
+extension HTMLRaw: SVGContent {}
