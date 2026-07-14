@@ -4,7 +4,7 @@ import Testing
 
 struct SVGRenderingTests {
     @Test func rendersRootSVGAndEmptyShape() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg(.viewBox(0, 0, 24, 24), .width(24), .height(24)) {
                 SVG.title { "Checkmark" }
                 SVG.path(
@@ -21,12 +21,15 @@ struct SVGRenderingTests {
             """
         )
     }
-    @Test func preservesAttributeValuesOnSelfClosingSVGElement() {
-        #expect(#"<path data-label="A&amp;&quot;B" />"# == SVG.path(.custom(name: "data-label", value: "A&\"B")).render())
+    @Test func preservesAttributeValuesOnSelfClosingSVGElement() async throws {
+        try await SVGAssertEqual(
+            SVG.path(.custom(name: "data-label", value: "A&\"B")),
+            #"<path data-label="A&amp;&quot;B" />"#
+        )
     }
 
     @Test func rendersNestedGroupsAndAccessibilityText() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg(.viewBox(0, 0, 10, 10), .role("img")) {
                 SVG.title { "A & B" }
                 SVG.desc { "Use <carefully>" }
@@ -43,7 +46,7 @@ struct SVGRenderingTests {
     @Test func rendersBuilderStructuresInsideSVG() async throws {
         let items = [2, 4]
 
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg {
                 Group {
                     if true {
@@ -66,7 +69,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersSVGEmbeddedInHTML() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             div {
                 SVG.svg(.viewBox(0, 0, 1, 1)) {
                     SVG.rect(.width(1), .height(1))
@@ -79,7 +82,7 @@ struct SVGRenderingTests {
     }
 
     @Test func mergesClassAndStyleAttributes() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg {
                 SVG.g(.class("base"), .style("stroke:red")) {
                     SVG.path(.d("M0 0"))
@@ -94,7 +97,7 @@ struct SVGRenderingTests {
     }
 
     @Test func escapesAttributeValuesAsUTF8() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg(.custom(name: "data-label", value: "Grüße & \"SVG\"")) {
                 SVG.text { "café" }
             },
@@ -105,7 +108,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersSharedAndElementConstrainedSVGAttributes() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg(.x(0), .y(0)) {
                 SVG.defs {
                     SVG.symbol(
@@ -151,7 +154,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersAdditionalPresentationAttributesAndReferences() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg {
                 SVG.defs {
                     SVG.clipPath(.id("clip"), .clipPathUnits(.userSpaceOnUse), .transform("translate(1 2)")) {
@@ -178,7 +181,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersAdditionalGradientAndTextAttributes() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg {
                 SVG.defs {
                     SVG.linearGradient(
@@ -222,7 +225,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersImagePatternAndMarkerElements() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg {
                 SVG.defs {
                     SVG.pattern(
@@ -270,7 +273,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersLinksStylesAndTextPathElements() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg(.viewBox(0, 0, 120, 40)) {
                 SVG.style {
                     ".accent{fill:currentColor}"
@@ -299,51 +302,47 @@ struct SVGRenderingTests {
         )
     }
 
-    @Test func rendersRawSVGContent() {
-        #expect(
-            #"<style>.label::after{content:"&"}</style>"# ==
-                SVG.style {
-                    SVGRaw(#".label::after{content:"&"}"#)
-                }
-                .render()
+    @Test func rendersRawSVGContent() async throws {
+        try await SVGAssertEqual(
+            SVG.style {
+                SVGRaw(#".label::after{content:"&"}"#)
+            },
+            #"<style>.label::after{content:"&"}</style>"#
         )
     }
 
-    @Test func rendersStringLiteralSVGAttributeValues() {
-        #expect(
-            #"<marker orient="45deg" markerUnits="customUnits" preserveAspectRatio="defer xMaxYMax slice"><path d="M0 0" /></marker>"# ==
-                SVG.marker(
-                    .orient("45deg"),
-                    .markerUnits("customUnits"),
-                    .preserveAspectRatio("defer xMaxYMax slice")
-                ) {
-                    SVG.path(.d("M0 0"))
-                }
-                .render()
+    @Test func rendersStringLiteralSVGAttributeValues() async throws {
+        try await SVGAssertEqual(
+            SVG.marker(
+                .orient("45deg"),
+                .markerUnits("customUnits"),
+                .preserveAspectRatio("defer xMaxYMax slice")
+            ) {
+                SVG.path(.d("M0 0"))
+            },
+            #"<marker orient="45deg" markerUnits="customUnits" preserveAspectRatio="defer xMaxYMax slice"><path d="M0 0" /></marker>"#
         )
     }
 
-    @Test func rendersStringLiteralSVGLinkAndTextPathAttributeValues() {
-        #expect(
-            ##"<text><textPath href="#curve" method="customMethod" spacing="customSpacing">Hi</textPath></text>"## ==
-                SVG.text {
-                    SVG.textPath(.href("#curve"), .method("customMethod"), .spacing("customSpacing")) {
-                        "Hi"
-                    }
+    @Test func rendersStringLiteralSVGLinkAndTextPathAttributeValues() async throws {
+        try await SVGAssertEqual(
+            SVG.text {
+                SVG.textPath(.href("#curve"), .method("customMethod"), .spacing("customSpacing")) {
+                    "Hi"
                 }
-                .render()
+            },
+            ##"<text><textPath href="#curve" method="customMethod" spacing="customSpacing">Hi</textPath></text>"##
         )
-        #expect(
-            #"<a href="/next" target="frame"><path d="M0 0" /></a>"# ==
-                SVG.a(.href("/next"), .target("frame")) {
-                    SVG.path(.d("M0 0"))
-                }
-                .render()
+        try await SVGAssertEqual(
+            SVG.a(.href("/next"), .target("frame")) {
+                SVG.path(.d("M0 0"))
+            },
+            #"<a href="/next" target="frame"><path d="M0 0" /></a>"#
         )
     }
 
     @Test func rendersFormattedLinksAndTextPathInline() {
-        HTMLFormattedAssertEqual(
+        SVGFormattedAssertEqual(
             SVG.svg {
                 SVG.text {
                     SVG.a(.href("/label")) {
@@ -362,7 +361,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersReusableSVGContentWithBody() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg {
                 CheckmarkIcon()
             },
@@ -373,7 +372,7 @@ struct SVGRenderingTests {
     }
 
     @Test func wrapsReusableSVGContentWithAttributes() async throws {
-        try await HTMLAssertEqual(
+        try await SVGAssertEqual(
             SVG.svg {
                 CheckmarkIcon()
                     .attributes(.id("check"))
@@ -385,49 +384,49 @@ struct SVGRenderingTests {
         )
     }
 
-    @Test func selfClosesElementWithKnownEmptyOptionalContent() {
-        #expect(
+    @Test func selfClosesElementWithKnownEmptyOptionalContent() async throws {
+        try await SVGAssertEqual(
+            SVG.g {
+                if false {
+                    SVG.path(.d("M0 0"))
+                }
+            },
             #"<g />"#
-                == SVG.g {
-                    if false {
-                        SVG.path(.d("M0 0"))
-                    }
-                }.render()
         )
     }
 
-    @Test func selfClosesElementWithKnownEmptyConditionalContent() {
+    @Test func selfClosesElementWithKnownEmptyConditionalContent() async throws {
         let shouldRender = false
 
-        #expect(
+        try await SVGAssertEqual(
+            SVG.g {
+                if shouldRender {
+                    SVG.path(.d("M0 0"))
+                } else {
+                    EmptyContent()
+                }
+            },
             #"<g />"#
-                == SVG.g {
-                    if shouldRender {
-                        SVG.path(.d("M0 0"))
-                    } else {
-                        EmptyContent()
-                    }
-                }.render()
         )
     }
 
-    @Test func keepsElementPairedWithKnownNonEmptyConditionalContent() {
+    @Test func keepsElementPairedWithKnownNonEmptyConditionalContent() async throws {
         let shouldRender = true
 
-        #expect(
+        try await SVGAssertEqual(
+            SVG.g {
+                if shouldRender {
+                    SVG.path(.d("M0 0"))
+                } else {
+                    EmptyContent()
+                }
+            },
             #"<g><path d="M0 0" /></g>"#
-                == SVG.g {
-                    if shouldRender {
-                        SVG.path(.d("M0 0"))
-                    } else {
-                        EmptyContent()
-                    }
-                }.render()
         )
     }
 
     @Test func rendersFormattedSVG() {
-        HTMLFormattedAssertEqual(
+        SVGFormattedAssertEqual(
             SVG.svg {
                 SVG.g {
                     SVG.path(.d("M0 0"))
@@ -444,7 +443,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersFormattedTextLikeSVGElementsInline() {
-        HTMLFormattedAssertEqual(
+        SVGFormattedAssertEqual(
             SVG.svg {
                 SVG.text(.x(0), .y(10)) {
                     SVG.tspan { "one" }
@@ -461,7 +460,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersAsyncSVGContent() async throws {
-        try await HTMLAssertEqualAsyncOnly(
+        try await SVGAssertEqualAsyncOnly(
             SVG.svg {
                 AsyncContent {
                     SVG.path(.d("M0 0"))
@@ -472,7 +471,7 @@ struct SVGRenderingTests {
     }
 
     @Test func rendersAsyncNestedSVGInitializerWithAttributeArray() async throws {
-        try await HTMLAssertEqualAsyncOnly(
+        try await SVGAssertEqualAsyncOnly(
             SVG.svg {
                 SVG.g(attributes: [.id("x")]) {
                     AsyncContent {
@@ -488,19 +487,23 @@ struct SVGRenderingTests {
     }
 }
 
-private func HTMLAssertEqual(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws {
+private func SVGAssertEqual(_ html: some MarkupContent, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws
+{
     #expect(expected == html.render(), sourceLocation: sourceLocation)
 
-    try await HTMLAssertEqualAsyncOnly(html, expected, sourceLocation: sourceLocation)
+    try await SVGAssertEqualAsyncOnly(html, expected, sourceLocation: sourceLocation)
 }
 
-private func HTMLAssertEqualAsyncOnly(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws
-{
+private func SVGAssertEqualAsyncOnly(
+    _ html: some MarkupContent,
+    _ expected: String,
+    sourceLocation: SourceLocation = #_sourceLocation
+) async throws {
     let asyncText = try await html.renderAsync()
     #expect(expected == asyncText, sourceLocation: sourceLocation)
 }
 
-private func HTMLFormattedAssertEqual(_ html: some HTML, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) {
+private func SVGFormattedAssertEqual(_ html: some MarkupContent, _ expected: String, sourceLocation: SourceLocation = #_sourceLocation) {
     #expect(expected == html.renderFormatted(), sourceLocation: sourceLocation)
 }
 

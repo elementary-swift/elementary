@@ -31,7 +31,12 @@ public extension SVGAttribute where Tag: SVGTrait.Attributes.PreserveAspectRatio
 }
 
 public extension SVGAttribute where Tag: SVGTrait.Attributes.ViewBox {
-    static func viewBox(_ minX: SVGAttributeValue.Number, _ minY: SVGAttributeValue.Number, _ width: SVGAttributeValue.Number, _ height: SVGAttributeValue.Number) -> Self {
+    static func viewBox(
+        _ minX: SVGAttributeValue.Number,
+        _ minY: SVGAttributeValue.Number,
+        _ width: SVGAttributeValue.Number,
+        _ height: SVGAttributeValue.Number
+    ) -> Self {
         SVGAttribute(name: "viewBox", value: "\(minX.value) \(minY.value) \(width.value) \(height.value)")
     }
 }
