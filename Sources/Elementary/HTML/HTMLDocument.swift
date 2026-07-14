@@ -3,6 +3,7 @@
 /// Provides a simple structure to model top-level HTML types.
 /// A default ``HTML/content`` implementation takes your ``title``, ``head``, ``body``
 /// and renders them into a full HTML document.
+/// The default document head starts with a UTF-8 charset meta tag, followed by the title.
 /// Optionally properties for ``lang`` and ``dir`` can be provided.
 ///
 /// ```swift
@@ -33,6 +34,8 @@ public protocol HTMLDocument: HTML {
     var lang: String { get }
 
     /// Attributes for the body tag.
+    ///
+    /// By default this property is an empty array.
     var bodyAttributes: [HTMLAttribute<HTMLTag.body>] { get }
 
     /// The text directionality (`ltr`, `rtl`, `auto`) of the HTML document.
@@ -40,7 +43,12 @@ public protocol HTMLDocument: HTML {
     /// By default this attribute is not set.
     var dir: HTMLAttributeValue.Direction { get }
 
+    /// Additional content for the document head.
+    ///
+    /// This content is rendered after the default UTF-8 charset meta tag and ``title`` element.
     @ContentBuilder var head: HTMLHead { get }
+
+    /// The content rendered inside the document body.
     @ContentBuilder var body: HTMLBody { get }
 }
 
@@ -95,6 +103,7 @@ public extension HTMLDocument {
         HTMLRaw("<!DOCTYPE html>")
         html {
             Elementary.head {
+                meta(.charset(.utf8))
                 Elementary.title { self.title }
                 self.head
             }
