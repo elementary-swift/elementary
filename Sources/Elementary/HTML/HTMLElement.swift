@@ -1,5 +1,6 @@
 /// An HTML element that can contain content.
 public struct HTMLElement<Tag: HTMLTrait.Paired, Content: HTML>: _Attributed, HTML {
+    public typealias Content = Content
     public typealias Body = Never
 
     public var _attributes: _AttributeStorage
