@@ -1,5 +1,3 @@
-import Elementary
-
 /// A type that represents SVG content that can be rendered.
 ///
 /// You can create reusable SVG components by conforming to this protocol

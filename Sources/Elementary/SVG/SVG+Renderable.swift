@@ -1,5 +1,3 @@
-import Elementary
-
 #if !hasFeature(Embedded)
 extension SVGTagDefinition {
     @inlinable

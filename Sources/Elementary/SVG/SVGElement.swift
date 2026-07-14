@@ -1,5 +1,3 @@
-import Elementary
-
 /// An SVG element that can contain SVG content.
 public struct SVGElement<Tag: SVGTagDefinition, Content: SVGContent>: _Attributed, SVGContent {
     public typealias Body = Never

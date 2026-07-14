@@ -1,5 +1,4 @@
 import Elementary
-import ElementarySVG
 import Testing
 
 struct SVGRenderingTests {

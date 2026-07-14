@@ -1,5 +1,3 @@
-import Elementary
-
 extension Never: SVGContent {}
 
 extension Optional: SVGContent where Wrapped: SVGContent {
