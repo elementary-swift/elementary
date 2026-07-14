@@ -29,30 +29,4 @@ public struct AsyncForEach<Source: AsyncSequence, Content> {
     }
 }
 
-extension AsyncForEach: HTML where Content: HTML {
-    public typealias Body = Never
-
-    @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        context.assertionFailureNoAsyncContext(self)
-    }
-
-    @inlinable
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        context.assertNoAttributes(self)
-
-        for try await element in html.sequence {
-            try await Content._render(html.contentBuilder(element), into: &renderer, with: copy context)
-        }
-    }
-}
 #endif

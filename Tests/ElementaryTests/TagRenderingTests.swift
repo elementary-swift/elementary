@@ -23,6 +23,36 @@ struct TagRenderingTests {
         )
     }
 
+    @Test func testRendersVoidAliasWithAttributes() async throws {
+        try await HTMLAssertEqual(
+            img(.src("/logo.png"), .alt("Logo")),
+            #"<img src="/logo.png" alt="Logo">"#
+        )
+    }
+
+    @Test func testRendersHTMLVoidElement() async throws {
+        try await HTMLAssertEqual(
+            HTMLVoidElement<HTMLTag.br>(),
+            "<br>"
+        )
+    }
+
+    @Test func testRendersHTMLVoidElementAlias() async throws {
+        try await HTMLAssertEqual(
+            HTMLVoidElement<HTMLTag.br>(.id("break")),
+            #"<br id="break">"#
+        )
+    }
+
+    @Test func testRendersDirectHTMLElement() async throws {
+        try await HTMLAssertEqual(
+            HTMLElement<HTMLTag.p, StringContent> {
+                "Hello"
+            },
+            "<p>Hello</p>"
+        )
+    }
+
     @Test func testRendersTuples() async throws {
         try await HTMLAssertEqual(
             div {

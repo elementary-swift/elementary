@@ -17,7 +17,7 @@ public extension HTMLTrait.Attributes {
     /// A marker that indicates that an HTML tag can have global attributes.
     ///
     /// Every HTML tag conforms to this.
-    protocol Global {}
+    protocol Global: MarkupTrait.AllowsAttributes {}
 }
 
 public extension HTMLTag {
@@ -97,6 +97,7 @@ public extension HTMLTag {
     enum figcaption: HTMLTrait.Paired { public static let name = "figcaption" }
     enum figure: HTMLTrait.Paired { public static let name = "figure" }
     enum picture: HTMLTrait.Paired { public static let name = "picture" }
+    @available(*, deprecated)
     enum svg: HTMLTrait.Paired { public static let name = "svg" }
 
     // Audio / Video
@@ -158,8 +159,4 @@ public extension HTMLTag {
     enum embed: HTMLTrait.Unpaired { public static let name = "embed" }
     enum object: HTMLTrait.Paired { public static let name = "object" }
     enum param: HTMLTrait.Unpaired { public static let name = "param" }
-}
-
-public extension HTMLTagDefinition where Self: HTMLTrait.RenderedInline {
-    static var _rendersInline: Bool { true }
 }

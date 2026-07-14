@@ -59,6 +59,7 @@ public extension HTMLDocument {
     var bodyAttributes: [HTMLAttribute<HTMLTag.body>] { [] }
 }
 
+#if !hasFeature(Embedded)
 // NOTE: this is a bit messy after the renaming of var content to var body
 public extension HTMLDocument {
     static func _render<Renderer: _HTMLRendering>(
@@ -103,3 +104,4 @@ public extension HTMLDocument {
         .attributes(.dir(dir), when: dir.value != defaultUndefinedDirection)
     }
 }
+#endif

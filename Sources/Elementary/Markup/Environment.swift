@@ -54,53 +54,10 @@ public struct Environment<T: Sendable>: Sendable {
     }
 }
 
-public extension HTML {
-    /// Sets the value of a `TaskLocal` for the duration of rendering the content.
-    ///
-    /// The value can be accessed using the ``Environment`` property wrapper.
-    /// Elementary uses task-locals as the underlying storage system for environment variables.
-    ///
-    /// ```swift
-    /// enum Values {
-    ///     @TaskLocal static var myNumber = 0
-    /// }
-    /// div {
-    ///     MyNumber()
-    ///         .environment(Values.$myNumber, 15)
-    /// }
-    /// ```
-    func environment<T: Sendable>(_ taskLocal: TaskLocal<T>, _ value: T) -> _ModifiedTaskLocal<T, Self> {
-        _ModifiedTaskLocal(wrappedContent: self, taskLocal: taskLocal, value: value)
-    }
-}
-
-public struct _ModifiedTaskLocal<T: Sendable, Content: HTML>: HTML {
-    public typealias Tag = Content.Tag
-
+public struct _ModifiedTaskLocal<T: Sendable, Content> {
     var wrappedContent: Content
     var taskLocal: TaskLocal<T>
     var value: T
-
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        html.taskLocal.withValue(html.value) { [context] in
-            Content._render(html.wrappedContent, into: &renderer, with: context)
-        }
-    }
-
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        try await html.taskLocal.withValue(html.value) { [context] in
-            try await Content._render(html.wrappedContent, into: &renderer, with: context)
-        }
-    }
 }
 
 extension _ModifiedTaskLocal: Sendable where Content: Sendable {}

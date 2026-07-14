@@ -1,7 +1,8 @@
+#if !hasFeature(Embedded)
 extension _RenderingContext {
     @inline(__always)
     @usableFromInline
-    func assertNoAttributes(_ type: (some HTML).Type) {
+    func assertNoAttributes(_ type: (some _Renderable).Type) {
         #if hasFeature(Embedded)
         assert(attributes.isEmpty, "Attributes are not supported")
         #else
@@ -11,7 +12,7 @@ extension _RenderingContext {
 
     @inline(__always)
     @usableFromInline
-    func assertionFailureNoAsyncContext(_ type: (some HTML).Type) {
+    func assertionFailureNoAsyncContext(_ type: (some _Renderable).Type) {
         #if hasFeature(Embedded)
         assertionFailure("Cannot render async content in a synchronous context, please use .render(into:) or .renderAsync() instead.")
         #else
@@ -24,7 +25,7 @@ extension _RenderingContext {
 }
 
 // I do not know why this function does not work in embedded, but currently it crashes the compiler
-#if !hasFeature(Embedded)
+
 extension [UInt8] {
     @inline(__always)
     mutating func appendToken(_ token: consuming _HTMLRenderToken) {
@@ -45,6 +46,21 @@ extension [UInt8] {
                 }
             }
             append(62)  // >
+        case let .selfClosingTag(tagName, attributes: attributes):
+            append(60)  // <
+            appendString(tagName)
+            if !attributes.isEmpty {
+                for attribute in attributes {
+                    append(32)  // space
+                    appendString(attribute.name)
+                    if let value = attribute.value {
+                        append(contentsOf: [61, 34])  // ="
+                        appendEscapedAttributeValue(value)
+                        append(34)  // "
+                    }
+                }
+            }
+            append(contentsOf: [32, 47, 62])  // />
         case let .endTag(tagName, _):
             append(contentsOf: [60, 47])  // </
             appendString(tagName)

@@ -10,17 +10,17 @@ public enum _AttributeStorage: Sendable, Equatable {
     case multiple([_StoredAttribute])
 
     @inlinable
-    init() {
+    public init() {
         self = .none
     }
 
     @inlinable
-    init(_ attribute: HTMLAttribute<some HTMLTagDefinition>) {
+    public init(_ attribute: MarkupAttribute<some MarkupTagDefinition>) {
         self = .single(attribute.htmlAttribute)
     }
 
     @inlinable
-    init(_ attributes: [HTMLAttribute<some HTMLTagDefinition>]) {
+    public init(_ attributes: [MarkupAttribute<some MarkupTagDefinition>]) {
         switch attributes.count {
         case 0: self = .none
         case 1: self = .single(attributes[0].htmlAttribute)
