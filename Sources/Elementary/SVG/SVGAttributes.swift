@@ -1,5 +1,3 @@
-import Elementary
-
 public enum SVGTrait {
     /// A marker that indicates that an SVG tag should be rendered inline in formatted output.
     public protocol RenderedInline {}

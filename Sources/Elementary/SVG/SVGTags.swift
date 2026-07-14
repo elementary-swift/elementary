@@ -1,5 +1,3 @@
-import Elementary
-
 public extension SVGTag {
     enum svg: SVGTagDefinition, HTMLTagDefinition { public static let name = "svg" }
     enum g: SVGTagDefinition { public static let name = "g" }

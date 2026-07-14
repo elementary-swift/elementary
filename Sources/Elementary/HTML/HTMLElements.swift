@@ -73,7 +73,7 @@ public typealias canvas<Content: HTML> = HTMLElement<HTMLTag.canvas, Content>
 public typealias figcaption<Content: HTML> = HTMLElement<HTMLTag.figcaption, Content>
 public typealias figure<Content: HTML> = HTMLElement<HTMLTag.figure, Content>
 public typealias picture<Content: HTML> = HTMLElement<HTMLTag.picture, Content>
-@available(*, deprecated, message: "Use ElementarySVG::SVG.svg instead. This type will be removed in a future release.")
+@available(*, deprecated, message: "Use SVG.svg instead. This type will be removed in a future release.")
 public typealias svg<Content: HTML> = HTMLElement<HTMLTag.svg, Content>
 
 // Audio / Video
