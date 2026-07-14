@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.1
 import PackageDescription
 
 let package = Package(
@@ -19,8 +19,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Hummingbird", package: "hummingbird"),
                 .product(name: "Elementary", package: "elementary"),
-            ],
-            swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]
+            ]
         )
     ]
 )
