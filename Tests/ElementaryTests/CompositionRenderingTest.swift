@@ -5,14 +5,14 @@ struct CompositionRenderingTests {
     @Test func testRendersADocument() async throws {
         try await HTMLAssertEqual(
             MyPage(text: "my text"),
-            #"<!DOCTYPE html><html lang="en"><head><title>Foo</title><meta name="author" content="Me"><meta name="description" content="Test page"></head><body class="my-class" id="42"><div><h1>Hello, world!</h1><p>my text</p></div></body></html>"#
+            #"<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Foo</title><meta name="author" content="Me"><meta name="description" content="Test page"></head><body class="my-class" id="42"><div><h1>Hello, world!</h1><p>my text</p></div></body></html>"#
         )
     }
 
     @Test func testRendersARTLPage() async throws {
         try await HTMLAssertEqual(
             MyRTLPage(),
-            #"<!DOCTYPE html><html lang="he" dir="rtl"><head><title>שלום עולם</title></head><body><h1>מה קורה?</h1></body></html>"#
+            #"<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"><title>שלום עולם</title></head><body><h1>מה קורה?</h1></body></html>"#
         )
     }
 
