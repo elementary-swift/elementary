@@ -4,11 +4,6 @@
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Felementary-swift%2Felementary%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/elementary-swift/elementary) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Felementary-swift%2Felementary%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/elementary-swift/elementary)
 
-> [!IMPORTANT]
-> 
-> This repo 📦 moved 📦 to its new home at **`https://github.com/elementary-swift`**.    
-> Please update your URLs to avoid trouble - and reach out if anything breaks!
-
 > [!NOTE]
 >
 > For running Swift apps in the browser, check out  **[ElementaryUI](https://elementary.codes/)**.
@@ -190,7 +185,7 @@ div {
 }
 ```
 
-By exposing the tag type of `content`, attributes will fall through and be applied correctly.
+By exposing the tag type of `body`, attributes will fall through and be applied correctly.
 
 ```swift
 struct Button: HTML {
