@@ -2,6 +2,9 @@
 public enum SVGAttributeValue {}
 
 public extension SVGAttributeValue {
+    /// The XML namespace URI for SVG: `http://www.w3.org/2000/svg`.
+    static let xmlNamespace = "http://www.w3.org/2000/svg"
+
     struct Length: ExpressibleByStringLiteral, ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral, Sendable, Equatable {
         public let value: String
 
