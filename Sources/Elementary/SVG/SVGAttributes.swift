@@ -6,7 +6,7 @@ public enum SVGTrait {
 }
 
 public extension SVGAttribute where Tag == SVGTag.svg {
-    static func xmlns(_ value: String = "http://www.w3.org/2000/svg") -> Self {
+    static func xmlns(_ value: String = SVGAttributeValue.xmlNamespace) -> Self {
         SVGAttribute(name: "xmlns", value: value)
     }
 }
