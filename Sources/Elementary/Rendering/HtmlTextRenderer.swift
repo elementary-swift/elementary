@@ -88,7 +88,7 @@ extension PrettyHTMLTextRenderer: _HTMLRendering {
 
         switch token {
         case .selfClosingTag(_, attributes: _):
-            flushInlineText(forceLineBreak: isInLineAfterBlockTagOpen)
+            flushInlineText(forceLineBreak: true)
             addLineBreak()
             result += renderedToken
         case let .startTag(_, attributes: _, isUnpaired: isUnpaired, type: type):
@@ -96,7 +96,7 @@ extension PrettyHTMLTextRenderer: _HTMLRendering {
             case .inline:
                 currentInlineText += renderedToken
             case .block:
-                flushInlineText(forceLineBreak: isInLineAfterBlockTagOpen)
+                flushInlineText(forceLineBreak: true)
                 addLineBreak()
                 result += renderedToken
 

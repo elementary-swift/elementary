@@ -173,6 +173,71 @@ struct FormatedRenderingTests {
         )
     }
 
+    @Test func testFormatsBlockSiblingAfterInlineAfterBlockSibling() {
+        HTMLFormattedAssertEqual(
+            div {
+                p { "a" }
+                span { "hi" }
+                p { "b" }
+            },
+            """
+            <div>
+              <p>a</p>
+              <span>hi</span>
+              <p>b</p>
+            </div>
+            """
+        )
+    }
+
+    @Test func testFormatsSelfClosingTagAfterInlineAfterBlockSibling() {
+        HTMLFormattedAssertEqual(
+            div {
+                p { "a" }
+                span { "hi" }
+                br()
+            },
+            """
+            <div>
+              <p>a</p>
+              <span>hi</span>
+              <br>
+            </div>
+            """
+        )
+    }
+
+    @Test func testFormatsConsecutiveInlineSiblingsAfterBlockSibling() {
+        HTMLFormattedAssertEqual(
+            div {
+                p { "a" }
+                span { "hi" }
+                span { "bye" }
+            },
+            """
+            <div>
+              <p>a</p>
+              <span>hi</span><span>bye</span>
+            </div>
+            """
+        )
+    }
+
+    @Test func testFormatsRawInsideInlineElementAfterBlockSibling() {
+        HTMLFormattedAssertEqual(
+            div {
+                p { "a" }
+                span { HTMLRaw("<b>raw</b>") }
+            },
+            """
+            <div>
+              <p>a</p>
+              <span><b>raw</b></span>
+            </div>
+            """
+        )
+    }
+
     @Test func testFormatsAttributes() {
         HTMLFormattedAssertEqual(
             div(.id("1")) {
