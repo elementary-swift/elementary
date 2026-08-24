@@ -137,4 +137,58 @@ struct AttributeRenderingTests {
             #"<img src="/path/to/dog.jpeg" alt="A happy dog" width="200" height="200">"#
         )
     }
+
+    @Test func testRendersNumericInputConstraints() async throws {
+        try await HTMLAssertEqual(
+            input(.type(.number), .min(0), .max(10.5), .step(0.5)),
+            #"<input type="number" min="0" max="10.5" step="0.5">"#
+        )
+    }
+
+    @Test func testRendersDateInputConstraints() async throws {
+        try await HTMLAssertEqual(
+            input(.type(.date), .min("2025-01-01"), .max("2025-12-31"), .step(.any)),
+            #"<input type="date" min="2025-01-01" max="2025-12-31" step="any">"#
+        )
+    }
+
+    @Test func testRendersTextInputConstraints() async throws {
+        try await HTMLAssertEqual(
+            input(.type(.text), .minlength(2), .maxlength(20), .size(30), .pattern("[a-z]+"), .readonly, .list("suggestions")),
+            #"<input type="text" minlength="2" maxlength="20" size="30" pattern="[a-z]+" readonly list="suggestions">"#
+        )
+    }
+
+    @Test func testRendersTextareaAttributes() async throws {
+        try await HTMLAssertEqual(
+            textarea(.rows(4), .cols(40), .wrap(.soft), .maxlength(100)) {},
+            #"<textarea rows="4" cols="40" wrap="soft" maxlength="100"></textarea>"#
+        )
+    }
+
+    @Test func testRendersSelectAttributes() async throws {
+        try await HTMLAssertEqual(
+            select(.multiple, .size(3)) {},
+            #"<select multiple size="3"></select>"#
+        )
+    }
+
+    @Test func testRendersFormEncodingAttributes() async throws {
+        try await HTMLAssertEqual(
+            form(.method(.post), .enctype(.multipartFormData), .novalidate) {},
+            #"<form method="post" enctype="multipart/form-data" novalidate></form>"#
+        )
+    }
+
+    @Test func testRendersMeterAndProgressAttributes() async throws {
+        try await HTMLAssertEqual(
+            meter(.min(0), .max(100), .low(20), .high(80), .optimum(90), .value(75)) {},
+            #"<meter min="0" max="100" low="20" high="80" optimum="90" value="75"></meter>"#
+        )
+
+        try await HTMLAssertEqual(
+            progress(.value(0.5), .max(1)) {},
+            #"<progress value="0.5" max="1"></progress>"#
+        )
+    }
 }

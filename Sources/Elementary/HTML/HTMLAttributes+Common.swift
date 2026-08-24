@@ -444,8 +444,24 @@ public extension HTMLAttribute where Tag == HTMLTag.form {
         HTMLAttribute(name: "action", value: url)
     }
 
+    struct EncodingType: Sendable, Equatable {
+        let value: String
+
+        public static var urlEncoded: Self { .init(value: "application/x-www-form-urlencoded") }
+        public static var multipartFormData: Self { .init(value: "multipart/form-data") }
+        public static var textPlain: Self { .init(value: "text/plain") }
+    }
+
     static func method(_ method: Method) -> Self {
         HTMLAttribute(name: "method", value: method.value)
+    }
+
+    static func enctype(_ type: EncodingType) -> Self {
+        HTMLAttribute(name: "enctype", value: type.value)
+    }
+
+    static var novalidate: Self {
+        HTMLAttribute(name: "novalidate", value: nil)
     }
 }
 
@@ -486,6 +502,12 @@ public extension HTMLAttribute where Tag == HTMLTag.input {
         }
     }
 
+    struct Step: Sendable, Equatable {
+        let value: String
+
+        public static var any: Self { .init(value: "any") }
+    }
+
     static func type(_ type: InputType) -> Self {
         HTMLAttribute(name: "type", value: type.value)
     }
@@ -500,6 +522,54 @@ public extension HTMLAttribute where Tag == HTMLTag.input {
 
     static func accept(_ type: Accept) -> Self {
         HTMLAttribute(name: "accept", value: type.value)
+    }
+
+    static func min(_ value: Int) -> Self {
+        HTMLAttribute(name: "min", value: "\(value)")
+    }
+
+    static func min(_ value: Double) -> Self {
+        HTMLAttribute(name: "min", value: "\(value)")
+    }
+
+    /// Sets the minimum value of a date, time or week input, e.g. `"2025-01-01"`.
+    static func min(_ value: String) -> Self {
+        HTMLAttribute(name: "min", value: value)
+    }
+
+    static func max(_ value: Int) -> Self {
+        HTMLAttribute(name: "max", value: "\(value)")
+    }
+
+    static func max(_ value: Double) -> Self {
+        HTMLAttribute(name: "max", value: "\(value)")
+    }
+
+    /// Sets the maximum value of a date, time or week input, e.g. `"2025-12-31"`.
+    static func max(_ value: String) -> Self {
+        HTMLAttribute(name: "max", value: value)
+    }
+
+    static func step(_ value: Int) -> Self {
+        HTMLAttribute(name: "step", value: "\(value)")
+    }
+
+    static func step(_ value: Double) -> Self {
+        HTMLAttribute(name: "step", value: "\(value)")
+    }
+
+    /// Sets the step to `any`, allowing any value in the input's range.
+    static func step(_ value: Step) -> Self {
+        HTMLAttribute(name: "step", value: value.value)
+    }
+
+    static func pattern(_ value: String) -> Self {
+        HTMLAttribute(name: "pattern", value: value)
+    }
+
+    /// References the id of a `datalist` element providing suggested values.
+    static func list(_ id: String) -> Self {
+        HTMLAttribute(name: "list", value: id)
     }
 }
 
@@ -571,6 +641,158 @@ extension HTMLTag.textarea: HTMLTrait.Attributes.placeholder {}
 public extension HTMLAttribute where Tag: HTMLTrait.Attributes.placeholder {
     static func placeholder(_ value: String) -> Self {
         HTMLAttribute(name: "placeholder", value: value)
+    }
+}
+
+// readonly attribute
+public extension HTMLTrait.Attributes {
+    protocol readonly {}
+}
+
+extension HTMLTag.input: HTMLTrait.Attributes.readonly {}
+extension HTMLTag.textarea: HTMLTrait.Attributes.readonly {}
+
+public extension HTMLAttribute where Tag: HTMLTrait.Attributes.readonly {
+    static var readonly: Self {
+        HTMLAttribute(name: "readonly", value: nil)
+    }
+}
+
+// multiple attribute
+public extension HTMLTrait.Attributes {
+    protocol multiple {}
+}
+
+extension HTMLTag.input: HTMLTrait.Attributes.multiple {}
+extension HTMLTag.select: HTMLTrait.Attributes.multiple {}
+
+public extension HTMLAttribute where Tag: HTMLTrait.Attributes.multiple {
+    static var multiple: Self {
+        HTMLAttribute(name: "multiple", value: nil)
+    }
+}
+
+// size attribute
+public extension HTMLTrait.Attributes {
+    protocol size {}
+}
+
+extension HTMLTag.input: HTMLTrait.Attributes.size {}
+extension HTMLTag.select: HTMLTrait.Attributes.size {}
+
+public extension HTMLAttribute where Tag: HTMLTrait.Attributes.size {
+    static func size(_ value: Int) -> Self {
+        HTMLAttribute(name: "size", value: "\(value)")
+    }
+}
+
+// minlength and maxlength attributes
+public extension HTMLTrait.Attributes {
+    protocol textLength {}
+}
+
+extension HTMLTag.input: HTMLTrait.Attributes.textLength {}
+extension HTMLTag.textarea: HTMLTrait.Attributes.textLength {}
+
+public extension HTMLAttribute where Tag: HTMLTrait.Attributes.textLength {
+    static func minlength(_ value: Int) -> Self {
+        HTMLAttribute(name: "minlength", value: "\(value)")
+    }
+
+    static func maxlength(_ value: Int) -> Self {
+        HTMLAttribute(name: "maxlength", value: "\(value)")
+    }
+}
+
+// textarea tag attributes
+public extension HTMLAttribute where Tag == HTMLTag.textarea {
+    struct Wrap: Sendable, Equatable {
+        let value: String
+
+        public static var hard: Self { .init(value: "hard") }
+        public static var soft: Self { .init(value: "soft") }
+    }
+
+    static func rows(_ value: Int) -> Self {
+        HTMLAttribute(name: "rows", value: "\(value)")
+    }
+
+    static func cols(_ value: Int) -> Self {
+        HTMLAttribute(name: "cols", value: "\(value)")
+    }
+
+    static func wrap(_ wrap: Wrap) -> Self {
+        HTMLAttribute(name: "wrap", value: wrap.value)
+    }
+}
+
+// meter tag attributes
+public extension HTMLAttribute where Tag == HTMLTag.meter {
+    static func value(_ value: Int) -> Self {
+        HTMLAttribute(name: "value", value: "\(value)")
+    }
+
+    static func value(_ value: Double) -> Self {
+        HTMLAttribute(name: "value", value: "\(value)")
+    }
+
+    static func min(_ value: Int) -> Self {
+        HTMLAttribute(name: "min", value: "\(value)")
+    }
+
+    static func min(_ value: Double) -> Self {
+        HTMLAttribute(name: "min", value: "\(value)")
+    }
+
+    static func max(_ value: Int) -> Self {
+        HTMLAttribute(name: "max", value: "\(value)")
+    }
+
+    static func max(_ value: Double) -> Self {
+        HTMLAttribute(name: "max", value: "\(value)")
+    }
+
+    static func low(_ value: Int) -> Self {
+        HTMLAttribute(name: "low", value: "\(value)")
+    }
+
+    static func low(_ value: Double) -> Self {
+        HTMLAttribute(name: "low", value: "\(value)")
+    }
+
+    static func high(_ value: Int) -> Self {
+        HTMLAttribute(name: "high", value: "\(value)")
+    }
+
+    static func high(_ value: Double) -> Self {
+        HTMLAttribute(name: "high", value: "\(value)")
+    }
+
+    static func optimum(_ value: Int) -> Self {
+        HTMLAttribute(name: "optimum", value: "\(value)")
+    }
+
+    static func optimum(_ value: Double) -> Self {
+        HTMLAttribute(name: "optimum", value: "\(value)")
+    }
+}
+
+// progress tag attributes
+public extension HTMLAttribute where Tag == HTMLTag.progress {
+    static func value(_ value: Int) -> Self {
+        HTMLAttribute(name: "value", value: "\(value)")
+    }
+
+    static func value(_ value: Double) -> Self {
+        HTMLAttribute(name: "value", value: "\(value)")
+    }
+
+    static func max(_ value: Int) -> Self {
+        HTMLAttribute(name: "max", value: "\(value)")
+    }
+
+    static func max(_ value: Double) -> Self {
+        HTMLAttribute(name: "max", value: "\(value)")
     }
 }
 
