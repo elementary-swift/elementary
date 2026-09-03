@@ -4,6 +4,10 @@
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Felementary-swift%2Felementary%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/elementary-swift/elementary) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Felementary-swift%2Felementary%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/elementary-swift/elementary)
 
+Elementary is built for server-side rendering in Swift, and integrates with both Hummingbird and Vapor. Use it for complete server-rendered applications, HTML-over-the-wire approaches with HTMX, or wherever you need efficient, type-safe HTML generation.
+
+[Examples](#play-with-it) | [Motivation](#motivation-and-other-packages) | [Discussion](https://github.com/elementary-swift/elementary/discussions)
+
 > [!NOTE]
 >
 > For running Swift apps in the browser, check out  **[ElementaryUI](https://elementary.codes/)**.
@@ -11,9 +15,6 @@
 >   <a href="https://elementary.codes">
 >    <img src="https://elementary.codes/og-image.png" width="400px" alt="Elementary Logo">
 >  </a>
-
-
-[Examples](#play-with-it) | [Motivation](#motivation-and-other-packages) | [Discussion](https://github.com/elementary-swift/elementary/discussions)
 
 ```swift
 struct MainPage: HTMLDocument {
