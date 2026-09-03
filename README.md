@@ -89,7 +89,7 @@ Elementary renders straight to text, optimized for serving generated HTML from a
 
 Any type conforming to `HTML` can be rendered individually, ideal for testing or for sending fragments with [htmx](https://github.com/elementary-swift/elementary-htmx).
 
-The default rendering mechanism produces chunks of HTML for efficient response streaming, so the browser can start loading a page while the server is still producing the rest of it. Swift concurrency is used to handle back pressure, so you your memory footprint stays low even for large pages.
+The default rendering mechanism produces chunks of HTML for efficient response streaming, so the browser can start loading a page while the server is still producing the rest of it. Swift concurrency is used to handle back pressure, so your memory footprint stays low even for large pages.
 
 ```swift
 // Stream HTML, optimized for responsiveness and back pressure-aware
