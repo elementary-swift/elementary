@@ -44,6 +44,7 @@ public typealias strong<Content: HTML> = HTMLElement<HTMLTag.strong, Content>
 public typealias sub<Content: HTML> = HTMLElement<HTMLTag.sub, Content>
 public typealias sup<Content: HTML> = HTMLElement<HTMLTag.sup, Content>
 public typealias template<Content: HTML> = HTMLElement<HTMLTag.template, Content>
+public typealias slot<Content: HTML> = HTMLElement<HTMLTag.slot, Content>
 public typealias time<Content: HTML> = HTMLElement<HTMLTag.time, Content>
 public typealias u<Content: HTML> = HTMLElement<HTMLTag.u, Content>
 public typealias wbr = HTMLVoidElement<HTMLTag.wbr>

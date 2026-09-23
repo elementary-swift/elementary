@@ -67,6 +67,7 @@ public extension HTMLTag {
     enum sub: HTMLTrait.Paired, HTMLTrait.RenderedInline { public static let name = "sub" }
     enum sup: HTMLTrait.Paired, HTMLTrait.RenderedInline { public static let name = "sup" }
     enum template: HTMLTrait.Paired { public static let name = "template" }
+    enum slot: HTMLTrait.Paired, HTMLTrait.RenderedInline { public static let name = "slot" }
     enum time: HTMLTrait.Paired, HTMLTrait.RenderedInline { public static let name = "time" }
     enum u: HTMLTrait.Paired { public static let name = "u" }
     // enum var_: HTMLTrait.Paired { public static let name = "var" }
