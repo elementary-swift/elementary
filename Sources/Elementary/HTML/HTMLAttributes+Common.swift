@@ -334,6 +334,7 @@ extension HTMLTag.form: HTMLTrait.Attributes.name {}
 extension HTMLTag.iframe: HTMLTrait.Attributes.name {}
 extension HTMLTag.input: HTMLTrait.Attributes.name {}
 extension HTMLTag.select: HTMLTrait.Attributes.name {}
+extension HTMLTag.slot: HTMLTrait.Attributes.name {}
 extension HTMLTag.textarea: HTMLTrait.Attributes.name {}
 
 public extension HTMLAttribute where Tag: HTMLTrait.Attributes.name {
