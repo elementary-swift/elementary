@@ -243,7 +243,7 @@ ul {
 
 ## Task-local values
 
-Elementary provides a few light-weight utilities to use `@TaskLocal` values as server-friendly environment variable.
+Elementary provides lightweight helpers for reading and scoping `@TaskLocal` values while content renders.
 
 ```swift
 enum MyValues {

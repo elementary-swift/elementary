@@ -17,7 +17,7 @@ struct App {
 
             return MainLayout(title: "Greetings") {
                 GreetingPage(greetingCount: count)
-                    .environment(EnvironmentValues.$name, name.isEmpty ? "kind stranger" : name)
+                    .taskLocalValue(EnvironmentValues.$name, name.isEmpty ? "kind stranger" : name)
             }
         }
 
