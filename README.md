@@ -241,9 +241,9 @@ ul {
 }
 ```
 
-## Enviroment values
+## Task-local values
 
-Elementary utilizes `TaskLocal`s to provide a light-weight environment system.
+Elementary provides a few light-weight utilities to use `@TaskLocal` values as server-friendly environment variable.
 
 ```swift
 enum MyValues {
@@ -253,7 +253,7 @@ enum MyValues {
 
 struct MyComponent: HTML {
     // ... their values can be accessed ...
-    @Environment(MyValues.$userName) var userName
+    @TaskLocalValue(MyValues.$userName) var userName
 
     var body: some HTML {
         p { "Hello, \(userName)!" }
@@ -261,9 +261,9 @@ struct MyComponent: HTML {
 }
 
 div {
-    // ... and provided in a familiar way
+    // ... and scoped to rendering this component
     MyComponent()
-        .environment(Values.$userName, "Drax the Destroyer")
+        .taskLocalValue(MyValues.$userName, "Drax the Destroyer")
 }
 ```
 
