@@ -2,12 +2,7 @@
 import Synchronization
 
 @available(iOS 18, macOS 15, *)
-final class SendOnceBox: Sendable, SendOnceBoxing {
-    // final class SendOnceBox<Value>: Sendable, SendOnceBoxing {
-    typealias Value = any HTML
-    // NOTE: generics+Synchronization crashes the compiler ATM
-    // https://github.com/swiftlang/swift/issues/78048
-
+final class SendOnceBox<Value>: Sendable, SendOnceBoxing {
     let mutex: Mutex<Value?>
 
     init(_ value: sending Value) {
