@@ -16,18 +16,24 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        # TODO: 6.4.x nightly currently does not build
-        # image: ["swift:6.3", "swiftlang/swift:nightly-6.4.x-noble"]
-        image: ["swift:6.3"]
+        # the Wasm SDK version must exactly match the toolchain version
+        include:
+          - swift: "6.3.3"
+            sdk-checksum: cabfa08b73bb8ac783927ecd15fa386e99d0c139c5f232445067bcf58379cae7
+          - swift: "6.4.0"
+            sdk-checksum: f07b7be3c586d92d7a07051fc6d303b87ebea67eadc40640ba59d5a8b79aa86d
 
     container:
-      image: ${{ matrix.image }}
+      image: swift:${{ matrix.swift }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Install Swift SDK for WebAssembly
         run: |
-          swift build \
-            --toolset Utilities/embedded-wasm.toolset.json \
-            --triple wasm32-unknown-none-wasm
+          swift sdk install \
+            https://download.swift.org/swift-${{ matrix.swift }}-release/wasm-sdk/swift-${{ matrix.swift }}-RELEASE/swift-${{ matrix.swift }}-RELEASE_wasm.artifactbundle.tar.gz \
+            --checksum ${{ matrix.sdk-checksum }}
+
+      - name: Build
+        run: swift build --swift-sdk swift-${{ matrix.swift }}-RELEASE_wasm-embedded
