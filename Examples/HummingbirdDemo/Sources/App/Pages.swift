@@ -53,7 +53,7 @@ struct WelcomePage: HTML {
 
 struct GreetingPage: HTML {
     // example of a task-local based environment value
-    @Environment(requiring: EnvironmentValues.$name) var name
+    @TaskLocalValue(requiring: EnvironmentValues.$name) var name
     var greetingCount: Int
 
     var body: some HTML {
