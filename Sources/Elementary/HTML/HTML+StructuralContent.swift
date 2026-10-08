@@ -24,13 +24,14 @@ extension _TupleContent5: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4:
 
 extension _TupleContent6: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML {}
 
+extension ModifiedContent: HTML
+where Content: HTML, Modifier: _MarkupRenderingModifier, Modifier.Tag: HTMLTagDefinition {}
+
 #if !hasFeature(Embedded)
 @_unavailableInEmbedded
 extension AsyncContent: HTML where Content: HTML {}
 
 extension AsyncForEach: HTML where Content: HTML {}
-
-extension _ModifiedTaskLocal: HTML where Content: HTML {}
 
 @available(iOS 17, *)
 extension _TupleContent: HTML where repeat each Child: HTML {}

@@ -1,4 +1,27 @@
 #if !hasFeature(Embedded)
+extension ModifiedContent: _Renderable where Content: MarkupContent, Modifier: _MarkupRenderingModifier {
+    @inlinable
+    @inline(__always)
+    public static func _render<Renderer: _HTMLRendering>(
+        _ html: consuming Self,
+        into renderer: inout Renderer,
+        with context: consuming _RenderingContext
+    ) {
+        html.modifier._render(html.content, into: &renderer, with: context)
+    }
+
+    @inlinable
+    @inline(__always)
+    @_unavailableInEmbedded
+    public static func _render<Renderer: _AsyncHTMLRendering>(
+        _ html: consuming Self,
+        into renderer: inout Renderer,
+        with context: consuming _RenderingContext
+    ) async throws {
+        try await html.modifier._render(html.content, into: &renderer, with: context)
+    }
+}
+
 extension Optional: _Renderable where Wrapped: _Renderable {
     @inlinable
     public static func _render<Renderer: _HTMLRendering>(
@@ -378,29 +401,6 @@ extension AsyncForEach: _Renderable where Content: _Renderable {
 
         for try await element in html.sequence {
             try await Content._render(html.contentBuilder(element), into: &renderer, with: copy context)
-        }
-    }
-}
-
-extension _ModifiedTaskLocal: _Renderable where Content: _Renderable {
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) {
-        html.taskLocal.withValue(html.value) { [context] in
-            Content._render(html.wrappedContent, into: &renderer, with: context)
-        }
-    }
-
-    @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
-        into renderer: inout Renderer,
-        with context: consuming _RenderingContext
-    ) async throws {
-        try await html.taskLocal.withValue(html.value) { [context] in
-            try await Content._render(html.wrappedContent, into: &renderer, with: context)
         }
     }
 }

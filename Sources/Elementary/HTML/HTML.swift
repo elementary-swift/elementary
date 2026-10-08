@@ -52,8 +52,6 @@ public typealias EmptyHTML = EmptyContent
 /// Prefer ``StringContent`` for new code. This alias is kept for source compatibility and will eventually be deprecated and removed.
 public typealias HTMLText = StringContent
 
-extension _AttributedContent: HTML where Content: HTML {}
-
 /// An HTML attribute that can be applied to an HTML element of the associated tag.
 public typealias HTMLAttribute = MarkupAttribute
 
@@ -72,12 +70,13 @@ public typealias _HTMLArray<Element> = _ArrayContent<Element>
 @available(*, deprecated, renamed: "_ConditionalContent")
 public typealias _HTMLConditional<TrueContent, FalseContent> = _ConditionalContent<TrueContent, FalseContent>
 
-@available(*, deprecated, renamed: "_AttributedContent")
-public typealias _AttributedElement<Content: HTML> = _AttributedContent<Content>
+@available(*, deprecated, renamed: "ModifiedContent")
+public typealias _AttributedElement<Content: HTML> = ModifiedContent<Content, _AttributesModifier<Content>>
 
 @available(*, deprecated)
-extension _AttributedElement {
+extension ModifiedContent where Content: HTML, Modifier == _AttributesModifier<Content> {
     @available(*, renamed: "_attributes")
+    @inlinable
     public var attributes: _AttributeStorage {
         _read { yield _attributes }
         _modify { yield &_attributes }
