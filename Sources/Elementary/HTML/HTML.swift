@@ -70,11 +70,15 @@ public typealias _HTMLArray<Element> = _ArrayContent<Element>
 @available(*, deprecated, renamed: "_ConditionalContent")
 public typealias _HTMLConditional<TrueContent, FalseContent> = _ConditionalContent<TrueContent, FalseContent>
 
+/// Compatibility alias for attribute-modified HTML content.
+///
+/// Use ``ModifiedContent`` with ``_AttributesModifier`` for new code.
 @available(*, deprecated, renamed: "ModifiedContent")
 public typealias _AttributedElement<Content: HTML> = ModifiedContent<Content, _AttributesModifier<Content>>
 
 @available(*, deprecated)
 extension ModifiedContent where Content: HTML, Modifier == _AttributesModifier<Content> {
+    /// Compatibility access to the attribute modifier's storage.
     @available(*, renamed: "_attributes")
     @inlinable
     public var attributes: _AttributeStorage {

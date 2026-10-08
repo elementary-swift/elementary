@@ -4,6 +4,7 @@
 /// During rendering, its attributes are prepended to the rendering context;
 /// duplicate attributes retain the existing attribute-merging behavior.
 public struct _AttributesModifier<WrappedContent: MarkupContent>: _MarkupRenderingModifier, Sendable {
+    public typealias InputTag = WrappedContent.Tag
     public typealias Tag = WrappedContent.Tag
 
     /// The attributes added to the wrapped content during rendering.

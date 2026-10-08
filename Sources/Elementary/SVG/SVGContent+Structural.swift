@@ -52,7 +52,7 @@ extension _TupleContent5: SVGContent where V0: SVGContent, V1: SVGContent, V2: S
 extension _TupleContent6: SVGContent where V0: SVGContent, V1: SVGContent, V2: SVGContent, V3: SVGContent, V4: SVGContent, V5: SVGContent {}
 
 extension ModifiedContent: SVGContent
-where Content: SVGContent, Modifier: _MarkupRenderingModifier, Modifier.Tag: SVGTagDefinition {}
+where Content: SVGContent, Modifier: _MarkupRenderingModifier, Content.Tag == Modifier.InputTag, Modifier.Tag: SVGTagDefinition {}
 
 #if !hasFeature(Embedded)
 extension AsyncContent: SVGContent where Content: SVGContent {}

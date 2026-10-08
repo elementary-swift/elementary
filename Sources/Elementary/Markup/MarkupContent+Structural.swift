@@ -62,9 +62,13 @@ where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent, V3: MarkupContent
 }
 
 extension ModifiedContent: MarkupContent
-where Content: MarkupContent, Modifier: _MarkupRenderingModifier {
+where Content: MarkupContent, Modifier: _MarkupRenderingModifier, Content.Tag == Modifier.InputTag {
     public typealias Body = Never
     public typealias Tag = Modifier.Tag
+}
+
+extension _HTMLModifierContent: MarkupContent {
+    public typealias Body = Never
 }
 
 #if !hasFeature(Embedded)

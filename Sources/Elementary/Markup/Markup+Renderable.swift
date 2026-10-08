@@ -26,7 +26,7 @@ extension _AttributesModifier {
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) {
+    ) where Content.Tag == InputTag {
         context.prependAttributes(_attributes)
         Content._render(content, into: &renderer, with: context)
     }
@@ -37,7 +37,7 @@ extension _AttributesModifier {
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) async throws {
+    ) async throws where Content.Tag == InputTag {
         context.prependAttributes(_attributes)
         try await Content._render(content, into: &renderer, with: context)
     }
@@ -49,7 +49,7 @@ extension _TaskLocalModifier where WrappedContent: MarkupContent {
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) {
+    ) where Content.Tag == InputTag {
         taskLocal.withValue(value) { [content, context] in
             Content._render(content, into: &renderer, with: context)
         }
@@ -61,7 +61,7 @@ extension _TaskLocalModifier where WrappedContent: MarkupContent {
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) async throws {
+    ) async throws where Content.Tag == InputTag {
         try await taskLocal.withValue(value) { [content, context] in
             try await Content._render(content, into: &renderer, with: context)
         }

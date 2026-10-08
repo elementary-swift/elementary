@@ -1,12 +1,18 @@
 /// Low-level rendering support for markup modifiers.
 ///
 /// Conforming modifiers control how ``ModifiedContent`` renders its wrapped content.
-/// Implement both rendering requirements and delegate to the content's rendering
-/// methods with the appropriate context. This underscored contract may evolve as
+/// Implement both rendering requirements to transform or delegate rendering of
+/// the content, passing on the appropriate context. This underscored contract may evolve as
 /// additional modifier APIs are introduced.
 ///
 /// In Embedded Swift, this protocol has no rendering requirements.
 public protocol _MarkupRenderingModifier {
+    /// The tag accepted by this modifier's rendering implementation.
+    ///
+    /// Rendering requires an exact tag match, including when this type is `Never`.
+    /// The wildcard behavior of ``HTMLModifier`` is provided by ``HTML/modifier(_:)``.
+    associatedtype InputTag: MarkupTagDefinition
+
     /// The tag describing the markup produced by this modifier.
     ///
     /// Tag-preserving modifiers use the wrapped content's tag. Modifiers that
@@ -23,7 +29,7 @@ public protocol _MarkupRenderingModifier {
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    )
+    ) where Content.Tag == InputTag
 
     /// Renders the wrapped content asynchronously using this modifier.
     /// - Parameters:
@@ -37,6 +43,6 @@ public protocol _MarkupRenderingModifier {
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) async throws
+    ) async throws where Content.Tag == InputTag
     #endif
 }

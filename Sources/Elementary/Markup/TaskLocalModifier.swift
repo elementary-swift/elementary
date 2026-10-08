@@ -8,6 +8,7 @@
 public struct _TaskLocalModifier<T: Sendable, WrappedContent>: Sendable {
     /// The task-local storage whose value is overridden during rendering.
     public var taskLocal: TaskLocal<T>
+
     /// The value made available while rendering the wrapped content.
     public var value: T
 
@@ -20,6 +21,7 @@ public struct _TaskLocalModifier<T: Sendable, WrappedContent>: Sendable {
 }
 
 extension _TaskLocalModifier: _MarkupRenderingModifier where WrappedContent: MarkupContent {
+    public typealias InputTag = WrappedContent.Tag
     public typealias Tag = WrappedContent.Tag
 }
 

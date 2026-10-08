@@ -1,5 +1,5 @@
 #if !hasFeature(Embedded)
-extension ModifiedContent: _Renderable where Content: MarkupContent, Modifier: _MarkupRenderingModifier {
+extension ModifiedContent: _Renderable where Content: MarkupContent, Modifier: _MarkupRenderingModifier, Content.Tag == Modifier.InputTag {
     @inlinable
     @inline(__always)
     public static func _render<Renderer: _HTMLRendering>(

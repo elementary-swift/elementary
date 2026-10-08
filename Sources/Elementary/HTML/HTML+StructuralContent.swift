@@ -25,7 +25,9 @@ extension _TupleContent5: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4:
 extension _TupleContent6: HTML where V0: HTML, V1: HTML, V2: HTML, V3: HTML, V4: HTML, V5: HTML {}
 
 extension ModifiedContent: HTML
-where Content: HTML, Modifier: _MarkupRenderingModifier, Modifier.Tag: HTMLTagDefinition {}
+where Content: HTML, Modifier: _MarkupRenderingModifier, Content.Tag == Modifier.InputTag, Modifier.Tag: HTMLTagDefinition {}
+
+extension _HTMLModifierContent: HTML {}
 
 #if !hasFeature(Embedded)
 @_unavailableInEmbedded

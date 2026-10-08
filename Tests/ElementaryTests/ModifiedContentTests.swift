@@ -139,13 +139,14 @@ private func requireTag<T: MarkupContent>(_ value: T, _ tag: T.Tag.Type) {}
 private func requireSameType<T>(_ first: T, _ second: T) {}
 
 private struct TestMarkupModifier: _MarkupRenderingModifier {
+    typealias InputTag = HTMLTag.p
     typealias Tag = HTMLTag.p
 
     consuming func _render<Content: MarkupContent, Renderer: _HTMLRendering>(
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) {
+    ) where Content.Tag == InputTag {
         Content._render(content, into: &renderer, with: context)
     }
 
@@ -153,7 +154,7 @@ private struct TestMarkupModifier: _MarkupRenderingModifier {
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) async throws {
+    ) async throws where Content.Tag == InputTag {
         try await Content._render(content, into: &renderer, with: context)
     }
 }
@@ -166,13 +167,14 @@ private func svgNumberAfterSuspension() async -> String {
 }
 
 private struct ReplacementModifier: _MarkupRenderingModifier {
+    typealias InputTag = HTMLTag.p
     typealias Tag = HTMLTag.div
 
     consuming func _render<Content: MarkupContent, Renderer: _HTMLRendering>(
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) {
+    ) where Content.Tag == InputTag {
         let replacement = div {}
         type(of: replacement)._render(replacement, into: &renderer, with: context)
     }
@@ -181,7 +183,7 @@ private struct ReplacementModifier: _MarkupRenderingModifier {
         _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) async throws {
+    ) async throws where Content.Tag == InputTag {
         let replacement = div {}
         try await type(of: replacement)._render(replacement, into: &renderer, with: context)
     }
