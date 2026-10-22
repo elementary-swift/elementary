@@ -35,34 +35,21 @@ extension [UInt8] {
             append(60)  // <
             appendString(tagName)
             if !attributes.isEmpty {
-                for attribute in attributes {
-                    append(32)  // space
-                    appendString(attribute.name)
-                    if let value = attribute.value {
-                        append(contentsOf: [61, 34])  // ="
-                        appendEscapedAttributeValue(value)
-                        append(34)  // "
-                    }
-                }
+                appendAttributes(attributes)
             }
             append(62)  // >
         case let .selfClosingTag(tagName, attributes: attributes):
             append(60)  // <
             appendString(tagName)
             if !attributes.isEmpty {
-                for attribute in attributes {
-                    append(32)  // space
-                    appendString(attribute.name)
-                    if let value = attribute.value {
-                        append(contentsOf: [61, 34])  // ="
-                        appendEscapedAttributeValue(value)
-                        append(34)  // "
-                    }
-                }
+                appendAttributes(attributes)
             }
-            append(contentsOf: [32, 47, 62])  // />
+            append(32)  // space
+            append(47)  // /
+            append(62)  // >
         case let .endTag(tagName, _):
-            append(contentsOf: [60, 47])  // </
+            append(60)  // <
+            append(47)  // /
             appendString(tagName)
             append(62)  // >
         case let .text(text):
@@ -73,6 +60,43 @@ extension [UInt8] {
             appendString("<!--")
             appendEscapedText(comment)
             appendString("-->")
+        }
+    }
+
+    @inline(never)
+    mutating func appendAttributes(_ attributes: borrowing _MergedAttributes) {
+        attributes.forEachMerged { attribute in
+            append(32)  // space
+            appendString(attribute.name)
+            switch attribute._value {
+            case .empty:
+                break
+            case let .plain(value):
+                append(61)  // =
+                append(34)  // "
+                appendEscapedAttributeValue(value)
+                append(34)  // "
+            case let .classes(classes):
+                append(61)  // =
+                append(34)  // "
+                for (index, value) in classes.classes.enumerated() {
+                    if index > 0 { append(32) }  // space
+                    appendEscapedAttributeValue(value)
+                }
+                append(34)  // "
+            case let .styles(styles):
+                append(61)  // =
+                append(34)  // "
+                for (index, entry) in styles.styles.enumerated() {
+                    if index > 0 { append(59) }  // ;
+                    if !entry.key.utf8.isEmpty {
+                        appendEscapedAttributeValue(entry.key)
+                        append(58)  // :
+                    }
+                    appendEscapedAttributeValue(entry.value)
+                }
+                append(34)  // "
+            }
         }
     }
 

@@ -1,59 +1,95 @@
 /// An internal type that stores HTML attributes for elements.
 ///
-/// It is optimized to avoid allocations for single attribute elements, and implements a lazy "flattening" iterator for rendering.
+/// Attributes are stored in a flat list in the order they were added. Attributes with the same name are merged
+/// into the first occurrence (according to their merge mode) when iterating or rendering.
 ///
-/// The storage automatically optimizes for the number of attributes being stored,
-/// using the most efficient representation in each case.
-public enum _AttributeStorage: Sendable, Equatable {
-    case none
-    case single(_StoredAttribute)
-    case multiple([_StoredAttribute])
+/// The storage avoids allocations for zero or one attribute, and merging never mutates or copies the stored list.
+public struct _AttributeStorage: Sendable, Equatable {
+    @usableFromInline
+    enum Storage: Sendable, Equatable {
+        case none
+        case single(_StoredAttribute)
+        case list([_StoredAttribute])
+    }
+
+    @usableFromInline
+    var storage: Storage
+
+    @inlinable
+    init(storage: Storage) {
+        self.storage = storage
+    }
+
+    @inlinable
+    public static var none: Self { .init(storage: .none) }
 
     @inlinable
     public init() {
-        self = .none
+        self.init(storage: .none)
     }
 
     @inlinable
     public init(_ attribute: MarkupAttribute<some MarkupTagDefinition>) {
-        self = .single(attribute.htmlAttribute)
+        self.init(storage: .single(attribute.htmlAttribute))
     }
 
     @inlinable
     public init(_ attributes: [MarkupAttribute<some MarkupTagDefinition>]) {
         switch attributes.count {
-        case 0: self = .none
-        case 1: self = .single(attributes[0].htmlAttribute)
-        default: self = .multiple(attributes.map { $0.htmlAttribute })
+        case 0: self.init(storage: .none)
+        case 1: self.init(storage: .single(attributes[0].htmlAttribute))
+        default: self.init(storage: .list(attributes.map { $0.htmlAttribute }))
         }
     }
 
+    @inlinable
     public var isEmpty: Bool {
-        switch self {
+        switch storage {
         case .none: return true
         case .single: return false
-        case let .multiple(attributes): return attributes.isEmpty  // just to be sure...
+        case let .list(attributes): return attributes.isEmpty
         }
     }
 
-    public mutating func append(_ attributes: consuming _AttributeStorage) {
-        // maybe this was a bad idea....
-        switch (self, attributes) {
-        case (_, .none):
-            break
-        case let (.none, other):
-            self = other
-        case let (.single(existing), .single(other)):
-            self = .multiple([existing, other])
-        case (let .single(existing), var .multiple(others)):
-            others.insert(existing, at: 0)
-            self = .multiple(others)
-        case (var .multiple(existing), let .single(other)):
-            existing.append(other)
-            self = .multiple(existing)
-        case (var .multiple(existing), let .multiple(others)):
-            existing.append(contentsOf: others)
-            self = .multiple(existing)
+    /// Appends the attributes of `other`, to be merged into the existing ones.
+    public mutating func append(_ other: consuming _AttributeStorage) {
+        switch other.storage {
+        case .none:
+            return
+        case let .single(attribute):
+            appendAttributes(single: attribute)
+        case let .list(attributes):
+            appendAttributes(list: attributes)
+        }
+    }
+
+    private mutating func appendAttributes(single attribute: consuming _StoredAttribute) {
+        switch storage {
+        case .none:
+            storage = .single(attribute)
+        case let .single(existing):
+            storage = .list([existing, attribute])
+        case var .list(existing):
+            storage = .none  // keep unique
+            existing.append(attribute)
+            storage = .list(existing)
+        }
+    }
+
+    private mutating func appendAttributes(list attributes: consuming [_StoredAttribute]) {
+        switch storage {
+        case .none:
+            storage = .list(attributes)
+        case let .single(existing):
+            var combined = [_StoredAttribute]()
+            combined.reserveCapacity(attributes.count + 1)
+            combined.append(existing)
+            combined.append(contentsOf: attributes)
+            storage = .list(combined)
+        case var .list(existing):
+            storage = .none  // keep unique
+            existing.append(contentsOf: attributes)
+            storage = .list(existing)
         }
     }
 
@@ -62,9 +98,107 @@ public enum _AttributeStorage: Sendable, Equatable {
     }
 }
 
+extension _AttributeStorage {
+    /// Calls `body` for every merged attribute in rendering order.
+    ///
+    /// Attributes that do not need merging are passed directly from storage without copying.
+    @inline(__always)
+    func forEachMerged(_ body: (borrowing _StoredAttribute) -> Void) {
+        switch storage {
+        case .none:
+            return
+        case let .single(attribute):
+            body(attribute)
+        case let .list(attributes):
+            attributes.withUnsafeBufferPointer { attributes in
+                var consumed = _ConsumedSet()
+                for index in attributes.indices where !consumed.contains(index) {
+                    if let match = Self.nextMatch(for: index, from: index &+ 1, in: attributes, consumed: consumed) {
+                        body(Self.merge(at: index, firstMatch: match, in: attributes, consumed: &consumed))
+                    } else {
+                        body(attributes[index])
+                    }
+                }
+            }
+        }
+    }
+
+    /// Returns the index of the next unconsumed attribute (starting at `start`) with the same name as the attribute at `index`.
+    @inline(__always)
+    static func nextMatch(
+        for index: Int,
+        from start: Int,
+        in attributes: UnsafeBufferPointer<_StoredAttribute>,
+        consumed: borrowing _ConsumedSet
+    ) -> Int? {
+        guard start < attributes.count else { return nil }
+        let nameCount = attributes[index].name.utf8.count
+
+        var other = start
+        while other < attributes.count {
+            if attributes[other].name.utf8.count == nameCount,
+                !consumed.contains(other),
+                attributes[other].name.utf8Equals(attributes[index].name)
+            {
+                return other
+            }
+            other &+= 1
+        }
+        return nil
+    }
+
+    /// Merges all later attributes with the same name into the attribute at `index`, marking them as consumed.
+    static func merge(
+        at index: Int,
+        firstMatch: Int,
+        in attributes: UnsafeBufferPointer<_StoredAttribute>,
+        consumed: inout _ConsumedSet
+    ) -> _StoredAttribute {
+        var merged = attributes[index]
+        var match: Int? = firstMatch
+        while let other = match {
+            consumed.insert(other)
+            merged.mergeWith(attributes[other])
+            match = nextMatch(for: index, from: other &+ 1, in: attributes, consumed: consumed)
+        }
+        return merged
+    }
+}
+
+/// A small bit set to track merged attributes, inline for up to 64 attributes.
+struct _ConsumedSet {
+    var inline: UInt64 = 0
+    var overflow: [UInt64] = []
+
+    @inline(__always)
+    func contains(_ index: Int) -> Bool {
+        if index < 64 { return inline & (1 &<< UInt64(index)) != 0 }
+        let word = (index &- 64) / 64
+        guard word < overflow.count else { return false }
+        return overflow[word] & (1 &<< UInt64((index &- 64) % 64)) != 0
+    }
+
+    @inline(__always)
+    mutating func insert(_ index: Int) {
+        if index < 64 {
+            inline |= 1 &<< UInt64(index)
+            return
+        }
+        let word = (index &- 64) / 64
+        while overflow.count <= word { overflow.append(0) }
+        overflow[word] |= 1 &<< UInt64((index &- 64) % 64)
+    }
+}
+
 public struct _MergedAttributes: Sequence, Sendable {
     public typealias Element = _StoredAttribute
+    @usableFromInline
     var storage: _AttributeStorage
+
+    @inlinable
+    init(storage: consuming _AttributeStorage) {
+        self.storage = storage
+    }
 
     public consuming func makeIterator() -> Iterator {
         Iterator(storage)
@@ -74,77 +208,42 @@ public struct _MergedAttributes: Sequence, Sendable {
         storage.isEmpty
     }
 
-    public struct Iterator: IteratorProtocol {
-        enum State {
-            case empty
-            case single(_StoredAttribute)
-            case flattening([_StoredAttribute], Int)
-            case _temporaryNothing
-        }
+    @inline(__always)
+    func forEachMerged(_ body: (borrowing _StoredAttribute) -> Void) {
+        storage.forEachMerged(body)
+    }
 
-        var state: State
+    public struct Iterator: IteratorProtocol {
+        let storage: _AttributeStorage
+        var index: Int = 0
+        var consumed = _ConsumedSet()
 
         init(_ storage: consuming _AttributeStorage) {
-            switch storage {
-            case .none: state = .empty
-            case let .single(attribute): state = .single(attribute)
-            case let .multiple(attributes): state = .flattening(attributes, 0)
-            }
+            self.storage = storage
         }
 
         public mutating func next() -> _StoredAttribute? {
-            switch state {
-            case .empty: return nil
+            switch storage.storage {
+            case .none:
+                return nil
             case let .single(attribute):
-                state = .empty
+                guard index == 0 else { return nil }
+                index = 1
                 return attribute
-            case .flattening(var list, let index):
-                state = ._temporaryNothing
-                let (attribute, newIndex) = nextflattenedAttribute(attributes: &list, from: index)
-
-                if let newIndex {
-                    state = .flattening(list, newIndex)
-                } else {
-                    state = .empty
+            case let .list(attributes):
+                while index < attributes.count, consumed.contains(index) {
+                    index &+= 1
                 }
+                guard index < attributes.count else { return nil }
+                defer { index &+= 1 }
 
-                return attribute
-            case ._temporaryNothing:
-                fatalError("unexpected _temporaryNothing state")
+                return attributes.withUnsafeBufferPointer { attributes in
+                    if let match = _AttributeStorage.nextMatch(for: index, from: index &+ 1, in: attributes, consumed: consumed) {
+                        return _AttributeStorage.merge(at: index, firstMatch: match, in: attributes, consumed: &consumed)
+                    }
+                    return attributes[index]
+                }
             }
         }
     }
-}
-
-private func nextflattenedAttribute(
-    attributes: inout [_StoredAttribute],
-    from index: Int
-) -> (
-    _StoredAttribute, Int?
-) {
-    var attribute: _StoredAttribute = .blankedOut
-    swap(&attribute, &attributes[index])
-
-    var nextIndex: Int?
-
-    for j in attributes.indices[(index + 1)...] {
-        // fast-skip blanked out attributes
-        guard !attributes[j].name.isEmpty else { continue }
-
-        guard attributes[j].name.utf8Equals(attribute.name) else {
-            if nextIndex == nil { nextIndex = j }
-            continue
-        }
-
-        var mergedAttribute: _StoredAttribute = .blankedOut
-        swap(&mergedAttribute, &attributes[j])
-
-        attribute.mergeWith(mergedAttribute)
-    }
-
-    return (attribute, nextIndex)
-}
-
-extension _StoredAttribute {
-    fileprivate static let blankedOut = _StoredAttribute(name: "")
 }

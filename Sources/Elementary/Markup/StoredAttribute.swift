@@ -251,11 +251,31 @@ extension String {
     @inline(__always)
     @usableFromInline
     func utf8Equals(_ other: borrowing String) -> Bool {
-        // for embedded support
-        utf8.elementsEqual(other.utf8)
+        // byte-wise comparison for embedded support (and to avoid unicode normalization)
+        // checking the count first is cheap and rules out most mismatches
+        let count = utf8.count
+        guard count == other.utf8.count else { return false }
+        guard count > 0 else { return true }
+
+        let result = utf8.withContiguousStorageIfAvailable { lhs in
+            other.utf8.withContiguousStorageIfAvailable { rhs in
+                var index = 0
+                while index < count {
+                    guard lhs[index] == rhs[index] else { return false }
+                    index &+= 1
+                }
+                return true
+            }
+        }
+
+        if let result, let result {
+            return result
+        } else {
+            return utf8.elementsEqual(other.utf8)
+        }
     }
 
     fileprivate static func utf8Equals(_ lhs: borrowing String, _ rhs: borrowing String) -> Bool {
-        lhs.utf8.elementsEqual(rhs.utf8)
+        lhs.utf8Equals(rhs)
     }
 }

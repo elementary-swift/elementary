@@ -68,6 +68,49 @@ struct AttributeRenderingTests {
         )
     }
 
+    @Test func testMergesWithinOneAttributeList() async throws {
+        try await HTMLAssertEqual(
+            p(.data("a", value: "1"), .id("x"), .data("a", value: "2")) {},
+            #"<p data-a="2" id="x"></p>"#
+        )
+    }
+
+    @Test func testMergesAllMatchesIntoFirstOccurrence() async throws {
+        try await HTMLAssertEqual(
+            p(.class("a"), .class("b")) {}.attributes(.class("c"), .class("d")),
+            #"<p class="a b c d"></p>"#
+        )
+    }
+
+    @Test func testMergesAcrossComponentBoundaries() async throws {
+        try await HTMLAssertEqual(
+            AttributedComponent().attributes(.class("outer"), .id("outer")).attributes(.class("outermost")),
+            #"<div class="inner modified outer outermost" data-x="1" id="outer"></div>"#
+        )
+    }
+
+    @Test func testMergesWithManyAttributes() async throws {
+        let many = (0..<70).map { HTMLAttribute<HTMLTag.p>.data("\($0)", value: "\($0)") }
+        let expected = (0..<70).map { $0 == 66 ? #" data-66="x""# : #" data-\#($0)="\#($0)""# }.joined()
+        try await HTMLAssertEqual(
+            p(attributes: many) {}.attributes(.data("66", value: "x")),
+            "<p\(expected)></p>"
+        )
+        try await HTMLAssertEqual(
+            p(attributes: Array(many.prefix(66))) {}.attributes(contentsOf: Array(many.suffix(4))).attributes(.data("66", value: "x")),
+            "<p\(expected)></p>"
+        )
+    }
+
+    @Test func testMergedIteratorMatchesRendering() {
+        var storage = _AttributeStorage([HTMLAttribute<HTMLTag.p>.id("1"), .class("a"), .class("b")])
+        storage.append(_AttributeStorage([HTMLAttribute<HTMLTag.p>.class("c"), .id("2"), .hidden]))
+        storage.append(_AttributeStorage(HTMLAttribute<HTMLTag.p>.style("x")))
+
+        let merged = Array(storage.flattened()).map { "\($0.name)=\($0.value ?? "")" }
+        #expect(merged == ["id=2", "class=a b c", "hidden=", "style=x"])
+    }
+
     @Test func testRendersMouseEventAttribute() async throws {
         try await HTMLAssertEqual(
             p(.on(.click, "doIt()")) {},
@@ -190,5 +233,14 @@ struct AttributeRenderingTests {
             progress(.value(0.5), .max(1)) {},
             #"<progress value="0.5" max="1"></progress>"#
         )
+    }
+}
+
+private struct AttributedComponent: HTML {
+    typealias Tag = HTMLTag.div
+
+    var body: some HTML {
+        div(.class("inner"), .data("x", value: "1")) {}
+            .attributes(.class("modified"))
     }
 }

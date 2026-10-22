@@ -79,6 +79,65 @@ let benchmarks = { @Sendable in
         }
     }
 
+    Benchmark("render many attributes (sync)") { benchmark in
+        let element = makeManyAttributesElements()
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(element.render())
+        }
+    }
+
+    Benchmark("render merged attributes (sync)") { benchmark in
+        let element = makeMergedAttributesElements()
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(element.render())
+        }
+    }
+
+    Benchmark("render class and style lists (sync)") { benchmark in
+        let element = makeClassAndStyleElements()
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(element.render())
+        }
+    }
+
+    Benchmark("render 5 attributes in one list (sync)") { benchmark in
+        let element = makeAttributeListElements(count: 5)
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(element.render())
+        }
+    }
+
+    Benchmark("render 10 attributes in one list (sync)") { benchmark in
+        let element = makeAttributeListElements(count: 10)
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(element.render())
+        }
+    }
+
+    Benchmark("render 15 attributes in one list (sync)") { benchmark in
+        let element = makeAttributeListElements(count: 15)
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(element.render())
+        }
+    }
+
+    Benchmark("compare attribute storage") { benchmark in
+        let a = makeAttributeStorage(seed: "1")
+        let b = makeAttributeStorage(seed: "1")
+        let c = makeAttributeStorage(seed: "2")
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(a == b)
+            blackHole(a == c)
+        }
+    }
+
     Benchmark("render tuples") { benchmark in
         for _ in benchmark.scaledIterations {
             try blackHole(
@@ -233,6 +292,66 @@ func makeMultiAttributeElements() -> some HTML {
             }
         }
     }
+}
+
+func makeManyAttributesElements() -> some HTML {
+    div {
+        ForEach(0..<100) { i in
+            input(.type(.text), .name("field"), .id("f\(i)"), .class("input"), .placeholder("Type here"), .required)
+            a(.href("/items"), .class("link"), .target(.blank), .rel("noopener")) { "link" }
+        }
+    }
+}
+
+func makeAttributeListElements(count: Int) -> some HTML {
+    // realistic names, including several that share a length (eg: type/name, class/title/value)
+    let attributes: [HTMLAttribute<HTMLTag.input>] = Array(
+        [
+            .type(.text), .name("email"), .id("email-input"), .class("form-control"), .placeholder("you@example.com"),
+            .value("someone@example.com"), .custom(name: "autocomplete", value: "email"), .maxlength(120), .title("Email address"),
+            .required,
+            .minlength(3), .pattern("[^@]+@[^@]+"), .custom(name: "aria-label", value: "Email"), .data("testid", value: "email"),
+            .readonly,
+        ].prefix(count)
+    )
+
+    return div {
+        for _ in 0..<100 {
+            input(attributes: attributes)
+        }
+    }
+}
+
+func makeMergedAttributesElements() -> some HTML {
+    div {
+        ForEach(0..<100) { i in
+            img(.class("1"), .style("1"), .id("old"))
+                .attributes(.class("2"), .style("2"))
+                .attributes(.id("new\(i)"))
+            p(.id("p"), .class("a")) { "text" }
+                .attributes(.class("b"), when: i.isMultiple(of: 2))
+        }
+    }
+}
+
+func makeClassAndStyleElements() -> some HTML {
+    div {
+        ForEach(0..<100) { _ in
+            p(.class(["foo", "bar"]), .style(["color": "red", "font-size": "16px"])) {}
+                .attributes(.class(["baz", "foo"]), .style(["font-size": "24px"]))
+        }
+    }
+}
+
+func makeAttributeStorage(seed: String) -> _AttributeStorage {
+    var storage = _AttributeStorage([
+        MarkupAttribute<HTMLTag.div>.id("id-\(seed)"),
+        .class("card"),
+        .data("index", value: seed),
+        .style("color: red"),
+    ])
+    storage.append(_AttributeStorage(MarkupAttribute<HTMLTag.div>.class("active")))
+    return storage
 }
 
 func makeSingleAttributeElements() -> some HTML {
