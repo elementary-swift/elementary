@@ -304,16 +304,25 @@ func makeManyAttributesElements() -> some HTML {
 }
 
 func makeAttributeListElements(count: Int) -> some HTML {
-    // realistic names, including several that share a length (eg: type/name, class/title/value)
-    let attributes: [HTMLAttribute<HTMLTag.input>] = Array(
-        [
-            .type(.text), .name("email"), .id("email-input"), .class("form-control"), .placeholder("you@example.com"),
-            .value("someone@example.com"), .custom(name: "autocomplete", value: "email"), .maxlength(120), .title("Email address"),
-            .required,
-            .minlength(3), .pattern("[^@]+@[^@]+"), .custom(name: "aria-label", value: "Email"), .data("testid", value: "email"),
-            .readonly,
-        ].prefix(count)
-    )
+    // realistic names, including several of equal length (eg: type/name, class/title/value)
+    let allAttributes: [HTMLAttribute<HTMLTag.input>] = [
+        .type(.text),
+        .name("email"),
+        .id("email-input"),
+        .class("form-control"),
+        .placeholder("you@example.com"),
+        .value("someone@example.com"),
+        .custom(name: "autocomplete", value: "email"),
+        .maxlength(120),
+        .title("Email address"),
+        .required,
+        .minlength(3),
+        .pattern("[^@]+@[^@]+"),
+        .custom(name: "aria-label", value: "Email"),
+        .data("testid", value: "email"),
+        .readonly,
+    ]
+    let attributes = Array(allAttributes.prefix(count))
 
     return div {
         for _ in 0..<100 {
@@ -345,12 +354,12 @@ func makeClassAndStyleElements() -> some HTML {
 
 func makeAttributeStorage(seed: String) -> _AttributeStorage {
     var storage = _AttributeStorage([
-        MarkupAttribute<HTMLTag.div>.id("id-\(seed)"),
+        HTMLAttribute<HTMLTag.div>.id("id-\(seed)"),
         .class("card"),
         .data("index", value: seed),
         .style("color: red"),
     ])
-    storage.append(_AttributeStorage(MarkupAttribute<HTMLTag.div>.class("active")))
+    storage.append(_AttributeStorage(HTMLAttribute<HTMLTag.div>.class("active")))
     return storage
 }
 

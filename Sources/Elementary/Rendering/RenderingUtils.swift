@@ -63,40 +63,39 @@ extension [UInt8] {
         }
     }
 
+    // NOTE: keeping this out of line is measurably faster than inlining it into `appendToken`
     @inline(never)
     mutating func appendAttributes(_ attributes: borrowing _MergedAttributes) {
         attributes.forEachMerged { attribute in
             append(32)  // space
             appendString(attribute.name)
+
+            // boolean attributes are rendered without a value
+            if case .empty = attribute._value { return }
+
+            append(61)  // =
+            append(34)  // "
             switch attribute._value {
             case .empty:
-                break
+                break  // handled above
             case let .plain(value):
-                append(61)  // =
-                append(34)  // "
                 appendEscapedAttributeValue(value)
-                append(34)  // "
             case let .classes(classes):
-                append(61)  // =
-                append(34)  // "
-                for (index, value) in classes.classes.enumerated() {
+                for (index, className) in classes.classes.enumerated() {
                     if index > 0 { append(32) }  // space
-                    appendEscapedAttributeValue(value)
+                    appendEscapedAttributeValue(className)
                 }
-                append(34)  // "
             case let .styles(styles):
-                append(61)  // =
-                append(34)  // "
                 for (index, entry) in styles.styles.enumerated() {
                     if index > 0 { append(59) }  // ;
-                    if !entry.key.utf8.isEmpty {
+                    if !entry.key.isEmpty {
                         appendEscapedAttributeValue(entry.key)
                         append(58)  // :
                     }
                     appendEscapedAttributeValue(entry.value)
                 }
-                append(34)  // "
             }
+            append(34)  // "
         }
     }
 

@@ -248,31 +248,30 @@ extension _StoredAttribute {
 }
 
 extension String {
+    /// Compares the UTF-8 bytes of two strings.
+    ///
+    /// Unlike `==`, this does not apply unicode normalization (which is not available in embedded Swift).
     @inline(__always)
     @usableFromInline
     func utf8Equals(_ other: borrowing String) -> Bool {
-        // byte-wise comparison for embedded support (and to avoid unicode normalization)
-        // checking the count first is cheap and rules out most mismatches
-        let count = utf8.count
-        guard count == other.utf8.count else { return false }
-        guard count > 0 else { return true }
+        guard utf8.count == other.utf8.count else { return false }
+        return contiguousUTF8Equals(other) ?? utf8.elementsEqual(other.utf8)
+    }
 
-        let result = utf8.withContiguousStorageIfAvailable { lhs in
+    /// Compares the UTF-8 bytes of two strings via their contiguous storage, which all native strings have.
+    ///
+    /// Returns `nil` if either string has no contiguous UTF-8 storage (eg: bridged strings).
+    @inline(__always)
+    private func contiguousUTF8Equals(_ other: borrowing String) -> Bool? {
+        utf8.withContiguousStorageIfAvailable { lhs in
             other.utf8.withContiguousStorageIfAvailable { rhs in
-                var index = 0
-                while index < count {
-                    guard lhs[index] == rhs[index] else { return false }
-                    index &+= 1
+                // NOTE: an indexed loop compiles to much tighter code than `elementsEqual` here
+                for index in lhs.indices where lhs[index] != rhs[index] {
+                    return false
                 }
                 return true
             }
-        }
-
-        if let result, let result {
-            return result
-        } else {
-            return utf8.elementsEqual(other.utf8)
-        }
+        } ?? nil
     }
 
     fileprivate static func utf8Equals(_ lhs: borrowing String, _ rhs: borrowing String) -> Bool {
