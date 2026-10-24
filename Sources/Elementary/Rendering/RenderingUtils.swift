@@ -66,36 +66,48 @@ extension [UInt8] {
     // NOTE: keeping this out of line is measurably faster than inlining it into `appendToken`
     @inline(never)
     mutating func appendAttributes(_ attributes: borrowing _MergedAttributes) {
-        attributes.forEachMerged { attribute in
-            append(32)  // space
-            appendString(attribute.name)
+        attributes.withSpan { attributes in
+            for index in attributes.indices {
+                append(32)  // space
+                appendString(attributes[unchecked: index].name)
+                appendAttributeValue(attributes[unchecked: index]._value)
+            }
+        }
+    }
 
-            // boolean attributes are rendered without a value
-            if case .empty = attribute._value { return }
-
+    /// Appends `="value"`, or nothing for boolean attributes.
+    mutating func appendAttributeValue(_ value: borrowing _StoredAttribute.Value) {
+        switch value {
+        case .empty:
+            break
+        case let .plain(value):
             append(61)  // =
             append(34)  // "
-            switch attribute._value {
-            case .empty:
-                break  // handled above
-            case let .plain(value):
-                appendEscapedAttributeValue(value)
-            case let .classes(classes):
-                for (index, className) in classes.classes.enumerated() {
-                    if index > 0 { append(32) }  // space
-                    appendEscapedAttributeValue(className)
-                }
-            case let .styles(styles):
-                for (index, entry) in styles.styles.enumerated() {
-                    if index > 0 { append(59) }  // ;
-                    if !entry.key.isEmpty {
-                        appendEscapedAttributeValue(entry.key)
-                        append(58)  // :
-                    }
-                    appendEscapedAttributeValue(entry.value)
-                }
+            appendEscapedAttributeValue(value)
+            append(34)  // "
+        case let .classes(classes):
+            append(61)  // =
+            append(34)  // "
+            for (index, className) in classes.classes.enumerated() {
+                if index > 0 { append(32) }  // space
+                appendEscapedAttributeValue(className)
             }
             append(34)  // "
+        case let .styles(styles):
+            append(61)  // =
+            append(34)  // "
+            for (index, entry) in styles.styles.enumerated() {
+                if index > 0 { append(59) }  // ;
+                if !entry.key.isEmpty {
+                    appendEscapedAttributeValue(entry.key)
+                    append(58)  // :
+                }
+                appendEscapedAttributeValue(entry.value)
+            }
+            append(34)  // "
+        case let .ignoredWithSuffix(value, _, _):
+            // the suffix only matters for merging
+            appendAttributeValue(value)
         }
     }
 
