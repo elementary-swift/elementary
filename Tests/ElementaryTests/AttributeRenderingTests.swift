@@ -99,15 +99,6 @@ struct AttributeRenderingTests {
         )
     }
 
-    @Test func testIteratesMergedAttributes() {
-        var storage = _AttributeStorage([HTMLAttribute<HTMLTag.p>.id("1"), .class("a"), .class("b")])
-        storage.append(_AttributeStorage([HTMLAttribute<HTMLTag.p>.class("c"), .id("2"), .hidden]))
-        storage.append(_AttributeStorage(HTMLAttribute<HTMLTag.p>.style("x")))
-
-        let merged = storage.flattened().map { "\($0.name)=\($0.value ?? "")" }
-        #expect(merged == ["id=2", "class=a b c", "hidden=", "style=x"])
-    }
-
     @Test func testRendersMouseEventAttribute() async throws {
         try await HTMLAssertEqual(
             p(.on(.click, "doIt()")) {},

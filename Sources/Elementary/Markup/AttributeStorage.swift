@@ -1,7 +1,7 @@
 /// An internal type that stores HTML attributes for elements.
 ///
 /// Attributes are merged when they are added, so the storage always holds the final attributes (with unique names)
-/// in the order of their first occurrence. Iterating or rendering is a plain loop over the stored attributes.
+/// in the order of their first occurrence. Use `_withSpan` to read them.
 ///
 /// The storage avoids allocations for zero or one attribute.
 ///
@@ -83,7 +83,7 @@ public enum _AttributeStorage: Sendable, Equatable {
         }
     }
 
-    /// Appends attributes with unique names.
+    /// Merges the attributes of another storage (so their names are already unique among themselves).
     private mutating func append(contentsOf attributes: consuming [_StoredAttribute]) {
         switch self {
         case .none:
@@ -101,15 +101,20 @@ public enum _AttributeStorage: Sendable, Equatable {
         }
     }
 
+    @available(*, deprecated, message: "Attributes are merged when they are added, use `_withSpan` to read them.")
     public consuming func flattened() -> _MergedAttributes {
-        .init(storage: self)
+        .init(self)
     }
 }
 
 extension _AttributeStorage {
     /// Calls `body` with a span of all attributes, in order (names are unique).
+    ///
+    /// NOTE: this is a stopgap for borrowing access to the attributes, to be replaced with borrowing iteration
+    /// (`Iterable`) or a `span` property once they are available for all supported platforms and Swift versions.
+    /// A `span` property currently can't cover `.single`, as enum payloads can't be borrowed in place (see SE-0551).
     @inlinable
-    public func withSpan<Result, Failure: Error>(
+    public func _withSpan<Result, Failure: Error>(
         _ body: (Span<_StoredAttribute>) throws(Failure) -> Result
     ) throws(Failure) -> Result {
         switch self {
@@ -181,9 +186,19 @@ extension UnsafeBufferPointer<_StoredAttribute> {
     }
 }
 
+/// The attributes of a tag, as passed to renderers in `_HTMLRenderToken`.
+///
+/// NOTE: `_AttributeStorage` merges attributes when they are added, so this is only a view of an already merged storage.
+/// It is kept for API compatibility, prefer `_withSpan` over iterating.
 public struct _MergedAttributes: Sequence, Sendable {
     public typealias Element = _StoredAttribute
-    var storage: _AttributeStorage
+    @usableFromInline
+    let storage: _AttributeStorage
+
+    @inlinable
+    init(_ storage: consuming _AttributeStorage) {
+        self.storage = storage
+    }
 
     public consuming func makeIterator() -> Iterator {
         Iterator(storage)
@@ -193,9 +208,14 @@ public struct _MergedAttributes: Sequence, Sendable {
         storage.isEmpty
     }
 
-    @inline(__always)
-    func withSpan<Result>(_ body: (Span<_StoredAttribute>) -> Result) -> Result {
-        storage.withSpan(body)
+    /// Calls `body` with a span of all attributes, in order (names are unique).
+    ///
+    /// NOTE: a stopgap, see `_AttributeStorage._withSpan`.
+    @inlinable
+    public func _withSpan<Result, Failure: Error>(
+        _ body: (Span<_StoredAttribute>) throws(Failure) -> Result
+    ) throws(Failure) -> Result {
+        try storage._withSpan(body)
     }
 
     public struct Iterator: IteratorProtocol {

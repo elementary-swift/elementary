@@ -66,7 +66,7 @@ extension [UInt8] {
     // NOTE: keeping this out of line is measurably faster than inlining it into `appendToken`
     @inline(never)
     mutating func appendAttributes(_ attributes: borrowing _MergedAttributes) {
-        attributes.withSpan { attributes in
+        attributes._withSpan { attributes in
             for index in attributes.indices {
                 append(32)  // space
                 appendString(attributes[unchecked: index].name)

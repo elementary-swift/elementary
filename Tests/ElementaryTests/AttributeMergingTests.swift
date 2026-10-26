@@ -37,15 +37,24 @@ struct AttributeMergingTests {
         var storage = _AttributeStorage([HTMLAttribute<HTMLTag.p>.id("1"), .class("a"), .hidden])
         storage.append(_AttributeStorage([HTMLAttribute<HTMLTag.p>.class("b"), .id("2"), .style("x")]))
 
-        let attributes = storage.withSpan { span in
+        let attributes = storage._withSpan { span in
             span.indices.map { "\(span[$0].name)=\(span[$0].value ?? "")" }
         }
         #expect(attributes == ["id=2", "class=a b", "hidden=", "style=x"])
     }
 
+    @available(*, deprecated, message: "tests the deprecated `flattened()`")
+    @Test func testFlattenedIteratesMergedAttributes() {
+        var storage = _AttributeStorage([HTMLAttribute<HTMLTag.p>.id("1"), .class("a"), .hidden])
+        storage.append(_AttributeStorage([HTMLAttribute<HTMLTag.p>.class("b"), .id("2"), .style("x")]))
+
+        let attributes = storage.flattened().map { "\($0.name)=\($0.value ?? "")" }
+        #expect(attributes == ["id=2", "class=a b", "hidden=", "style=x"])
+    }
+
     @Test func testSpanOfSingleAndNoAttributes() {
-        #expect(_AttributeStorage().withSpan { $0.count } == 0)
-        #expect(_AttributeStorage(HTMLAttribute<HTMLTag.p>.id("1")).withSpan { $0[0].value } == "1")
+        #expect(_AttributeStorage()._withSpan { $0.count } == 0)
+        #expect(_AttributeStorage(HTMLAttribute<HTMLTag.p>.id("1"))._withSpan { $0[0].value } == "1")
     }
 
     @Test func testIgnoredAttributeKeepsPendingAppendsAcrossGroupings() {
@@ -117,7 +126,7 @@ private func mergedOutsideIn(_ attributes: [HTMLAttribute<HTMLTag.p>]) -> String
     var storage = _AttributeStorage(attributes[0])
     storage.append(outer)
 
-    return storage.withSpan { span in
+    return storage._withSpan { span in
         span.indices.map { index in
             span[index].value.map { #" \#(span[index].name)="\#($0)""# } ?? " \(span[index].name)"
         }.joined()
