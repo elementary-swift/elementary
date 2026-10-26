@@ -4,9 +4,9 @@ extension _StoredAttribute {
     @inlinable
     public var _styleKeyValuePairs: _StyleKeyValuePairs? {
         switch _value {
-        case .styles(let styles):
+        case .styles(let styles), .ignoredWithSuffix(.styles(let styles), _, _):
             return _StyleKeyValuePairs(styles)
-        case .plain(let value) where name.utf8Equals("style"):
+        case .plain(let value) where name.utf8Equals("style"), .ignoredWithSuffix(.plain(let value), _, _) where name.utf8Equals("style"):
             return _StyleKeyValuePairs(plainValue: value)
         default:
             return nil

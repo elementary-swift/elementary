@@ -15,7 +15,9 @@ extension HTMLElement {
     ) {
         html._attributes.append(context.attributes)
 
-        renderer.appendToken(.startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: false, type: Tag.renderingType))
+        renderer.appendToken(
+            .startTag(Tag.name, attributes: _MergedAttributes(html._attributes), isUnpaired: false, type: Tag.renderingType)
+        )
         Content._render(html.content, into: &renderer, with: .emptyContext)
         renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
     }
@@ -30,7 +32,7 @@ extension HTMLElement {
         html._attributes.append(context.attributes)
 
         try await renderer.appendToken(
-            .startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: false, type: Tag.renderingType)
+            .startTag(Tag.name, attributes: _MergedAttributes(html._attributes), isUnpaired: false, type: Tag.renderingType)
         )
         try await Content._render(html.content, into: &renderer, with: .emptyContext)
         try await renderer.appendToken(.endTag(Tag.name, type: Tag.renderingType))
@@ -45,7 +47,9 @@ extension HTMLVoidElement {
         with context: consuming _RenderingContext
     ) {
         html._attributes.append(context.attributes)
-        renderer.appendToken(.startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType))
+        renderer.appendToken(
+            .startTag(Tag.name, attributes: _MergedAttributes(html._attributes), isUnpaired: true, type: Tag.renderingType)
+        )
     }
 
     @inlinable
@@ -57,7 +61,7 @@ extension HTMLVoidElement {
     ) async throws {
         html._attributes.append(context.attributes)
         try await renderer.appendToken(
-            .startTag(Tag.name, attributes: html._attributes.flattened(), isUnpaired: true, type: Tag.renderingType)
+            .startTag(Tag.name, attributes: _MergedAttributes(html._attributes), isUnpaired: true, type: Tag.renderingType)
         )
     }
 }

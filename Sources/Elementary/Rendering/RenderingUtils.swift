@@ -35,34 +35,21 @@ extension [UInt8] {
             append(60)  // <
             appendString(tagName)
             if !attributes.isEmpty {
-                for attribute in attributes {
-                    append(32)  // space
-                    appendString(attribute.name)
-                    if let value = attribute.value {
-                        append(contentsOf: [61, 34])  // ="
-                        appendEscapedAttributeValue(value)
-                        append(34)  // "
-                    }
-                }
+                appendAttributes(attributes)
             }
             append(62)  // >
         case let .selfClosingTag(tagName, attributes: attributes):
             append(60)  // <
             appendString(tagName)
             if !attributes.isEmpty {
-                for attribute in attributes {
-                    append(32)  // space
-                    appendString(attribute.name)
-                    if let value = attribute.value {
-                        append(contentsOf: [61, 34])  // ="
-                        appendEscapedAttributeValue(value)
-                        append(34)  // "
-                    }
-                }
+                appendAttributes(attributes)
             }
-            append(contentsOf: [32, 47, 62])  // />
+            append(32)  // space
+            append(47)  // /
+            append(62)  // >
         case let .endTag(tagName, _):
-            append(contentsOf: [60, 47])  // </
+            append(60)  // <
+            append(47)  // /
             appendString(tagName)
             append(62)  // >
         case let .text(text):
@@ -73,6 +60,54 @@ extension [UInt8] {
             appendString("<!--")
             appendEscapedText(comment)
             appendString("-->")
+        }
+    }
+
+    // NOTE: keeping this out of line is measurably faster than inlining it into `appendToken`
+    @inline(never)
+    mutating func appendAttributes(_ attributes: borrowing _MergedAttributes) {
+        attributes._withSpan { attributes in
+            for index in attributes.indices {
+                append(32)  // space
+                appendString(attributes[unchecked: index].name)
+                appendAttributeValue(attributes[unchecked: index]._value)
+            }
+        }
+    }
+
+    /// Appends `="value"`, or nothing for boolean attributes.
+    mutating func appendAttributeValue(_ value: borrowing _StoredAttribute.Value) {
+        switch value {
+        case .empty:
+            break
+        case let .plain(value):
+            append(61)  // =
+            append(34)  // "
+            appendEscapedAttributeValue(value)
+            append(34)  // "
+        case let .classes(classes):
+            append(61)  // =
+            append(34)  // "
+            for (index, className) in classes.classes.enumerated() {
+                if index > 0 { append(32) }  // space
+                appendEscapedAttributeValue(className)
+            }
+            append(34)  // "
+        case let .styles(styles):
+            append(61)  // =
+            append(34)  // "
+            for (index, entry) in styles.styles.enumerated() {
+                if index > 0 { append(59) }  // ;
+                if !entry.key.isEmpty {
+                    appendEscapedAttributeValue(entry.key)
+                    append(58)  // :
+                }
+                appendEscapedAttributeValue(entry.value)
+            }
+            append(34)  // "
+        case let .ignoredWithSuffix(value, _, _):
+            // the suffix only matters for merging
+            appendAttributeValue(value)
         }
     }
 

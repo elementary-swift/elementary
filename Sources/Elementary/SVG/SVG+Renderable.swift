@@ -15,7 +15,7 @@ extension SVGElement {
     ) {
         svg._attributes.append(context.attributes)
 
-        let attributes = svg._attributes.flattened()
+        let attributes = _MergedAttributes(svg._attributes)
         guard !svg.content._isKnownEmpty else {
             renderer.appendToken(.selfClosingTag(Tag.name, attributes: attributes))
             return
@@ -35,7 +35,7 @@ extension SVGElement {
     ) async throws {
         svg._attributes.append(context.attributes)
 
-        let attributes = svg._attributes.flattened()
+        let attributes = _MergedAttributes(svg._attributes)
         guard !svg.content._isKnownEmpty else {
             try await renderer.appendToken(.selfClosingTag(Tag.name, attributes: attributes))
             return
