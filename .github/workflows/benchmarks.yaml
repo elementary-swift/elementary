@@ -1,0 +1,104 @@
+name: Benchmarks
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark-delta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+    container:
+      image: swift:6.4
+      # needed for perf events (instruction counts)
+      options: --privileged
+    env:
+      BENCHMARK: swift package --package-path Benchmarks --disable-sandbox benchmark
+      BASE_SHA: ${{ github.event.pull_request.base.sha || 'origin/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # https://github.com/actions/checkout/issues/766
+      - name: Mark the workspace as safe
+        run: git config --global --add safe.directory ${GITHUB_WORKSPACE}
+
+      - name: Run benchmarks for PR
+        run: $BENCHMARK baseline update pull_request --no-progress --quiet
+
+      - name: Run benchmarks for main
+        run: |
+          git checkout --force "$BASE_SHA"
+          $BENCHMARK baseline update main --no-progress --quiet
+          # compare using the PR's benchmark target and thresholds
+          git checkout --force "$GITHUB_SHA"
+
+      - name: Compare PR and main
+        id: compare
+        shell: bash
+        run: |
+          set +e
+          $BENCHMARK baseline check main pull_request --format markdown > check.md 2> check_stderr
+          status=$?
+          set -e
+          cat check_stderr >&2
+          # SwiftPM maps all non-zero plugin exit codes to 1, so parse stderr to recover the real status
+          if [ "$status" -eq 0 ]; then result=same
+          elif grep -q benchmarkThresholdRegression check_stderr; then result=regression
+          elif grep -q benchmarkThresholdImprovement check_stderr; then result=improvement
+          else result=failure
+          fi
+          echo "result=$result" >> "$GITHUB_OUTPUT"
+
+          $BENCHMARK baseline compare main pull_request --no-progress --quiet --format markdown > compare.md
+
+          case "$result" in
+            same) headline="✅ No significant change in instructions or allocations compared to \`main\`" ;;
+            improvement) headline="📈 Improved instructions or allocations compared to \`main\`" ;;
+            regression) headline="⚠️ **Regression in instructions or allocations compared to \`main\`**" ;;
+            *) headline="🚫 Benchmark comparison failed" ;;
+          esac
+          {
+            echo "## Benchmarks"
+            echo "$headline ([run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}))"
+            echo
+            if ! grep -q Instructions compare.md; then
+              echo "::warning title=Benchmark instructions::Instruction counts are not available on this runner" >&2
+              echo "> [!WARNING]"
+              echo "> Instruction counts are not available on this runner, only allocations were compared."
+              echo
+            fi
+            cat check.md
+            echo
+            echo "<details><summary>Full comparison</summary>"
+            echo
+            # stay under GitHub's comment size limit
+            head -c 50000 compare.md
+            echo
+            echo "</details>"
+          } > comment.md
+          cat comment.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
+        with:
+          file-path: comment.md
+          comment-tag: benchmark-delta
+
+      - name: Report result
+        run: |
+          case "${{ steps.compare.outputs.result }}" in
+            regression) echo "::warning title=Benchmark regression::Instructions or allocations regressed compared to main, see the job summary" ;;
+            failure) exit 1 ;;
+          esac
