@@ -101,7 +101,9 @@ public enum _AttributeStorage: Sendable, Equatable {
         }
     }
 
-    @available(*, deprecated, message: "Attributes are merged when they are added, use `_withSpan` to read them.")
+    /// Returns the attributes for iteration (they are already merged).
+    ///
+    /// Prefer `_withSpan` for new code. This is kept for source compatibility and will eventually be deprecated and removed.
     public consuming func flattened() -> _MergedAttributes {
         .init(self)
     }

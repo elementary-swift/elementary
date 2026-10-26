@@ -43,7 +43,6 @@ struct AttributeMergingTests {
         #expect(attributes == ["id=2", "class=a b", "hidden=", "style=x"])
     }
 
-    @available(*, deprecated, message: "tests the deprecated `flattened()`")
     @Test func testFlattenedIteratesMergedAttributes() {
         var storage = _AttributeStorage([HTMLAttribute<HTMLTag.p>.id("1"), .class("a"), .hidden])
         storage.append(_AttributeStorage([HTMLAttribute<HTMLTag.p>.class("b"), .id("2"), .style("x")]))
