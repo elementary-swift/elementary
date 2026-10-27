@@ -53,5 +53,4 @@ public typealias SVGRaw = HTMLRaw
 
 extension Never: SVGTagDefinition {}
 
-extension _AttributedContent: SVGContent where Content: SVGContent {}
 extension HTMLRaw: SVGContent {}
