@@ -138,6 +138,80 @@ let benchmarks = { @Sendable in
         }
     }
 
+    Benchmark("compare equal class attributes") { benchmark in
+        let a = makeClassAttribute()
+        let b = makeClassAttribute()
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(a == b)
+        }
+    }
+
+    Benchmark("compare equal class attributes (dynamic)") { benchmark in
+        let a = makeClassAttribute(seed: 1)
+        let b = makeClassAttribute(seed: 1)
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(a == b)
+        }
+    }
+
+    Benchmark("compare equal style attributes") { benchmark in
+        let a = makeStyleAttribute()
+        let b = makeStyleAttribute()
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(a == b)
+        }
+    }
+
+    Benchmark("compare equal style attributes (dynamic)") { benchmark in
+        let a = makeStyleAttribute(seed: 1)
+        let b = makeStyleAttribute(seed: 1)
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(a == b)
+        }
+    }
+
+    Benchmark("compare equal plain style attributes") { benchmark in
+        let a = makePlainStyleAttribute()
+        let b = makePlainStyleAttribute()
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(a == b)
+        }
+    }
+
+    Benchmark("compare equal plain style attributes (dynamic)") { benchmark in
+        let a = makePlainStyleAttribute(seed: 1)
+        let b = makePlainStyleAttribute(seed: 1)
+        benchmark.startMeasurement()
+        for _ in benchmark.scaledIterations {
+            blackHole(a == b)
+        }
+    }
+
+    Benchmark("merge class and style attributes") { benchmark in
+        for _ in benchmark.scaledIterations {
+            var storage = _AttributeStorage([
+                HTMLAttribute<HTMLTag.div>.class(["card", "card-elevated", "interactive"]),
+                .style(["background-color": "white", "border-radius": "4px"]),
+                .id("card"),
+            ])
+            storage.append(
+                _AttributeStorage([
+                    HTMLAttribute<HTMLTag.div>.class(["card-elevated", "is-selected"]),
+                    .style(["border-radius": "8px"]),
+                ])
+            )
+            storage.append(_AttributeStorage(HTMLAttribute<HTMLTag.div>.class("interactive")))
+            for attribute in storage.flattened() {
+                blackHole(attribute)
+            }
+        }
+    }
+
     Benchmark("render tuples") { benchmark in
         for _ in benchmark.scaledIterations {
             try blackHole(
@@ -361,6 +435,47 @@ func makeAttributeStorage(seed: String) -> _AttributeStorage {
     ])
     storage.append(_AttributeStorage(HTMLAttribute<HTMLTag.div>.class("active")))
     return storage
+}
+
+func makeClassAttribute() -> _StoredAttribute {
+    storedAttribute(.class(["card", "card-elevated-surface", "interactive-hover-state", "is-selected"]))
+}
+
+// NOTE: the seeded variants build all strings at runtime, so they never share storage
+func makeClassAttribute(seed: Int) -> _StoredAttribute {
+    storedAttribute(.class(["card-\(seed)", "card-elevated-surface-\(seed)", "interactive-hover-state-\(seed)", "is-selected-\(seed)"]))
+}
+
+func makeStyleAttribute() -> _StoredAttribute {
+    storedAttribute(
+        .style([
+            "background-color": "var(--surface-background)",
+            "border-radius": "4px",
+            "box-shadow": "0 1px 2px rgba(0, 0, 0, 0.2)",
+        ])
+    )
+}
+
+func makeStyleAttribute(seed: Int) -> _StoredAttribute {
+    storedAttribute(
+        .style([
+            "background-color-\(seed)": "var(--surface-background-\(seed))",
+            "border-radius-\(seed)": "4px-\(seed)",
+            "box-shadow-\(seed)": "0 1px 2px rgba(0, 0, 0, 0.2)-\(seed)",
+        ])
+    )
+}
+
+func makePlainStyleAttribute() -> _StoredAttribute {
+    storedAttribute(.style("background-color: var(--surface-background); border-radius: 4px"))
+}
+
+func makePlainStyleAttribute(seed: Int) -> _StoredAttribute {
+    storedAttribute(.style("background-color: var(--surface-background-\(seed)); border-radius: 4px"))
+}
+
+func storedAttribute(_ attribute: HTMLAttribute<HTMLTag.div>) -> _StoredAttribute {
+    _AttributeStorage(attribute).flattened().first(where: { _ in true })!
 }
 
 func makeSingleAttributeElements() -> some HTML {

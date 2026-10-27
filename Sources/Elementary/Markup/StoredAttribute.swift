@@ -144,6 +144,17 @@ public struct _StoredAttribute: Equatable, Sendable {
     }
 }
 
+extension _StoredAttribute {
+    /// Returns `true` if both attributes render the same value.
+    ///
+    /// May return `false` for values that render the same (eg: classes vs. an equal plain string),
+    /// callers must treat `false` as "possibly different".
+    @inlinable
+    public func _hasKnownEqualValue(to other: borrowing _StoredAttribute) -> Bool {
+        _value == other._value
+    }
+}
+
 extension _StoredAttribute.Value {
     /// The value as rendered, `nil` for boolean attributes.
     var flattened: String? {
@@ -313,8 +324,33 @@ extension String {
     @inline(__always)
     @usableFromInline
     func utf8Equals(_ other: borrowing String) -> Bool {
+        if isBitwiseIdentical(to: other) { return true }
         guard utf8.count == other.utf8.count else { return false }
         return contiguousUTF8Equals(other) ?? utf8.elementsEqual(other.utf8)
+    }
+
+    /// Compares the raw bits of two string values, without looking at their contents.
+    ///
+    /// Identical bits imply equal contents, this covers literals, small strings, and copies sharing one buffer.
+    @inline(__always)
+    private func isBitwiseIdentical(to other: borrowing String) -> Bool {
+        withUnsafeBytes(of: self) { lhs in
+            withUnsafeBytes(of: other) { rhs in
+                // NOTE: the size is a multiple of the word size on all supported platforms, the byte loop is a fallback
+                let wordSize = MemoryLayout<UInt>.size
+                let wordCount = lhs.count / wordSize
+                for index in 0..<wordCount {
+                    let offset = index * wordSize
+                    if lhs.load(fromByteOffset: offset, as: UInt.self) != rhs.load(fromByteOffset: offset, as: UInt.self) {
+                        return false
+                    }
+                }
+                for index in (wordCount * wordSize)..<lhs.count where lhs[index] != rhs[index] {
+                    return false
+                }
+                return true
+            }
+        }
     }
 
     /// Compares the UTF-8 bytes of two strings via their contiguous storage, which all native strings have.
