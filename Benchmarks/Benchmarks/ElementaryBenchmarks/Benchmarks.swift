@@ -5,7 +5,15 @@ let benchmarks = { @Sendable in
     Benchmark.defaultConfiguration = .init(
         metrics: [.wallClock, .mallocCountTotal, .instructions, .throughput],
         scalingFactor: .kilo,
-        maxDuration: .seconds(5)
+        maxDuration: .seconds(5),
+        // only deterministic metrics are checked against baselines, timings are too noisy on CI
+        thresholds: [
+            .instructions: .init(relative: [.p50: 5.0]),
+            // absolute is scaled by 1000 (500 = half an allocation per iteration), catches new allocations where main had none
+            .mallocCountTotal: .init(relative: [.p50: 5.0], absolute: [.p50: 500]),
+            .wallClock: .none,
+            .throughput: .none,
+        ]
     )
 
     Benchmark("initialize nested html tags") { benchmark in
