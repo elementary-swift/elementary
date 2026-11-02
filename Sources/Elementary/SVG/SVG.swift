@@ -28,7 +28,7 @@ public enum SVG {}
 public enum SVGTag {}
 
 /// A type that represents an SVG tag.
-public protocol SVGTagDefinition: MarkupTagDefinition, MarkupTrait.AllowsAttributes {
+public protocol SVGTagDefinition: MarkupTagDefinition {
     /// Internal property that controls formatted rendering of the element (inline or block).
     ///
     /// A default implementation is provided that returns `false`.

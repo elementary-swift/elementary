@@ -512,7 +512,7 @@ private func asyncPathData(_ value: String) async -> String {
 }
 
 private struct CheckmarkIcon: SVGContent {
-    var body: some SVGContent {
+    var body: some SVGContent<SVGTag.path> {
         SVG.path(
             .d("M20 6 9 17l-5-5"),
             .fill(.none),
