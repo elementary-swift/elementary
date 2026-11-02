@@ -61,6 +61,16 @@ where V0: MarkupContent, V1: MarkupContent, V2: MarkupContent, V3: MarkupContent
     public typealias Body = Never
 }
 
+extension ModifiedContent: MarkupContent
+where Content: MarkupContent, Modifier: _MarkupRenderingModifier, Content.Tag == Modifier.InputTag {
+    public typealias Body = Never
+    public typealias Tag = Modifier.Tag
+}
+
+extension _HTMLModifierContent: MarkupContent {
+    public typealias Body = Never
+}
+
 #if !hasFeature(Embedded)
 @_unavailableInEmbedded
 extension AsyncContent: MarkupContent where Content: MarkupContent {
@@ -69,11 +79,6 @@ extension AsyncContent: MarkupContent where Content: MarkupContent {
 }
 
 extension AsyncForEach: MarkupContent where Content: MarkupContent {
-    public typealias Body = Never
-}
-
-extension _ModifiedTaskLocal: MarkupContent where Content: MarkupContent {
-    public typealias Tag = Content.Tag
     public typealias Body = Never
 }
 

@@ -1,7 +1,7 @@
 #if !hasFeature(Embedded)
 /// A property wrapper that reads a task-local value from a `TaskLocal`.
 ///
-/// Use `@TaskLocalValue` to conveniently read a value provided via ``HTML/taskLocalValue(_:_:)``.
+/// Use `@TaskLocalValue` to conveniently read a value provided via ``MarkupContent/taskLocalValue(_:_:)``.
 /// The value is read from the current task each time the property is accessed.
 ///
 /// ```swift
@@ -58,11 +58,4 @@ public struct TaskLocalValue<T: Sendable>: Sendable {
 @available(*, deprecated, renamed: "TaskLocalValue")
 public typealias Environment<T: Sendable> = TaskLocalValue<T>
 
-public struct _ModifiedTaskLocal<T: Sendable, Content> {
-    var wrappedContent: Content
-    var taskLocal: TaskLocal<T>
-    var value: T
-}
-
-extension _ModifiedTaskLocal: Sendable where Content: Sendable {}
 #endif

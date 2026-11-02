@@ -20,26 +20,51 @@ public extension MarkupContent {
     }
 }
 
-extension _AttributedContent: _Renderable where Content: _Renderable {
+extension _AttributesModifier {
     @inlinable
-    public static func _render<Renderer: _HTMLRendering>(
-        _ html: consuming Self,
+    public consuming func _render<Content: MarkupContent, Renderer: _HTMLRendering>(
+        _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) {
-        context.prependAttributes(html._attributes)
-        Content._render(html.content, into: &renderer, with: context)
+    ) where Content.Tag == InputTag {
+        context.prependAttributes(_attributes)
+        Content._render(content, into: &renderer, with: context)
     }
 
     @inlinable
     @_unavailableInEmbedded
-    public static func _render<Renderer: _AsyncHTMLRendering>(
-        _ html: consuming Self,
+    public consuming func _render<Content: MarkupContent, Renderer: _AsyncHTMLRendering>(
+        _ content: consuming Content,
         into renderer: inout Renderer,
         with context: consuming _RenderingContext
-    ) async throws {
-        context.prependAttributes(html._attributes)
-        try await Content._render(html.content, into: &renderer, with: context)
+    ) async throws where Content.Tag == InputTag {
+        context.prependAttributes(_attributes)
+        try await Content._render(content, into: &renderer, with: context)
+    }
+}
+
+extension _TaskLocalModifier where WrappedContent: MarkupContent {
+    @inlinable
+    public consuming func _render<Content: MarkupContent, Renderer: _HTMLRendering>(
+        _ content: consuming Content,
+        into renderer: inout Renderer,
+        with context: consuming _RenderingContext
+    ) where Content.Tag == InputTag {
+        taskLocal.withValue(value) { [content, context] in
+            Content._render(content, into: &renderer, with: context)
+        }
+    }
+
+    @_unavailableInEmbedded
+    @inlinable
+    public consuming func _render<Content: MarkupContent, Renderer: _AsyncHTMLRendering>(
+        _ content: consuming Content,
+        into renderer: inout Renderer,
+        with context: consuming _RenderingContext
+    ) async throws where Content.Tag == InputTag {
+        try await taskLocal.withValue(value) { [content, context] in
+            try await Content._render(content, into: &renderer, with: context)
+        }
     }
 }
 
