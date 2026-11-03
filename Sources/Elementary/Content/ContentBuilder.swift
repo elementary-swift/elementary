@@ -1,12 +1,12 @@
 /// A result builder for building content components.
 @resultBuilder public struct ContentBuilder {
     @inlinable
-    public static func buildExpression<Content>(_ content: Content) -> Content {
+    public static func buildExpression<Content>(_ content: consuming Content) -> Content {
         content
     }
 
     @inlinable
-    public static func buildExpression(_ content: String) -> StringContent {
+    public static func buildExpression(_ content: consuming String) -> StringContent {
         StringContent(content)
     }
 
@@ -16,29 +16,31 @@
     }
 
     @inlinable
-    public static func buildBlock<Content>(_ content: Content) -> Content {
+    public static func buildBlock<Content>(_ content: consuming Content) -> Content {
         content
     }
 
     @inlinable
-    public static func buildIf<Content>(_ content: Content?) -> Content? {
+    public static func buildIf<Content>(_ content: consuming Content?) -> Content? {
         content
     }
 
     @inlinable
-    public static func buildEither<TrueContent, FalseContent>(first: TrueContent) -> _ConditionalContent<TrueContent, FalseContent> {
+    public static func buildEither<TrueContent, FalseContent>(
+        first: consuming TrueContent
+    ) -> _ConditionalContent<TrueContent, FalseContent> {
         _ConditionalContent(.trueContent(first))
     }
 
     @inlinable
     public static func buildEither<TrueContent, FalseContent>(
-        second: FalseContent
+        second: consuming FalseContent
     ) -> _ConditionalContent<TrueContent, FalseContent> {
         _ConditionalContent(.falseContent(second))
     }
 
     @inlinable
-    public static func buildArray<Element>(_ components: [Element]) -> _ArrayContent<Element> {
+    public static func buildArray<Element>(_ components: consuming [Element]) -> _ArrayContent<Element> {
         _ArrayContent(components)
     }
 }

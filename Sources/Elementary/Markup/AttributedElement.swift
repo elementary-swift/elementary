@@ -45,14 +45,9 @@ public extension MarkupContent where Self: _Attributed {
     ///   - condition: If set to false, the attribute will not be added.
     /// - Returns: A new element with the specified attribute added.
     @inlinable
-    func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> Self {
-        if condition {
-            var element = self
-            element._attributes.append(_AttributeStorage(attribute))
-            return element
-        } else {
-            return self
-        }
+    consuming func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> Self {
+        if condition { _attributes.append(_AttributeStorage(attribute)) }
+        return self
     }
 
     /// Adds the specified attributes to the element.
@@ -61,7 +56,7 @@ public extension MarkupContent where Self: _Attributed {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable
-    func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> Self {
+    consuming func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> Self {
         self.attributes(contentsOf: attributes, when: condition)
     }
 
@@ -71,14 +66,9 @@ public extension MarkupContent where Self: _Attributed {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable
-    func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> Self {
-        if condition {
-            var element = self
-            element._attributes.append(_AttributeStorage(attributes))
-            return element
-        } else {
-            return self
-        }
+    consuming func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> Self {
+        if condition { _attributes.append(_AttributeStorage(attributes)) }
+        return self
     }
 }
 
@@ -89,7 +79,7 @@ public extension MarkupContent where Tag: MarkupTrait.AllowsAttributes {
     ///   - condition: If set to false, the attribute will not be added.
     /// - Returns: A new element with the specified attribute added.
     @inlinable @_disfavoredOverload
-    func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> _AttributedContent<Self> {
+    consuming func attributes(_ attribute: MarkupAttribute<Tag>, when condition: Bool = true) -> _AttributedContent<Self> {
         if condition {
             return _AttributedContent(content: self, attribute: attribute)
         } else {
@@ -103,7 +93,7 @@ public extension MarkupContent where Tag: MarkupTrait.AllowsAttributes {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable @_disfavoredOverload
-    func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> _AttributedContent<Self> {
+    consuming func attributes(_ attributes: MarkupAttribute<Tag>..., when condition: Bool = true) -> _AttributedContent<Self> {
         _AttributedContent(content: self, attributes: condition ? attributes : [])
     }
 
@@ -113,7 +103,7 @@ public extension MarkupContent where Tag: MarkupTrait.AllowsAttributes {
     ///   - condition: If set to false, the attributes will not be added.
     /// - Returns: A new element with the specified attributes added.
     @inlinable @_disfavoredOverload
-    func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> _AttributedContent<Self> {
+    consuming func attributes(contentsOf attributes: [MarkupAttribute<Tag>], when condition: Bool = true) -> _AttributedContent<Self> {
         _AttributedContent(content: self, attributes: condition ? attributes : [])
     }
 }

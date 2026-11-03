@@ -4,39 +4,44 @@
 
 public extension ContentBuilder {
     @inlinable
-    static func buildBlock<V0, V1>(_ v0: V0, _ v1: V1) -> _TupleContent2<V0, V1> {
+    static func buildBlock<V0, V1>(_ v0: consuming V0, _ v1: consuming V1) -> _TupleContent2<V0, V1> {
         _TupleContent2(v0: v0, v1: v1)
     }
 
     @inlinable
-    static func buildBlock<V0, V1, V2>(_ v0: V0, _ v1: V1, _ v2: V2) -> _TupleContent3<V0, V1, V2> {
+    static func buildBlock<V0, V1, V2>(_ v0: consuming V0, _ v1: consuming V1, _ v2: consuming V2) -> _TupleContent3<V0, V1, V2> {
         _TupleContent3(v0: v0, v1: v1, v2: v2)
     }
 
     @inlinable
-    static func buildBlock<V0, V1, V2, V3>(_ v0: V0, _ v1: V1, _ v2: V2, _ v3: V3) -> _TupleContent4<V0, V1, V2, V3> {
+    static func buildBlock<V0, V1, V2, V3>(
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3
+    ) -> _TupleContent4<V0, V1, V2, V3> {
         _TupleContent4(v0: v0, v1: v1, v2: v2, v3: v3)
     }
 
     @inlinable
     static func buildBlock<V0, V1, V2, V3, V4>(
-        _ v0: V0,
-        _ v1: V1,
-        _ v2: V2,
-        _ v3: V3,
-        _ v4: V4
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3,
+        _ v4: consuming V4
     ) -> _TupleContent5<V0, V1, V2, V3, V4> {
         _TupleContent5(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4)
     }
 
     @inlinable
     static func buildBlock<V0, V1, V2, V3, V4, V5>(
-        _ v0: V0,
-        _ v1: V1,
-        _ v2: V2,
-        _ v3: V3,
-        _ v4: V4,
-        _ v5: V5
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3,
+        _ v4: consuming V4,
+        _ v5: consuming V5
     ) -> _TupleContent6<V0, V1, V2, V3, V4, V5> {
         _TupleContent6(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5)
     }
@@ -45,75 +50,75 @@ public extension ContentBuilder {
 
     @inlinable
     static func buildBlock<V0, V1, V2, V3, V4, V5, V6>(
-        _ v0: V0,
-        _ v1: V1,
-        _ v2: V2,
-        _ v3: V3,
-        _ v4: V4,
-        _ v5: V5,
-        _ v6: V6
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3,
+        _ v4: consuming V4,
+        _ v5: consuming V5,
+        _ v6: consuming V6
     ) -> _TupleContent2<_TupleContent6<V0, V1, V2, V3, V4, V5>, V6> {
         .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: v6)
     }
 
     @inlinable
     static func buildBlock<V0, V1, V2, V3, V4, V5, V6, V7>(
-        _ v0: V0,
-        _ v1: V1,
-        _ v2: V2,
-        _ v3: V3,
-        _ v4: V4,
-        _ v5: V5,
-        _ v6: V6,
-        _ v7: V7
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3,
+        _ v4: consuming V4,
+        _ v5: consuming V5,
+        _ v6: consuming V6,
+        _ v7: consuming V7
     ) -> _TupleContent2<_TupleContent6<V0, V1, V2, V3, V4, V5>, _TupleContent2<V6, V7>> {
         .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7))
     }
 
     @inlinable
     static func buildBlock<V0, V1, V2, V3, V4, V5, V6, V7, V8>(
-        _ v0: V0,
-        _ v1: V1,
-        _ v2: V2,
-        _ v3: V3,
-        _ v4: V4,
-        _ v5: V5,
-        _ v6: V6,
-        _ v7: V7,
-        _ v8: V8
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3,
+        _ v4: consuming V4,
+        _ v5: consuming V5,
+        _ v6: consuming V6,
+        _ v7: consuming V7,
+        _ v8: consuming V8
     ) -> _TupleContent2<_TupleContent6<V0, V1, V2, V3, V4, V5>, _TupleContent3<V6, V7, V8>> {
         .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7, v2: v8))
     }
 
     @inlinable
     static func buildBlock<V0, V1, V2, V3, V4, V5, V6, V7, V8, V9>(
-        _ v0: V0,
-        _ v1: V1,
-        _ v2: V2,
-        _ v3: V3,
-        _ v4: V4,
-        _ v5: V5,
-        _ v6: V6,
-        _ v7: V7,
-        _ v8: V8,
-        _ v9: V9
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3,
+        _ v4: consuming V4,
+        _ v5: consuming V5,
+        _ v6: consuming V6,
+        _ v7: consuming V7,
+        _ v8: consuming V8,
+        _ v9: consuming V9
     ) -> _TupleContent2<_TupleContent6<V0, V1, V2, V3, V4, V5>, _TupleContent4<V6, V7, V8, V9>> {
         .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7, v2: v8, v3: v9))
     }
 
     @inlinable
     static func buildBlock<V0, V1, V2, V3, V4, V5, V6, V7, V8, V9, V10>(
-        _ v0: V0,
-        _ v1: V1,
-        _ v2: V2,
-        _ v3: V3,
-        _ v4: V4,
-        _ v5: V5,
-        _ v6: V6,
-        _ v7: V7,
-        _ v8: V8,
-        _ v9: V9,
-        _ v10: V10
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3,
+        _ v4: consuming V4,
+        _ v5: consuming V5,
+        _ v6: consuming V6,
+        _ v7: consuming V7,
+        _ v8: consuming V8,
+        _ v9: consuming V9,
+        _ v10: consuming V10
     ) -> _TupleContent2<_TupleContent6<V0, V1, V2, V3, V4, V5>, _TupleContent5<V6, V7, V8, V9, V10>> {
         .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7, v2: v8, v3: v9, v4: v10))
     }
@@ -133,18 +138,18 @@ public extension ContentBuilder {
         V10,
         V11
     >(
-        _ v0: V0,
-        _ v1: V1,
-        _ v2: V2,
-        _ v3: V3,
-        _ v4: V4,
-        _ v5: V5,
-        _ v6: V6,
-        _ v7: V7,
-        _ v8: V8,
-        _ v9: V9,
-        _ v10: V10,
-        _ v11: V11
+        _ v0: consuming V0,
+        _ v1: consuming V1,
+        _ v2: consuming V2,
+        _ v3: consuming V3,
+        _ v4: consuming V4,
+        _ v5: consuming V5,
+        _ v6: consuming V6,
+        _ v7: consuming V7,
+        _ v8: consuming V8,
+        _ v9: consuming V9,
+        _ v10: consuming V10,
+        _ v11: consuming V11
     ) -> _TupleContent2<_TupleContent6<V0, V1, V2, V3, V4, V5>, _TupleContent6<V6, V7, V8, V9, V10, V11>> {
         .init(v0: .init(v0: v0, v1: v1, v2: v2, v3: v3, v4: v4, v5: v5), v1: .init(v0: v6, v1: v7, v2: v8, v3: v9, v4: v10, v5: v11))
     }
