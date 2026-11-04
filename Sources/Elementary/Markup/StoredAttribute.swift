@@ -120,21 +120,25 @@ public struct _StoredAttribute: Equatable, Sendable {
         // appending nothing changes nothing, not even the separator
         guard !suffix.isEmpty else { return }
 
-        switch (mergeMode, _value) {
-        case (.replaceValue, _):
-            _value = _value.appending(suffix, separator: separator)
-        case (.appendValue, _):
+        // NOTE: switching on the mode only (not a tuple with the value), so the value stays uniquely referenced
+        switch mergeMode {
+        case .replaceValue:
+            _value.append(suffix, separator: separator)
+        case .appendValue:
             // without a value of our own, only the suffix (and its separator) is appended to an existing value
             if _value.isEmpty { mergeMode = .appendValue(separator) }
-            _value = _value.appending(suffix, separator: separator)
-        case let (.ignoreIfSet, .ignoredWithSuffix(value, ownSeparator, ownSuffix)):
-            _value = .ignoredWithSuffix(
-                value: value.appending(suffix, separator: separator),
-                separator: ownSeparator,
-                suffix: ownSuffix.appending(suffix, separator: separator)
-            )
-        case (.ignoreIfSet, _):
-            _value = .ignoredWithSuffix(value: _value.appending(suffix, separator: separator), separator: separator, suffix: suffix)
+            _value.append(suffix, separator: separator)
+        case .ignoreIfSet:
+            if case let .ignoredWithSuffix(value, ownSeparator, ownSuffix) = _value {
+                _value = .ignoredWithSuffix(
+                    value: value.appending(suffix, separator: separator),
+                    separator: ownSeparator,
+                    suffix: ownSuffix.appending(suffix, separator: separator)
+                )
+            } else {
+                _value.append(suffix, separator: separator)
+                _value = .ignoredWithSuffix(value: _value, separator: separator, suffix: suffix)
+            }
         }
     }
 
@@ -167,40 +171,76 @@ extension _StoredAttribute.Value {
         }
     }
 
-    /// Returns this value with `other` appended (`separator` is only used between plain values).
+    /// Returns this value with `other` appended, see `append(_:separator:)`.
     func appending(_ other: Self, separator: String) -> Self {
-        switch (self, other) {
-        case (_, .empty):
-            return self
-        case (.empty, _):
-            return other
-        case let (.plain(existing), .plain(other)):
-            return .plain("\(existing)\(separator)\(other)")
-        case (.styles(var existing), .styles(let other)):
-            existing.append(contentsOf: other)
-            return .styles(existing)
-        case (.classes(var existing), .classes(let other)):
-            existing.append(contentsOf: other)
-            return .classes(existing)
-        case let (.plain(existing), .styles(other)):
-            var styles = _StoredAttribute.Styles(plainValue: existing)
-            styles.append(contentsOf: other)
-            return .styles(styles)
-        case (.styles(var existing), .plain(let other)):
-            existing.append(plainValue: other)
-            return .styles(existing)
-        case let (.plain(existing), .classes(other)):
-            var classes = _StoredAttribute.Classes([existing])
-            classes.append(contentsOf: other)
-            return .classes(classes)
-        case (.classes(var existing), .plain(let other)):
-            existing.append(plainValue: other)
-            return .classes(existing)
-        case (.styles, .classes), (.classes, .styles):
-            assertionFailure("Cannot merge styles and classes")
-            // If trying to merge incompatible types, just replace
-            return other
-        case (.ignoredWithSuffix, _), (_, .ignoredWithSuffix):
+        var result = self
+        result.append(other, separator: separator)
+        return result
+    }
+
+    /// Appends `other` to this value (`separator` is only used between plain values).
+    ///
+    /// NOTE: each case releases our own reference before modifying the payload, so it is uniquely referenced and
+    /// modified in place (instead of copying the string or array on every merge).
+    mutating func append(_ other: Self, separator: String) {
+        switch self {
+        case _ where other.isEmpty:
+            return
+        case .empty:
+            self = other
+        case var .plain(existing):
+            switch other {
+            case let .plain(other):
+                self = .empty
+                existing.append(separator)
+                existing.append(other)
+                self = .plain(existing)
+            case let .styles(other):
+                var styles = _StoredAttribute.Styles(plainValue: existing)
+                styles.append(contentsOf: other)
+                self = .styles(styles)
+            case let .classes(other):
+                var classes = _StoredAttribute.Classes([existing])
+                classes.append(contentsOf: other)
+                self = .classes(classes)
+            case .empty, .ignoredWithSuffix:
+                preconditionFailure("unreachable")
+            }
+        case var .styles(existing):
+            switch other {
+            case let .styles(other):
+                self = .empty
+                existing.append(contentsOf: other)
+                self = .styles(existing)
+            case let .plain(other):
+                self = .empty
+                existing.append(plainValue: other)
+                self = .styles(existing)
+            case .classes:
+                assertionFailure("Cannot merge styles and classes")
+                // If trying to merge incompatible types, just replace
+                self = other
+            case .empty, .ignoredWithSuffix:
+                preconditionFailure("unreachable")
+            }
+        case var .classes(existing):
+            switch other {
+            case let .classes(other):
+                self = .empty
+                existing.append(contentsOf: other)
+                self = .classes(existing)
+            case let .plain(other):
+                self = .empty
+                existing.append(plainValue: other)
+                self = .classes(existing)
+            case .styles:
+                assertionFailure("Cannot merge styles and classes")
+                // If trying to merge incompatible types, just replace
+                self = other
+            case .empty, .ignoredWithSuffix:
+                preconditionFailure("unreachable")
+            }
+        case .ignoredWithSuffix:
             preconditionFailure("unreachable: values with a pending suffix are merged by `_StoredAttribute.append`")
         }
     }
@@ -312,7 +352,17 @@ extension _StoredAttribute {
 
         @usableFromInline
         static func == (lhs: Classes, rhs: Classes) -> Bool {
-            lhs.classes.elementsEqual(rhs.classes, by: String.utf8Equals)
+            guard lhs.classes.count == rhs.classes.count else { return false }
+            return lhs.classes.withUnsafeBufferPointer { lhs in
+                rhs.classes.withUnsafeBufferPointer { rhs in
+                    // the same buffer (eg: an unchanged list that is applied again) is trivially equal
+                    if lhs.baseAddress == rhs.baseAddress { return true }
+                    for index in lhs.indices where !lhs[index].utf8Equals(rhs[index]) {
+                        return false
+                    }
+                    return true
+                }
+            }
         }
     }
 }
@@ -367,9 +417,5 @@ extension String {
                 return true
             }
         } ?? nil
-    }
-
-    fileprivate static func utf8Equals(_ lhs: borrowing String, _ rhs: borrowing String) -> Bool {
-        lhs.utf8Equals(rhs)
     }
 }

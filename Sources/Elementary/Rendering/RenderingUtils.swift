@@ -112,15 +112,15 @@ extension [UInt8] {
     }
 
     @inline(__always)
-    mutating func appendString(_ string: consuming String) {
-        string.withUTF8 { utf8 in
+    mutating func appendString(_ string: borrowing String) {
+        withUTF8(of: string) { utf8 in
             append(contentsOf: utf8)
         }
     }
 
     @inline(__always)
-    mutating func appendEscapedAttributeValue(_ value: consuming String) {
-        value.withUTF8 { utf8 in
+    mutating func appendEscapedAttributeValue(_ value: borrowing String) {
+        withUTF8(of: value) { utf8 in
             var start = utf8.startIndex
 
             for current in utf8.indices {
@@ -145,8 +145,8 @@ extension [UInt8] {
     }
 
     @inline(__always)
-    mutating func appendEscapedText(_ value: consuming String) {
-        value.withUTF8 { utf8 in
+    mutating func appendEscapedText(_ value: borrowing String) {
+        withUTF8(of: value) { utf8 in
             var start = utf8.startIndex
 
             for current in utf8.indices {
@@ -173,5 +173,18 @@ extension [UInt8] {
             }
         }
     }
+}
+
+/// Calls `body` with the UTF-8 bytes of `string`, without copying (or retaining) native strings.
+///
+/// NOTE: unlike `String.withUTF8`, this does not need a mutable copy of the string.
+@inline(__always)
+private func withUTF8<Result>(of string: borrowing String, _ body: (UnsafeBufferPointer<UInt8>) -> Result) -> Result {
+    if let result = string.utf8.withContiguousStorageIfAvailable(body) {
+        return result
+    }
+    // non-contiguous strings (eg: bridged strings) are made native first
+    var string = copy string
+    return string.withUTF8(body)
 }
 #endif
