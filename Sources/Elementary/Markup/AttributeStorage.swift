@@ -70,6 +70,8 @@ public enum _AttributeStorage: Sendable, Equatable {
             self = .single(attribute)
         case var .single(existing):
             if existing.name.utf8Equals(attribute.name) {
+                // release our reference first, so the value is uniquely referenced and merged in place
+                self = .none
                 existing.mergeWith(attribute)
                 self = .single(existing)
             } else {
