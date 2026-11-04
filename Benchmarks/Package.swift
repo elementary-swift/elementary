@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.3
 import PackageDescription
 
 let package = Package(
@@ -6,19 +6,19 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [],
     dependencies: [
-        .package(url: "https://github.com/ordo-one/package-benchmark", from: "1.0.0"),
+        .package(url: "https://github.com/ordo-one/benchmark", from: "1.38.0"),
         .package(path: "../"),
     ],
     targets: [
         .executableTarget(
             name: "ElementaryBenchmarks",
             dependencies: [
-                .product(name: "Benchmark", package: "package-benchmark"),
+                .product(name: "Benchmark", package: "benchmark"),
                 .product(name: "Elementary", package: "Elementary"),
             ],
             path: "Benchmarks/ElementaryBenchmarks",
             plugins: [
-                .plugin(name: "BenchmarkPlugin", package: "package-benchmark")
+                .plugin(name: "BenchmarkPlugin", package: "benchmark")
             ]
         )
     ]
