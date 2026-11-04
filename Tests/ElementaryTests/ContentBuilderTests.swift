@@ -33,8 +33,8 @@ struct ContentBuilderTests {
         let forEach = ForEach([1, 2, 3]) { number in
             number * 2
         }
-        #expect(forEach._data == [1, 2, 3])
-        #expect(forEach._contentBuilder(2) == 4)
+        #expect(forEach.data == [1, 2, 3])
+        #expect(forEach.content(2) == 4)
     }
 }
 

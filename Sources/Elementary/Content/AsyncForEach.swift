@@ -13,20 +13,28 @@
 /// }
 /// ```
 public struct AsyncForEach<Source: AsyncSequence, Content> {
-    @usableFromInline
-    var sequence: Source
-    @usableFromInline
-    var contentBuilder: (Source.Element) -> Content
+    /// The async sequence of data to render.
+    public var data: Source
+
+    /// A closure that builds content for each element in the sequence.
+    public var content: (Source.Element) -> Content
 
     /// Creates a new async container that builds the specified content for each element of the sequence.
     ///
     /// - Parameters:
-    ///   - sequence: An `AsyncSequence` of data to render.
-    ///   - contentBuilder: A closure that builds content for each element in the sequence.
-    public init(_ sequence: Source, @ContentBuilder contentBuilder: @escaping (Source.Element) -> Content) {
-        self.sequence = sequence
-        self.contentBuilder = contentBuilder
+    ///   - data: An `AsyncSequence` of data to render.
+    ///   - content: A closure that builds content for each element in the sequence.
+    public init(_ data: Source, @ContentBuilder content: @escaping (Source.Element) -> Content) {
+        self.data = data
+        self.content = content
     }
 }
 
+public extension AsyncForEach {
+    @available(*, deprecated, renamed: "init(_:content:)")
+    @_disfavoredOverload
+    init(_ sequence: Source, @ContentBuilder contentBuilder: @escaping (Source.Element) -> Content) {
+        self.init(sequence, content: contentBuilder)
+    }
+}
 #endif

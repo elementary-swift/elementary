@@ -102,8 +102,8 @@ extension ForEach: _Renderable where Content: _Renderable {
     ) {
         context.assertNoAttributes(self)
 
-        for element in html._data {
-            Content._render(html._contentBuilder(element), into: &renderer, with: copy context)
+        for element in html.data {
+            Content._render(html.content(element), into: &renderer, with: copy context)
         }
     }
 
@@ -116,8 +116,8 @@ extension ForEach: _Renderable where Content: _Renderable {
     ) async throws {
         context.assertNoAttributes(self)
 
-        for element in html._data {
-            try await Content._render(html._contentBuilder(element), into: &renderer, with: copy context)
+        for element in html.data {
+            try await Content._render(html.content(element), into: &renderer, with: copy context)
         }
     }
 }
@@ -376,8 +376,8 @@ extension AsyncForEach: _Renderable where Content: _Renderable {
     ) async throws {
         context.assertNoAttributes(self)
 
-        for try await element in html.sequence {
-            try await Content._render(html.contentBuilder(element), into: &renderer, with: copy context)
+        for try await element in html.data {
+            try await Content._render(html.content(element), into: &renderer, with: copy context)
         }
     }
 }
