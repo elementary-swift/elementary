@@ -10,21 +10,38 @@
 /// ```
 public struct ForEach<Data, Content>
 where Data: Sequence {
-    public var _data: Data
+    /// The sequence of data to render.
+    public var data: Data
+
     // TODO: Swift 6 - @Sendable is not ideal here, but currently the response generators for hummingbird/vapor require sendable HTML types
     // also, currently there is no good way to conditionally apply Sendable conformance based on closure type
 
-    public var _contentBuilder: @Sendable (Data.Element) -> Content
+    /// A closure that builds content for each element in the sequence.
+    public var content: @Sendable (Data.Element) -> Content
 
     /// Creates a new `ForEach` container with the given sequence and content builder closure.
     ///
     /// - Parameters:
-    ///  - sequence: A sequence of data to render.
-    ///  - contentBuilder: A closure that builds content for each element in the sequence.
-    public init(_ data: Data, @ContentBuilder content contentBuilder: @escaping @Sendable (Data.Element) -> Content) {
-        _data = data
-        _contentBuilder = contentBuilder
+    ///   - data: A sequence of data to render.
+    ///   - content: A closure that builds content for each element in the sequence.
+    public init(_ data: Data, @ContentBuilder content: @escaping @Sendable (Data.Element) -> Content) {
+        self.data = data
+        self.content = content
     }
 }
 
 extension ForEach: Sendable where Data: Sendable {}
+
+public extension ForEach {
+    @available(*, deprecated, renamed: "data")
+    var _data: Data {
+        get { data }
+        set { data = newValue }
+    }
+
+    @available(*, deprecated, renamed: "content")
+    var _contentBuilder: @Sendable (Data.Element) -> Content {
+        get { content }
+        set { content = newValue }
+    }
+}
